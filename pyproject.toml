@@ -1,0 +1,31 @@
+[tool.poetry]
+authors = ["Elton Chou <plscd748@gmail.com>"]
+description = ""
+name = "hook_api"
+version = "0.0.1"
+
+[tool.poetry.dependencies]
+SQLAlchemy = {extras = ["mypy"], version = "^1.4.36"}
+fastapi = "^0.78.0"
+psycopg2 = "^2.9.3"
+pydantic = "^1.9.1"
+python = "^3.9"
+python-dotenv = "^0.20.0"
+pytz = "^2022.1"
+sqlalchemy-mixins = "^1.5.3"
+uvicorn = {extras = ["standard"], version = "^0.17.6"}
+
+[tool.poetry.dev-dependencies]
+Faker = "^13.11.1"
+alembic = "^1.7.7"
+autopep8 = "^1.6.0"
+coverage = "^6.3.3"
+mypy = "^0.960"
+pytest = "^7.1.2"
+pytest-mock = "^3.7.0"
+types-pytz = "^2021.3.8"
+pytest-xdist = "^2.5.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]

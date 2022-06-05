@@ -1,0 +1,6 @@
+.devcontainer/
+data/
+.env
+**/.mypy_cache/
+**/.pytest_cache/
+**/__pycache__
