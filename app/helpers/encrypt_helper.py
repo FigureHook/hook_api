@@ -1,3 +1,5 @@
+from typing import overload
+
 from app.core.config import settings
 from cryptography.fernet import Fernet
 
@@ -14,22 +16,44 @@ fernet = Fernet(settings.SECRET_KEY)
 
 
 class EncryptHelper:
+    @overload
     @staticmethod
-    def encrypt(data: bytes) -> bytes:
-        return fernet.encrypt(data)
+    def encrypt(data: str) -> str: ...
+
+    @overload
+    @staticmethod
+    def encrypt(data: bytes) -> bytes: ...
 
     @staticmethod
-    def decrypt(data: bytes) -> bytes:
-        return fernet.decrypt(data)
+    def encrypt(data):
+        if type(data) is str:
+            byte_data = str_to_bytes(data)
+            encrypted_byte_data = fernet.encrypt(byte_data)
+            return bytes_to_str(encrypted_byte_data)
+
+        if type(data) is bytes:
+            return fernet.encrypt(data)
+
+        raise TypeError(
+            f'Only accepted `bytes` or `str` type. (passed: {type(data)})')
+
+    @overload
+    @staticmethod
+    def decrypt(data: str) -> str: ...
+
+    @overload
+    @staticmethod
+    def decrypt(data: bytes) -> bytes: ...
 
     @staticmethod
-    def encrypt_str(data: str) -> str:
-        byte_data = str_to_bytes(data)
-        encrypted_byte_data = fernet.encrypt(byte_data)
-        return bytes_to_str(encrypted_byte_data)
+    def decrypt(data):
+        if type(data) is str:
+            byte_data = str_to_bytes(data)
+            decrypted_byte_data = fernet.decrypt(byte_data)
+            return bytes_to_str(decrypted_byte_data)
 
-    @staticmethod
-    def decrypt_str(data: str) -> str:
-        byte_data = str_to_bytes(data)
-        decrypted_byte_data = fernet.decrypt(byte_data)
-        return bytes_to_str(decrypted_byte_data)
+        if type(data) is bytes:
+            return fernet.decrypt(data)
+
+        raise TypeError(
+            f'Only accepted `bytes` or `str` type. (passed: {type(data)})')

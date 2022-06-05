@@ -27,7 +27,7 @@ class Webhook(Model, TimestampsMixin):
 
     @property
     def decrypted_token(self):
-        return EncryptHelper.decrypt_str(self.token)
+        return EncryptHelper.decrypt(self.token)
 
     @validates('lang')
     def validate_lang(self, key, lang):
@@ -41,4 +41,4 @@ class Webhook(Model, TimestampsMixin):
 
 @listens_for(target=Webhook.token, identifier='set', retval=True)
 def _webhook_attr_token_receive_set(target, token_value: str, old_token_value, initiator) -> str:
-    return EncryptHelper.encrypt_str(token_value)
+    return EncryptHelper.encrypt(token_value)
