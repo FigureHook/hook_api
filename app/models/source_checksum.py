@@ -1,8 +1,8 @@
-from typing import Type, TypeVar, Union, cast
+from typing import TypeVar, cast
 
 from app.db.model_base import PkModel, UniqueMixin
 from sqlalchemy import Column, DateTime, String
-from sqlalchemy.orm import Query, Session
+from sqlalchemy.orm import Query
 from sqlalchemy.sql import func
 
 __all__ = [

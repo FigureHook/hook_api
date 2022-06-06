@@ -1,15 +1,15 @@
 import uuid
-from typing import Any, AnyStr, Callable, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Optional, Type, TypeVar
 
-from sqlalchemy import TIMESTAMP, Column, Integer, func
+from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Query, Session
 from sqlalchemy_mixins.repr import ReprMixin
 from sqlalchemy_mixins.serialize import SerializeMixin
 from sqlalchemy_mixins.timestamp import TimestampsMixin
 
+T = TypeVar('T')
 Model_T = TypeVar('Model_T', bound='Model')
-PkModel_T = TypeVar('PkModel_T', bound='PkModel')
 
 
 class Model(ReprMixin, SerializeMixin):
@@ -40,7 +40,7 @@ class UUIDPkModel(Model, TimestampsMixin):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
 
-class UniqueMixin(Model):
+class UniqueMixin:
     """
     https://github.com/sqlalchemy/sqlalchemy/wiki/UniqueObject
     """
@@ -68,10 +68,10 @@ class UniqueMixin(Model):
 
 def _unique(
         session: Session,
-        cls: Type[Model_T],
+        cls: Type[T],
         hashfunc: Callable,
         queryfunc: Callable,
-        constructor, arg, kw) -> Optional[Model_T]:
+        constructor, arg, kw) -> Optional[T]:
     cache = getattr(session, '_unique_cache', None)
     if cache is None:
         cache = {}
