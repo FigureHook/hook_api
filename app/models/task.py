@@ -1,23 +1,21 @@
+from app.db.model_base import PkModel, UniqueMixin
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import Query
 from sqlalchemy.sql import func
-
-from ..db.model_base import Model, UniqueMixin
 
 __all__ = [
     "Task"
 ]
 
 
-class Task(UniqueMixin, Model):
+class Task(UniqueMixin, PkModel):
     __tablename__ = "periodic_task"
     __datetime_callback__ = func.now
 
-    name = Column(String, primary_key=True)
+    name = Column(String)
     executed_at = Column(
         DateTime,
-        default=__datetime_callback__(),
-        onupdate=__datetime_callback__()
+        default=__datetime_callback__()
     )
 
     @classmethod

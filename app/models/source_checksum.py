@@ -1,9 +1,9 @@
 from typing import Type, TypeVar, Union, cast
 
+from app.db.model_base import PkModel, UniqueMixin
 from sqlalchemy import Column, DateTime, String
+from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql import func
-from sqlalchemy.orm import Session
-from ..db.model_base import Model
 
 __all__ = [
     "SourceChecksum"
@@ -12,11 +12,11 @@ __all__ = [
 T = TypeVar('T', bound='SourceChecksum')
 
 
-class SourceChecksum(Model):
+class SourceChecksum(UniqueMixin, PkModel):
     __tablename__ = "source_checksum"
     __datetime_callback__ = func.now
 
-    source = Column(String, primary_key=True)
+    source = Column(String)
     checksum = cast(str, Column(String))
     checked_at = Column(
         DateTime,
@@ -24,5 +24,9 @@ class SourceChecksum(Model):
     )
 
     @classmethod
-    def get_by_site(cls: Type[T], session: Session,  source: str) -> Union[T, None]:
-        return session.query(cls, cls.source == source).scalar()
+    def unique_hash(cls, source):
+        return source
+
+    @classmethod
+    def unique_filter(cls, query: Query, source):
+        return query.filter(cls.source == source)

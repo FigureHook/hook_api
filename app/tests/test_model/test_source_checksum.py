@@ -22,3 +22,16 @@ class TestSourceChecksum:
         assert site_checksum
         assert site_checksum.checksum == checksum
         assert isinstance(site_checksum.checked_at, datetime)
+
+    def test_sourcechecksum_as_unique(self, db: Session):
+        checksum = "kappa"
+        s = SourceChecksum(
+            source=SourceSite.GSC_ANNOUNCEMENT,
+            checksum=checksum
+        )
+        db.add(s)
+        db.commit()
+
+        fetched_source = SourceChecksum.as_unique(
+            db, SourceSite.GSC_ANNOUNCEMENT)
+        assert fetched_source == s
