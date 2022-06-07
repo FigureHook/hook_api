@@ -7,6 +7,10 @@ from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 
 from ..db.model_base import PkModel, PkModelWithTimestamps
+from .worker import Sculptor, Paintwork
+from .company import Company
+from .series import Series
+from .category import Category
 from .relation_table import product_paintwork_table, product_sculptor_table
 
 __all__ = [
@@ -95,49 +99,50 @@ class Product(PkModelWithTimestamps):
     jan = Column(String(13), unique=True)
     id_by_official = Column(String)
     checksum = Column(String(32))
-    order_period_start = Column(DateTime(timezone=True))
-    order_period_end = Column(DateTime(timezone=True))
+    order_period_start = Column(DateTime)
+    order_period_end = Column(DateTime)
     thumbnail = Column(String)
     og_image = Column(String)
 
     # ---Foreign key columns---
     series_id = Column(Integer, ForeignKey("series.id"))
-    series = relationship(
+    series = cast(Series, relationship(
         "Series",
         backref="products",
         lazy="joined",
-    )
+    ))
 
     category_id = Column(Integer, ForeignKey("category.id"))
-    category = relationship(
+    category = cast(Category, relationship(
         "Category",
         backref="products",
         lazy="joined",
-    )
+    ))
 
     manufacturer_id = Column(Integer, ForeignKey("company.id"))
-    manufacturer = relationship(
+    manufacturer = cast(Company, relationship(
         "Company",
         backref="made_products",
         primaryjoin="Product.manufacturer_id == Company.id",
         lazy="joined"
-    )
+    ))
 
     releaser_id = Column(Integer, ForeignKey("company.id"))
-    releaser = relationship(
+    releaser = cast(Company, relationship(
         "Company",
         backref="released_products",
         primaryjoin="Product.releaser_id == Company.id",
         lazy="joined"
-    )
+    ))
 
     distributer_id = Column(Integer, ForeignKey("company.id"))
-    distributer = relationship(
+    distributer = cast(Company, relationship(
         "Company",
         backref="distributed_products",
         primaryjoin="Product.distributer_id == Company.id",
         lazy="joined"
-    )
+    ))
+
     # ---relationships field---
     release_infos = cast(list[ProductReleaseInfo], relationship(
         ProductReleaseInfo,
@@ -154,18 +159,18 @@ class Product(PkModelWithTimestamps):
         cascade="all, delete",
         passive_deletes=True
     ))
-    sculptors = relationship(
+    sculptors = cast(list[Sculptor], relationship(
         "Sculptor",
         secondary=product_sculptor_table,
         backref="products",
         lazy="joined",
-    )
-    paintworks = relationship(
+    ))
+    paintworks = cast(list[Paintwork], relationship(
         "Paintwork",
         secondary=product_paintwork_table,
         backref="products",
         lazy="joined",
-    )
+    ))
 
     @property
     def last_release(self) -> Union[ProductReleaseInfo, None]:
@@ -173,5 +178,3 @@ class Product(PkModelWithTimestamps):
 
     def check_checksum(self, checksum: str) -> bool:
         return checksum == self.checksum
-
-
