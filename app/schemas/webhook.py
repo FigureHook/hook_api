@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.models import Webhook
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, constr, validator
 
 
 def _validate_lang(lang: str) -> str:
@@ -17,7 +17,7 @@ class WebhookBase(BaseModel):
     id: str
     token: str
     is_nsfw: bool
-    lang: str
+    lang: constr(to_lower=True)  # type: ignore
 
     @validator('lang')
     def validate_lang(cls, lang_v):
@@ -28,16 +28,8 @@ class WebhookCreate(WebhookBase):
     channel_id: str
 
 
-class WebhookUpdate(BaseModel):
-    id: Optional[str]
-    token: Optional[str]
-    is_nsfw: Optional[bool]
-    lang: Optional[str]
+class WebhookUpdate(WebhookBase):
     is_existed: Optional[bool]
-
-    @validator('lang')
-    def validate_lang(cls, lang_v):
-        return _validate_lang(lang_v)
 
 
 class WebhookInDB(WebhookBase):
