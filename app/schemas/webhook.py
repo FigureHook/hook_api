@@ -17,7 +17,7 @@ class WebhookBase(BaseModel):
     id: str
     token: str
     is_nsfw: bool
-    lang: constr(to_lower=True)  # type: ignore
+    lang: str  # type: ignore
 
     @validator('lang')
     def validate_lang(cls, lang_v):
