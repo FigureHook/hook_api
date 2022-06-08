@@ -1,9 +1,9 @@
 import uuid
-from typing import Any, Callable, Optional, Type, TypeVar, cast
+from typing import Any, Callable, Optional, Type, TypeVar
 
 from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Query, Session
+from sqlalchemy.orm import Mapped, Query, Session
 from sqlalchemy_mixins.repr import ReprMixin
 from sqlalchemy_mixins.serialize import SerializeMixin
 from sqlalchemy_mixins.timestamp import TimestampsMixin
@@ -23,7 +23,8 @@ class PkModel(Model):
 
     __abstract__ = True
 
-    id = cast(int, Column(Integer, primary_key=True, autoincrement=True))
+    id: Mapped[int] = Column(Integer, primary_key=True,
+                             autoincrement=True)  # type: ignore
 
 
 class PkModelWithTimestamps(PkModel, TimestampsMixin):
@@ -37,7 +38,8 @@ class UUIDPkModel(Model, TimestampsMixin):
     """
     __abstract__ = True
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[UUID] = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)  # type: ignore
 
 
 class UniqueMixin:
