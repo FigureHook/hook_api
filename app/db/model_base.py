@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Callable, Optional, Type, TypeVar
+from typing import Any, Callable, Optional, Type, TypeVar, cast
 
 from sqlalchemy import Column, Integer
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,7 +23,7 @@ class PkModel(Model):
 
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = cast(int, Column(Integer, primary_key=True, autoincrement=True))
 
 
 class PkModelWithTimestamps(PkModel, TimestampsMixin):
