@@ -1,23 +1,32 @@
-from sqlalchemy.orm import Session
-from fastapi.testclient import TestClient
-from app.main import app
-from app.db.session import pgsql_db
-from app.db.base import Model
-from app.core.config import settings
-import pytest
-import psycopg2
 import os
-from typing import Dict, Generator
+from typing import Generator
+
+import pytest
 
 os.environ['ENV'] = "test"
 
+if os.environ['ENV'] == "test":
+    import psycopg2
+    from app.core.config import settings
+    from app.db.base import Model
+    from app.db.session import pgsql_db
+    from app.main import app
+    from fastapi.testclient import TestClient
+else:
+    raise ValueError
+
 
 def check_test_database():
+
     connection = None
 
     try:
         connection = psycopg2.connect(
-            f"user={settings.POSTGRES_USER} host={settings.POSTGRES_SERVER} password={settings.POSTGRES_PASSWORD} port='5432'")
+            host=settings.POSTGRES_SERVER,
+            dbname=settings.POSTGRES_DB,
+            user=settings.POSTGRES_USER,
+            password=settings.POSTGRES_PASSWORD,
+        )
 
     except:
         print('Database not connected.')
@@ -36,6 +45,13 @@ def check_test_database():
             cur.execute(sql)
 
         connection.close()
+
+
+@pytest.fixture(scope="module")
+def client() -> Generator:
+    check_test_database()
+    with TestClient(app) as client:
+        yield client
 
 
 @pytest.fixture(scope="function")
