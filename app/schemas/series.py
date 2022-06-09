@@ -15,3 +15,6 @@ class SeriesUpdate(SeriesBase):
 
 class SeriesInDB(SeriesBase):
     id: int
+
+    class Config:
+        orm_mode = True

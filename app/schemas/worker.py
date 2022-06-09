@@ -15,3 +15,6 @@ class WorkerUpdate(WorkerBase):
 
 class WorkerInDB(WorkerBase):
     id: int
+
+    class Config:
+        orm_mode = True

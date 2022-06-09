@@ -17,3 +17,6 @@ class TaskUpdate(TaskBase):
 
 class TaskInDB(TaskBase):
     id: int
+
+    class Config:
+        orm_mode = True
