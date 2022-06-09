@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 @router.get('/')
-def get_items(
+def get_products(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
