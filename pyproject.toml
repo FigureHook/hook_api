@@ -14,6 +14,7 @@ python-dotenv = "^0.20.0"
 pytz = "^2022.1"
 sqlalchemy-mixins = "^1.5.3"
 uvicorn = {extras = ["standard"], version = "^0.17.6"}
+deepdiff = "^5.8.1"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.1"
@@ -25,6 +26,11 @@ pytest = "^7.1.2"
 pytest-mock = "^3.7.0"
 types-pytz = "^2021.3.8"
 pytest-xdist = "^2.5.0"
+
+[tool.mypy]
+python_version = "3.9"
+warn_unused_configs = true
+plugins = "sqlalchemy.ext.mypy.plugin"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
