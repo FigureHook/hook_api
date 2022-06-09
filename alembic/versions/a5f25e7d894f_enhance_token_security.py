@@ -7,7 +7,7 @@ Create Date: 2021-11-28 08:31:38.641913
 """
 import sqlalchemy as sa
 from alembic import op
-
+from app.helpers.encrypt_helper import EncryptHelper
 from app.models import Webhook
 
 # revision identifiers, used by Alembic.
@@ -21,11 +21,11 @@ def upgrade():
     bind = op.get_bind()
     session = sa.orm.Session(bind=bind)
 
-    webhooks = session.query(Webhook).all()
+    webhooks = session.execute(f"SELECT id, token FROM webhook;")
+    # webhooks = session.query(Webhook).all()
 
     for w in webhooks:
-        original_val = w.token
-        w.token = original_val # type: ignore
+        session.execute(f"UPDATE webhook SET token='{EncryptHelper.encrypt(w.token)}' WHERE id='{w.id}';")
 
     session.add_all(webhooks)
     session.commit()
@@ -36,8 +36,9 @@ def downgrade():
     bind = op.get_bind()
     session = sa.orm.Session(bind=bind)
 
-    webhooks = session.query(Webhook).all()
+    webhooks = session.execute(f"SELECT id, token FROM webhook;")
     for w in webhooks:
-        session.execute(f"UPDATE {Webhook.__tablename__} SET token='{w.decrypted_token}' WHERE id='{w.id}';")
+        session.execute(
+            f"UPDATE {Webhook.__tablename__} SET token='{EncryptHelper.decrypt(w.token)}' WHERE id='{w.id}';")
     session.commit()
     session.close()
