@@ -1,5 +1,5 @@
 from app import crud
-from app.models import Webhook
+from app.constants import WebhookCurrency, WebhookLang
 from app.schemas.webhook import WebhookCreate, WebhookUpdate
 from app.tests.utils.faker import faker
 from app.tests.utils.webhook import create_random_webhook
@@ -14,7 +14,8 @@ def test_create_webhook(db: Session):
             text='%################'),
         token=faker.lexify(text='???????????????????'),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
-        lang=faker.random_choices(elements=Webhook.supporting_languages())[0]
+        lang=faker.random_choices(elements=WebhookLang)[0],
+        currency=faker.random_choices(elements=WebhookCurrency)[0]
     )
 
     db_obj = crud.webhook.create(db=db, obj_in=obj_in)
@@ -40,7 +41,8 @@ def test_update_webhook(db: Session):
         id=faker.numerify(text='%################'),
         token=faker.lexify(text='???????????????????'),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
-        lang=faker.random_choices(elements=Webhook.supporting_languages())[0],
+        lang=faker.random_choices(elements=WebhookLang)[0],
+        currency=faker.random_choices(elements=WebhookCurrency)[0],
         is_existed=faker.boolean(chance_of_getting_true=25)
     )
 

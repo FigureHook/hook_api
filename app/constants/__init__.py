@@ -12,3 +12,15 @@ class SourceSite:
 class PeriodicTask(Enum):
     DISCORD_NEW_RELEASE_PUSH = 1
     PLURK_NEW_RELEASE_PUSH = 2
+
+
+class WebhookCurrency(str, Enum):
+    JPY = 'JPY'
+    USD = 'USD'
+    EUR = 'EUR'
+
+
+class WebhookLang(str,  Enum):
+    ZH_TW = 'zh-TW'
+    EN = 'en'
+    JA = 'ja'
