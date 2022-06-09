@@ -9,3 +9,4 @@ from fastapi import Depends
 def get_db() -> Generator[Session, None, None]:
     with pgsql_db.Session() as session:
         yield session
+        session.close()

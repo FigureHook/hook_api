@@ -3,6 +3,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, NonNegativeInt, PositiveInt, validator
 
+from .category import CategoryInDB
+from .company import CompanyInDB
+from .series import SeriesInDB
+from .worker import WorkerInDB
+
 
 class ProductOfficialImageBase(BaseModel):
     url: str
@@ -22,6 +27,13 @@ class ProductOfficialImageUpdate(ProductOfficialImageBase):
     pass
 
 
+class ProductOfficialImageInDB(ProductOfficialImageBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class ProductBase(BaseModel):
     name: str
     size: Optional[PositiveInt]
@@ -32,6 +44,7 @@ class ProductBase(BaseModel):
     url: str
     jan: Optional[str]
     checksum: str
+    id_by_official: str
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
         description="This value should be an UTC timestamp."
@@ -66,3 +79,42 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(ProductBase):
     pass
+
+
+class ProductInDB(BaseModel):
+    id: int
+    name: str
+    size: Optional[PositiveInt]
+    scale: Optional[PositiveInt]
+    rerelease: bool
+    adult: bool = Field(default=False)
+    copyright: str
+    url: str
+    jan: Optional[str]
+    checksum: str
+    id_by_official: str
+    order_period_start: Optional[datetime] = Field(
+        title="The begining of order period.",
+        description="This value should be an UTC timestamp."
+    )
+    order_period_end: Optional[datetime] = Field(
+        title="The end of order period.",
+        description="This value should be an UTC timestamp."
+    )
+
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class ProductInDBRich(ProductInDB):
+    series: SeriesInDB
+    category: CategoryInDB
+    manufacturer: CompanyInDB
+    releaser: Optional[CompanyInDB]
+    distributer: Optional[CompanyInDB]
+    sculptors: Optional[list[WorkerInDB]]
+    paintworks: Optional[list[WorkerInDB]]
+    official_images: list[ProductOfficialImageInDB]

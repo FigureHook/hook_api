@@ -4,14 +4,14 @@ from typing import Union, cast
 from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
                         SmallInteger, String)
 from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 from ..db.model_base import PkModel, PkModelWithTimestamps
-from .worker import Sculptor, Paintwork
-from .company import Company
-from .series import Series
 from .category import Category
+from .company import Company
 from .relation_table import product_paintwork_table, product_sculptor_table
+from .series import Series
+from .worker import Paintwork, Sculptor
 
 __all__ = [
     "ProductOfficialImage",
@@ -26,7 +26,7 @@ class ProductOfficialImage(PkModel):
     url = Column(String)
     order = Column(Integer)
     product_id = Column(Integer, ForeignKey(
-        "product.id", ondelete="CASCADE"), nullable=False)
+        "product.id", ondelete="CASCADE"))
 
     @classmethod
     def create_image_list(cls, image_urls: list[str]) -> list['ProductOfficialImage']:
@@ -89,20 +89,20 @@ class Product(PkModelWithTimestamps):
     __tablename__ = "product"
 
     # ---native columns---
-    name = Column(String, nullable=False)
-    size = Column(SmallInteger)
-    scale = Column(SmallInteger)
-    rerelease = Column(Boolean)
-    adult = Column(Boolean)
-    copyright = Column(String)
-    url = Column(String)
-    jan = Column(String(13), unique=True)
-    id_by_official = Column(String)
-    checksum = Column(String(32))
-    order_period_start = Column(DateTime)
-    order_period_end = Column(DateTime)
-    thumbnail = Column(String)
-    og_image = Column(String)
+    name: Mapped[str] = Column(String, nullable=False)  # type: ignore
+    size: Mapped[int] = Column(SmallInteger)  # type: ignore
+    scale: Mapped[int] = Column(SmallInteger)  # type: ignore
+    rerelease: Mapped[bool] = Column(Boolean)  # type: ignore
+    adult: Mapped[bool] = Column(Boolean)  # type: ignore
+    copyright: Mapped[str] = Column(String)  # type: ignore
+    url: Mapped[str] = Column(String)  # type: ignore
+    jan: Mapped[str] = Column(String(13), unique=True)  # type: ignore
+    id_by_official: Mapped[str] = Column(String)  # type: ignore
+    checksum: Mapped[str] = Column(String(32))  # type: ignore
+    order_period_start: Mapped[datetime] = Column(DateTime)  # type: ignore
+    order_period_end: Mapped[datetime] = Column(DateTime)  # type: ignore
+    thumbnail: Mapped[str] = Column(String)  # type: ignore
+    og_image: Mapped[str] = Column(String)  # type: ignore
 
     # ---Foreign key columns---
     series_id = Column(Integer, ForeignKey("series.id"))
