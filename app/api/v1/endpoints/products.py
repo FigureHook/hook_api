@@ -27,7 +27,10 @@ def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> 
     return product
 
 
-@router.get('/')
+@router.get(
+    '/',
+    response_model=list[ProductInDBRich]
+)
 def get_products(
     *,
     db: Session = Depends(deps.get_db),
@@ -35,7 +38,10 @@ def get_products(
     limit: int = 100
 ) -> Any:
     products = crud.product.get_multi(db=db, skip=skip, limit=limit)
-    return products
+    return [
+        map_product_model_to_schema(product)
+        for product in products
+    ]
 
 
 @router.post(

@@ -46,6 +46,21 @@ rich_content = {
 }
 
 
+def v1_endpoint(path: str):
+    return f"{settings.API_V1_ENDPOINT}{path}"
+
+
+def test_get_products(client: TestClient, db: Session):
+    for _ in range(random.randint(0, 200)):
+        create_random_product(db)
+
+    response = client.get(v1_endpoint("/products"))
+    assert response.status_code == 200
+    content = response.json()
+    assert type(content) is list
+    assert len(content) <= 100
+
+
 def test_create_product(client: TestClient, db: Session):
     post_data = {
         "name": "kappa",
@@ -80,7 +95,7 @@ def test_create_product(client: TestClient, db: Session):
     }
 
     response = client.post(
-        f"{settings.API_V1_ENDPOINT}/products/",
+        v1_endpoint("/products/"),
         json=post_data
     )
     assert response.status_code == 201
@@ -133,7 +148,7 @@ def test_get_product(client: TestClient, db: Session):
 
     product = create_random_product(db)
     response = client.get(
-        f"{settings.API_V1_ENDPOINT}/products/{product.id}"
+        v1_endpoint(f"/products/{product.id}")
     )
     fetched_product = response.json()
     assert response.status_code == 200
@@ -141,7 +156,7 @@ def test_get_product(client: TestClient, db: Session):
         assert key in fetched_product
 
     response = client.get(
-        f"{settings.API_V1_ENDPOINT}/products/5"
+        v1_endpoint("/products/5")
     )
     assert response.status_code == 404
 
@@ -149,13 +164,13 @@ def test_get_product(client: TestClient, db: Session):
 def test_delete_product(db: Session, client: TestClient):
     product = create_random_product(db=db)
     response = client.delete(
-        f"{settings.API_V1_ENDPOINT}/products/{product.id}"
+        v1_endpoint(f"/products/{product.id}")
     )
 
     assert response.status_code == 204
 
     response = client.delete(
-        f"{settings.API_V1_ENDPOINT}/products/122"
+        v1_endpoint("/products/122")
     )
 
     assert response.status_code == 404
@@ -195,7 +210,7 @@ def test_update_product(db: Session, client: TestClient):
         ]
     }
     response = client.put(
-        f"{settings.API_V1_ENDPOINT}/products/{product.id}",
+        v1_endpoint(f"/products/{product.id}"),
         json=update_data
     )
     assert response.status_code == 200
@@ -219,7 +234,7 @@ def test_update_product(db: Session, client: TestClient):
             assert updated_product.get(key) == update_data.get(key)
 
     response = client.put(
-        f"{settings.API_V1_ENDPOINT}/products/1235",
+        v1_endpoint("/products/1235"),
         json=update_data
     )
 
@@ -235,7 +250,7 @@ def test_create_product_release(db: Session, client: TestClient):
         'announced_at': date(2021, 12, 28).isoformat(),
     }
     response = client.post(
-        f"{settings.API_V1_ENDPOINT}/products/{product.id}/release-infos",
+        v1_endpoint(f"/products/{product.id}/release-infos"),
         json=release_data
     )
     assert response.status_code == 201
@@ -246,7 +261,7 @@ def test_create_product_release(db: Session, client: TestClient):
         assert content.get(key) == release_data.get(key)
 
     response = client.post(
-        f"{settings.API_V1_ENDPOINT}/products/1325/release-infos",
+        v1_endpoint("/products/1325/release-infos"),
         json=release_data
     )
     assert response.status_code == 404
@@ -260,7 +275,7 @@ def test_get_product_releases(db: Session, client: TestClient):
         create_random_release_info_own_by_product(db, product_id=product.id)
 
     response = client.get(
-        f"{settings.API_V1_ENDPOINT}/products/{product.id}/release-infos",
+        v1_endpoint(f"/products/{product.id}/release-infos"),
     )
     assert response.status_code == 200
 
@@ -270,6 +285,6 @@ def test_get_product_releases(db: Session, client: TestClient):
     assert len(content) is release_info_count
 
     response = client.get(
-        f"{settings.API_V1_ENDPOINT}/products/123123/release-infos",
+        v1_endpoint("/products/123123/release-infos"),
     )
     assert response.status_code == 404
