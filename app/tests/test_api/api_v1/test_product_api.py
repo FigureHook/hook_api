@@ -1,7 +1,10 @@
-from datetime import datetime
+import random
+from datetime import date, datetime
 
 from app.core.config import settings
 from app.tests.utils.product import create_random_product
+from app.tests.utils.release_info import \
+    create_random_release_info_own_by_product
 from deepdiff import DeepDiff
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -202,3 +205,41 @@ def test_update_product(db: Session, client: TestClient):
 
         if key not in rich_content:
             assert updated_product.get(key) == update_data.get(key)
+
+
+def test_create_product_release(db: Session, client: TestClient):
+    product = create_random_product(db)
+    release_data = {
+        'price': 12700,
+        'tax_including': False,
+        'initial_release_date': date(2022, 5, 31).isoformat(),
+        'announced_at': date(2021, 12, 28).isoformat(),
+    }
+    response = client.post(
+        f"{settings.API_V1_ENDPOINT}/products/{product.id}/release-infos",
+        json=release_data
+    )
+    assert response.status_code is 201
+
+    content = response.json()
+    assert content.get('product_id') == product.id
+    for key in release_data:
+        assert content.get(key) == release_data.get(key)
+
+
+def test_get_product_releases(db: Session, client: TestClient):
+    release_info_count = random.randint(0, 5)
+
+    product = create_random_product(db)
+    for _ in range(release_info_count):
+        create_random_release_info_own_by_product(db, product_id=product.id)
+
+    response = client.get(
+        f"{settings.API_V1_ENDPOINT}/products/{product.id}/release-infos",
+    )
+    assert response.status_code is 200
+
+    content = response.json()
+
+    assert type(content) is list
+    assert len(content) is release_info_count

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field, NonNegativeInt, validator
@@ -19,3 +19,12 @@ class ProductReleaseInfoCreate(ProductReleaseInfoBase):
 
 class ProductReleaseInfoUpdate(ProductReleaseInfoBase):
     pass
+
+
+class ProductReleaseInfoInDB(ProductReleaseInfoBase):
+    product_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
