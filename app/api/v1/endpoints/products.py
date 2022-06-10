@@ -17,6 +17,16 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
+def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> Product:
+    product = crud.product.get(db=db, id=product_id)
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Specified product(id:{product_id}) didn't exist."
+        )
+    return product
+
+
 @router.get('/')
 def get_products(
     *,
@@ -46,12 +56,9 @@ def create_product(
 def get_product(
     *,
     db: Session = Depends(deps.get_db),
-    product_id: int
+    product: Product = Depends(check_product_exist),
 ):
-    db_obj = crud.product.get(db=db, id=product_id)
-    if not db_obj:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    obj_out = map_product_model_to_schema(db_obj)
+    obj_out = map_product_model_to_schema(product)
     return obj_out
 
 
@@ -59,13 +66,9 @@ def get_product(
 def update_product(
     *,
     db: Session = Depends(deps.get_db),
+    product: Product = Depends(check_product_exist),
     product_in: ProductUpdate,
-    product_id: int
 ):
-    product = crud.product.get(db=db, id=product_id)
-    if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
     updated_product = crud.product.update(
         db=db, db_obj=product, obj_in=product_in)
 
@@ -79,9 +82,9 @@ def update_product(
 def deleted_product(
     *,
     db: Session = Depends(deps.get_db),
-    product_id: int
+    product: Product = Depends(check_product_exist),
 ):
-    db_obj = crud.product.remove(db=db, id=product_id)
+    db_obj = crud.product.remove(db=db, id=product.id)
     if not db_obj:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -93,38 +96,24 @@ def deleted_product(
 def create_product_release_info(
     *,
     db: Session = Depends(deps.get_db),
-    product_id: int,
+    product: Product = Depends(check_product_exist),
     release_info: ProductReleaseInfoCreate
 ):
-    product = crud.product.get(db=db, id=product_id)
-    if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Specified product(id:{product_id}) didn't exist."
-        )
-
     obj_out = crud.release_info.create_with_product(
-        db=db, obj_in=release_info, product_id=product_id)
+        db=db, obj_in=release_info, product_id=product.id)
     return ProductReleaseInfoInDB.from_orm(obj_out)
 
 
-@router.get(
+@ router.get(
     '/{product_id}/release-infos',
     response_model=list[ProductReleaseInfoInDB])
 def get_product_release_infos(
     *,
     db: Session = Depends(deps.get_db),
-    product_id: int,
+    product: Product = Depends(check_product_exist),
 ):
-    product = crud.product.get(db=db, id=product_id)
-    if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Specified product(id:{product_id}) didn't exist."
-        )
-
     release_infos = crud.release_info.get_by_product(
-        db=db, product_id=product_id)
+        db=db, product_id=product.id)
     return [
         ProductReleaseInfoInDB.from_orm(info)
         for info in release_infos
