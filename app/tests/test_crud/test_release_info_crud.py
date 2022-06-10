@@ -1,7 +1,12 @@
+import random
+
 from app import crud
-from app.schemas.release_info import ProductReleaseInfoCreate, ProductReleaseInfoUpdate
+from app.schemas.release_info import (ProductReleaseInfoCreate,
+                                      ProductReleaseInfoUpdate)
 from app.tests.utils.faker import faker
 from app.tests.utils.product import create_random_product
+from app.tests.utils.release_info import \
+    create_random_release_info_own_by_product
 from sqlalchemy.orm import Session
 
 
@@ -94,3 +99,15 @@ def test_remove_release_info(db: Session):
     assert not fetched_db_obj
     if deleted_db_obj:
         assert deleted_db_obj == db_obj
+
+
+def test_get_release_infos_by_product(db: Session):
+    count = random.randint(0, 5)
+    product = create_random_product(db)
+    for _ in range(count):
+        create_random_release_info_own_by_product(db, product_id=product.id)
+
+    release_infos = crud.release_info.get_by_product(
+        db=db, product_id=product.id)
+
+    assert len(release_infos) is count

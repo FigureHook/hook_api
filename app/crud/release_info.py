@@ -20,5 +20,13 @@ class CRUDReleaseInfo(CRUDBase[ProductReleaseInfo, ProductReleaseInfoCreate, Pro
         db.refresh(db_obj)
         return db_obj
 
+    def get_by_product(
+        self,
+        *,
+        db: Session,
+        product_id: int
+    ) -> list[ProductReleaseInfo]:
+        return db.query(self.model).filter(self.model.product_id == product_id).all()
+
 
 release_info = CRUDReleaseInfo(ProductReleaseInfo)
