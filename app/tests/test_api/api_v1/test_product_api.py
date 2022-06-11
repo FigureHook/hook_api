@@ -2,6 +2,7 @@ import random
 from datetime import date, datetime
 
 from app.core.config import settings
+from app.tests.utils.faker import faker
 from app.tests.utils.product import create_random_product
 from app.tests.utils.release_info import \
     create_random_release_info_own_by_product
@@ -209,7 +210,7 @@ def test_update_product(db: Session, client: TestClient):
             "/full/02.jpg"
         ]
     }
-    response = client.put(
+    response = client.patch(
         v1_endpoint(f"/products/{product.id}"),
         json=update_data
     )
@@ -233,7 +234,7 @@ def test_update_product(db: Session, client: TestClient):
         if key not in rich_content:
             assert updated_product.get(key) == update_data.get(key)
 
-    response = client.put(
+    response = client.patch(
         v1_endpoint("/products/1235"),
         json=update_data
     )
@@ -287,4 +288,42 @@ def test_get_product_releases(db: Session, client: TestClient):
     response = client.get(
         v1_endpoint("/products/123123/release-infos"),
     )
+    assert response.status_code == 404
+
+
+def test_create_product_image(db: Session, client: TestClient):
+    product = create_random_product(db)
+    images_len = len(product.official_images)
+    img_uri = faker.uri()
+    response = client.post(v1_endpoint(
+        f"/products/{product.id}/official-images/"),
+        json={
+        'url': img_uri
+    })
+    assert response.status_code == 201
+
+    content = response.json()
+    assert len(content) == images_len + 1
+    assert content[-1].get('url') == img_uri
+
+    response = client.post(v1_endpoint(
+        f"/products/12341234/official-images/"),
+        json={
+        'url': img_uri
+    })
+    assert response.status_code == 404
+
+
+def test_get_product_images(db: Session, client: TestClient):
+    product = create_random_product(db)
+    response = client.get(v1_endpoint(
+        f"/products/{product.id}/official-images"))
+    assert response.status_code == 200
+
+    content = response.json()
+    assert type(content) is list
+    assert len(content) == len(product.official_images)
+
+    response = client.get(v1_endpoint(
+        f"/products/12351235/official-images"))
     assert response.status_code == 404

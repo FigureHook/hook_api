@@ -3,9 +3,11 @@ from typing import Any
 from app import crud
 from app.api import deps
 from app.models import Product
+from app.models.product import ProductOfficialImage
 from app.schemas.category import CategoryInDB
 from app.schemas.company import CompanyInDB
 from app.schemas.product import (ProductCreate, ProductInDBRich,
+                                 ProductOfficialImageCreate,
                                  ProductOfficialImageInDB, ProductUpdate)
 from app.schemas.release_info import (ProductReleaseInfoCreate,
                                       ProductReleaseInfoInDB)
@@ -68,7 +70,7 @@ def get_product(
     return obj_out
 
 
-@router.put('/{product_id}')
+@router.patch('/{product_id}', response_model=ProductInDBRich)
 def update_product(
     *,
     db: Session = Depends(deps.get_db),
@@ -110,7 +112,7 @@ def create_product_release_info(
     return ProductReleaseInfoInDB.from_orm(obj_out)
 
 
-@ router.get(
+@router.get(
     '/{product_id}/release-infos',
     response_model=list[ProductReleaseInfoInDB])
 def get_product_release_infos(
@@ -123,6 +125,39 @@ def get_product_release_infos(
     return [
         ProductReleaseInfoInDB.from_orm(info)
         for info in release_infos
+    ]
+
+
+@router.post(
+    '/{product_id}/official-images/',
+    response_model=list[ProductOfficialImageInDB],
+    status_code=status.HTTP_201_CREATED)
+def create_official_image(
+    *,
+    db: Session = Depends(deps.get_db),
+    image: ProductOfficialImageCreate,
+    product: Product = Depends(check_product_exist)
+):
+    product.official_images.append(ProductOfficialImage(url=image.url))
+    db.commit()
+
+    return [
+        ProductOfficialImageInDB.from_orm(image)
+        for image in product.official_images
+    ]
+
+
+@router.get(
+    '/{product_id}/official-images',
+    response_model=list[ProductOfficialImageInDB])
+def get_official_images(
+    *,
+    db: Session = Depends(deps.get_db),
+    product: Product = Depends(check_product_exist)
+):
+    return [
+        ProductOfficialImageInDB.from_orm(image)
+        for image in product.official_images
     ]
 
 

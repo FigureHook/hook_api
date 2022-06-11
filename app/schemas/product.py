@@ -11,12 +11,6 @@ from .worker import WorkerInDB
 
 class ProductOfficialImageBase(BaseModel):
     url: str
-    order: NonNegativeInt = Field(
-        default=0,
-        title="The order of images.",
-        description='''Specified the order of image.
-        By default, 0 is for the last image.'''
-    )
 
 
 class ProductOfficialImageCreate(ProductOfficialImageBase):
@@ -24,7 +18,12 @@ class ProductOfficialImageCreate(ProductOfficialImageBase):
 
 
 class ProductOfficialImageUpdate(ProductOfficialImageBase):
-    pass
+    order: NonNegativeInt = Field(
+        default=0,
+        title="The order of images.",
+        description='''Specified the order of image.
+        By default, 0 is for the last image.'''
+    )
 
 
 class ProductOfficialImageInDB(ProductOfficialImageBase):
