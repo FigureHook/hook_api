@@ -1,7 +1,6 @@
 import random
 from datetime import date, datetime
 
-from app.core.config import settings
 from app.tests.utils.faker import faker
 from app.tests.utils.product import create_random_product
 from app.tests.utils.release_info import \
@@ -9,6 +8,8 @@ from app.tests.utils.release_info import \
 from deepdiff import DeepDiff
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+
+from .util import v1_endpoint
 
 rich_content = {
     "series": {
@@ -45,10 +46,6 @@ rich_content = {
         'url': 'url'
     }
 }
-
-
-def v1_endpoint(path: str):
-    return f"{settings.API_V1_ENDPOINT}{path}"
 
 
 def test_get_products(client: TestClient, db: Session):

@@ -63,7 +63,6 @@ def create_product(
 @router.get('/{product_id}', response_model=ProductInDBRich)
 def get_product(
     *,
-    db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
 ):
     obj_out = map_product_model_to_schema(product)
@@ -92,9 +91,7 @@ def deleted_product(
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
 ):
-    db_obj = crud.product.remove(db=db, id=product.id)
-    if not db_obj:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    crud.product.remove(db=db, id=product.id)
 
 
 @router.post(
