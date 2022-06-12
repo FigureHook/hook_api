@@ -1,31 +1,35 @@
 from datetime import datetime
+from optparse import Option
 from typing import Optional
 
 from app.constants import WebhookCurrency, WebhookLang
 from pydantic import BaseModel, Field
-from this import d
 
 
 class WebhookBase(BaseModel):
-    id: str
-    is_nsfw: bool
-    lang: Optional[WebhookLang] = Field(default=WebhookLang.EN)
-    currency: Optional[WebhookCurrency] = Field(default=WebhookCurrency.JPY)
+    id: Optional[str]
+    is_nsfw: Optional[bool]
+    lang: Optional[WebhookLang]
+    currency: Optional[WebhookCurrency]
 
 
 class WebhookCreate(WebhookBase):
     channel_id: str
+    id: str
     token: str
+    is_nsfw: Optional[bool] = Field(default=True)
+    lang: Optional[WebhookLang] = Field(default=WebhookLang.EN)
+    currency: Optional[WebhookCurrency] = Field(default=WebhookCurrency.JPY)
 
 
 class WebhookUpdate(WebhookBase):
     is_existed: Optional[bool]
-    token: str
+    token: Optional[str]
 
 
 class WebhookInDBBase(WebhookBase):
     channel_id: str
-    is_existed: bool
+    is_existed: Optional[bool]
     created_at: datetime
     updated_at: datetime
 
