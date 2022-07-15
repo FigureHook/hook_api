@@ -12,11 +12,10 @@ def test_get_series_multi(db: Session, client: TestClient):
     for _ in range(series_count):
         create_random_series(db)
 
-    response = client.get(v1_endpoint("/companys"))
+    response = client.get(v1_endpoint("/series"))
     assert response.status_code == 200
 
     content = response.json()
-
     assert type(content) is list
     assert len(content) == series_count
     for seires in content:
