@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .endpoints import products, webhooks, company, series
+from .endpoints import category, company, products, series, webhooks
 
 api_router = APIRouter()
 
@@ -15,4 +15,7 @@ api_router.include_router(
 )
 api_router.include_router(
     series.router, prefix='/series', tags=['series']
+)
+api_router.include_router(
+    category.router, prefix='/categories', tags=['category']
 )
