@@ -1,6 +1,5 @@
 from app import crud
 from app.api import deps
-from app.crud import worker
 from app.models import Paintwork
 from app.schemas.worker import WorkerCreate, WorkerInDB, WorkerUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
