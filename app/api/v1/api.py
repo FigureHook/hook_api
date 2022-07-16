@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from .endpoints import (category, company, paintwork, products, sculptor,
-                        series, webhooks)
+                        series, source_checksum, webhooks)
 
 api_router = APIRouter()
 
@@ -19,3 +19,5 @@ api_router.include_router(
     sculptor.router, prefix='/sculptors', tags=['sculptor', 'worker'])
 api_router.include_router(
     paintwork.router, prefix='/paintworks', tags=['paintwork', 'worker'])
+api_router.include_router(
+    source_checksum.router, prefix='/source-checksums', tags=['source-checksum'])
