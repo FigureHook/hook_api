@@ -35,7 +35,7 @@ def test_update_task(db: Session):
 def test_remove_task(db: Session):
     db_obj = create_random_task(db)
     deleted_db_obj = crud.task.remove(db=db, id=db_obj.id)
-    fetched_db_obj = crud.task.get(db, db_obj.id)
+    fetched_db_obj = crud.task.get(db=db, id=db_obj.id)
 
     assert not fetched_db_obj
     if deleted_db_obj:

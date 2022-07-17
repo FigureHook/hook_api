@@ -21,7 +21,7 @@ def test_create_source_checksum(db: Session):
 
 def test_get_source_checksum(db: Session):
     db_obj = create_random_source_checksum(db=db)
-    fetched_db_obj = crud.source_checksum.get(db, db_obj.id)
+    fetched_db_obj = crud.source_checksum.get(db=db, id=db_obj.id)
 
     assert fetched_db_obj == db_obj
 

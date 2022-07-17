@@ -16,7 +16,7 @@ def check_source_checksum_exist(
         source_checksum_id: int,
         db: Session = Depends(deps.get_db)
 ) -> SourceChecksum:
-    source_checksum = crud.source_checksum.get(db, source_checksum_id)
+    source_checksum = crud.source_checksum.get(db=db, id=source_checksum_id)
     if not source_checksum:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

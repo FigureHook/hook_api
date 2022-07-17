@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -> Sculptor:
-    sculptor = crud.sculptor.get(db, sculptor_id)
+    sculptor = crud.sculptor.get(db=db, id=sculptor_id)
     if not sculptor:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

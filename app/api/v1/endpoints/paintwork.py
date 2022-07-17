@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 def check_paintwork_exist(paintwork_id: int, db: Session = Depends(deps.get_db)) -> Paintwork:
-    paintwork = crud.paintwork.get(db, paintwork_id)
+    paintwork = crud.paintwork.get(db=db, id=paintwork_id)
     if not paintwork:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

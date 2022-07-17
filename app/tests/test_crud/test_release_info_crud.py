@@ -44,7 +44,7 @@ def test_get_release_info(db: Session):
     product = create_random_product(db)
     db_obj = crud.release_info.create_with_product(
         db=db, obj_in=obj_in, product_id=product.id)
-    fetched_db_obj = crud.release_info.get(db, db_obj.id)
+    fetched_db_obj = crud.release_info.get(db=db, id=db_obj.id)
 
     assert fetched_db_obj == db_obj
 

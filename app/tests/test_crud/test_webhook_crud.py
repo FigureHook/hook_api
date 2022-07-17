@@ -29,7 +29,7 @@ def test_create_webhook(db: Session):
 
 def test_get_webhook(db: Session):
     db_obj = create_random_webhook(db=db)
-    fetched_db_obj = crud.webhook.get(db, db_obj.channel_id)
+    fetched_db_obj = crud.webhook.get(db=db, id=db_obj.channel_id)
 
     assert fetched_db_obj == db_obj
 

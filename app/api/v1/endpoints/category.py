@@ -1,6 +1,6 @@
-from app.models import Category
-from app.api import deps
 from app import crud
+from app.api import deps
+from app.models import Category
 from app.schemas.category import CategoryCreate, CategoryInDB, CategoryUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
