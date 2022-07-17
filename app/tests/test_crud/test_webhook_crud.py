@@ -1,13 +1,13 @@
 from app import crud
 from app.constants import WebhookCurrency, WebhookLang
-from app.schemas.webhook import WebhookCreate, WebhookUpdate
+from app.schemas.webhook import WebhookCreate, WebhookUpdate, WebhookDBCreate
 from app.tests.utils.faker import faker
 from app.tests.utils.webhook import create_random_webhook
 from sqlalchemy.orm import Session
 
 
 def test_create_webhook(db: Session):
-    obj_in = WebhookCreate(
+    obj_in = WebhookDBCreate(
         channel_id=faker.numerify(
             text='%################'),
         id=faker.numerify(
@@ -37,13 +37,12 @@ def test_get_webhook(db: Session):
 def test_update_webhook(db: Session):
     db_obj = create_random_webhook(db=db)
 
-    obj_in = WebhookUpdate(
+    obj_in = WebhookCreate(
         id=faker.numerify(text='%################'),
         token=faker.lexify(text='???????????????????'),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
         lang=faker.random_choices(elements=WebhookLang)[0],
         currency=faker.random_choices(elements=WebhookCurrency)[0],
-        is_existed=faker.boolean(chance_of_getting_true=25)
     )
 
     udpated_db_obj = crud.webhook.update(db=db, db_obj=db_obj, obj_in=obj_in)
@@ -51,7 +50,6 @@ def test_update_webhook(db: Session):
     assert obj_in.token == udpated_db_obj.decrypted_token
     assert obj_in.is_nsfw == udpated_db_obj.is_nsfw
     assert obj_in.lang == udpated_db_obj.lang
-    assert obj_in.is_existed == udpated_db_obj.is_existed
 
 
 def test_remove_webhook(db: Session):

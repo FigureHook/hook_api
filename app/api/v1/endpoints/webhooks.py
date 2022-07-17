@@ -1,10 +1,11 @@
 from app import crud
 from app.api import deps
 from app.models import Webhook
-from app.schemas.webhook import (DecryptedWebhookInDB, EncryptedWebhookInDB,
-                                 WebhookCreate, WebhookUpdate)
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from app.schemas.webhook import (DecryptedWebhookInDB, WebhookCreate,
+                                 WebhookDBCreate,
+                                 WebhookUpdate)
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -35,27 +36,6 @@ def get_webhooks(
     ]
 
 
-@router.post(
-    "/",
-    response_model=DecryptedWebhookInDB,
-    status_code=status.HTTP_201_CREATED)
-def create_webhook(
-    *,
-    request: Request,
-    db: Session = Depends(deps.get_db),
-    webhook_item: WebhookCreate
-):
-    webhook = crud.webhook.get(db=db, id=webhook_item.channel_id)
-    if webhook:
-        return RedirectResponse(
-            url=request.url_for('get_webhook', channel_id=webhook.channel_id),
-            status_code=status.HTTP_303_SEE_OTHER
-        )
-
-    webhook = crud.webhook.create(db=db, obj_in=webhook_item)
-    return DecryptedWebhookInDB.from_orm(webhook)
-
-
 @router.get(
     "/{channel_id}",
     response_model=DecryptedWebhookInDB)
@@ -71,11 +51,29 @@ def get_webhook(
     response_model=DecryptedWebhookInDB)
 def update_webhook(
     *,
+    response: Response,
     db: Session = Depends(deps.get_db),
-    data_in: WebhookUpdate,
-    webhook: Webhook = Depends(check_webhook_exist)
+    webhook_in: WebhookCreate,
+    channel_id: str
 ):
-    crud.webhook.update(db=db, db_obj=webhook, obj_in=data_in)
+    webhook = crud.webhook.get(db=db, id=channel_id)
+
+    if webhook:
+        crud.webhook.update(db=db, db_obj=webhook, obj_in=webhook_in)
+        response.status_code = status.HTTP_200_OK
+    else:
+        webhook_item = WebhookDBCreate(
+            channel_id=channel_id,
+            id=webhook_in.id,
+            token=webhook_in.token,
+            is_nsfw=webhook_in.is_nsfw,
+            lang=webhook_in.lang,
+            currency=webhook_in.currency
+        )
+        webhook_in = WebhookDBCreate.parse_obj(webhook_item)
+        webhook = crud.webhook.create(db=db, obj_in=webhook_in)
+        response.status_code = status.HTTP_201_CREATED
+
     return DecryptedWebhookInDB.from_orm(webhook)
 
 
@@ -92,7 +90,7 @@ def delete_webhook(
 
 @router.patch(
     "/{channel_id}",
-    response_model=EncryptedWebhookInDB)
+    response_model=DecryptedWebhookInDB)
 def patch_webhook(
     *,
     db: Session = Depends(deps.get_db),
@@ -100,5 +98,4 @@ def patch_webhook(
     patch_data: WebhookUpdate
 ):
     crud.webhook.update(db=db, db_obj=webhook, obj_in=patch_data)
-    return EncryptedWebhookInDB.from_orm(webhook)
-
+    return DecryptedWebhookInDB.from_orm(webhook)

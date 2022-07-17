@@ -1,6 +1,6 @@
 from app import crud
 from app.constants import WebhookCurrency, WebhookLang
-from app.schemas.webhook import WebhookCreate
+from app.schemas.webhook import WebhookDBCreate
 from sqlalchemy.orm import Session
 
 from .faker import faker
@@ -9,7 +9,7 @@ from .faker import faker
 def create_random_webhook(db: Session):
     lang = faker.random_choices(elements=WebhookLang)[0]
     currency = faker.random_choices(elements=WebhookCurrency)[0]
-    obj_data = WebhookCreate(
+    obj_data = WebhookDBCreate(
         channel_id=faker.numerify(
             text='%################'),
         id=faker.numerify(
