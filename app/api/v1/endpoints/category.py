@@ -2,6 +2,7 @@ from app import crud
 from app.api import deps
 from app.models import Category
 from app.schemas.category import CategoryCreate, CategoryInDB, CategoryUpdate
+from app.schemas.page import Page, PageParamsBase
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -19,18 +20,24 @@ def check_category_exist(category_id: int, db: Session = Depends(deps.get_db)) -
     return category
 
 
-@router.get('/', response_model=list[CategoryInDB])
+@router.get('/', response_model=Page[CategoryInDB])
 def get_categories(
     *,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
+    params: PageParamsBase = Depends()
 ):
-    categories = crud.category.get_multi(db=db, skip=skip, limit=limit)
-    return [
+    skip = (params.page - 1) * params.size
+    categories = crud.category.get_multi(db=db, skip=skip, limit=params.size)
+    categories_count = crud.category.count(db=db)
+    categories_out = [
         CategoryInDB.from_orm(category)
         for category in categories
     ]
+    return Page.create(
+        results=categories_out,
+        total_results=categories_count,
+        params=params
+    )
 
 
 @router.post(

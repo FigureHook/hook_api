@@ -1,4 +1,5 @@
 import random
+from math import ceil
 
 from app.tests.utils.category import create_random_category
 from fastapi.testclient import TestClient
@@ -9,16 +10,37 @@ from .util import v1_endpoint
 
 def test_get_categories(db: Session, client: TestClient):
     categories_count = random.randint(0, 20)
+    results_size = random.randint(1, 100)
+    expected_pages = ceil(
+        categories_count / results_size
+    ) if categories_count else 1
+    expected_page = random.randint(1, expected_pages)
     for _ in range(categories_count):
         create_random_category(db)
 
-    response = client.get(v1_endpoint("/categories"))
+    response = client.get(
+        url=v1_endpoint("/categories"),
+        params={
+            'page': expected_page,
+            'size': results_size
+        }
+    )
     assert response.status_code == 200
 
     content = response.json()
-    assert type(content) is list
-    assert len(content) == categories_count
-    for category in content:
+    assert 'page' in content
+    assert 'total_pages' in content
+    assert 'total_results' in content
+    assert 'results' in content
+
+    assert content.get('page') == expected_page
+    assert content.get('total_pages') == expected_pages
+    assert content.get('total_results') == categories_count
+
+    assert type(content['results']) is list
+    assert len(content['results']) <= results_size
+
+    for category in content['results']:
         assert 'id' in category
         assert 'name' in category
 
