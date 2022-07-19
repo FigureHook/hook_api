@@ -37,7 +37,7 @@ def get_products(
     db: Session = Depends(deps.get_db),
     params: PageParamsBase = Depends()
 ):
-    skip = params.page - 1 * params.size
+    skip = (params.page - 1) * params.size
     products = crud.product.get_multi(
         db=db,
         skip=skip,
