@@ -10,7 +10,7 @@ api_router.include_router(
 api_router.include_router(
     webhooks.router, prefix='/webhooks', tags=['webhook'])
 api_router.include_router(
-    company.router, prefix='/companys', tags=['compnay'])
+    company.router, prefix='/companies', tags=['compnay'])
 api_router.include_router(
     series.router, prefix='/series', tags=['series'])
 api_router.include_router(

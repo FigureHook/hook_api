@@ -5,6 +5,7 @@ from app.schemas.company import CompanyCreate, CompanyInDB, CompanyUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from app.schemas.page import Page, PageParamsBase
 
 router = APIRouter()
 
@@ -21,19 +22,25 @@ def check_company_exist(company_id: str, db: Session = Depends(deps.get_db)) -> 
 
 @router.get(
     '/',
-    response_model=list[CompanyInDB]
+    response_model=Page[CompanyInDB]
 )
 def get_companys(
     *,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
+    params: PageParamsBase = Depends()
 ):
-    companys = crud.company.get_multi(db=db, skip=skip, limit=limit)
-    return [
+    skip = (params.page - 1) * params.size
+    companys = crud.company.get_multi(db=db, skip=skip, limit=params.size)
+    companys_count = crud.company.count(db=db)
+    companys_out = [
         CompanyInDB.from_orm(company)
         for company in companys
     ]
+    return Page.create(
+        results=companys_out,
+        total_results=companys_count,
+        params=params
+    )
 
 
 @router.post(
