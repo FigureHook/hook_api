@@ -1,22 +1,40 @@
 import random
+from math import ceil
 
 from app.tests.utils.worker import create_random_sculptor
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from .util import v1_endpoint
+
+from .util import assert_pageination_content, v1_endpoint
 
 
 def test_get_sculptors(db: Session, client: TestClient):
     worker_count = random.randint(0, 20)
+    results_size = random.randint(1, 100)
+    expected_pages = ceil(
+        worker_count / results_size
+    ) if worker_count else 1
+    expected_page = random.randint(1, expected_pages)
     for _ in range(worker_count):
         create_random_sculptor(db)
 
-    response = client.get(v1_endpoint('/sculptors'))
+    response = client.get(
+        url=v1_endpoint('/sculptors'),
+        params={
+            'page': expected_page,
+            'size': results_size
+        }
+    )
     assert response.status_code == 200
 
     content = response.json()
-    assert type(content) is list
-    assert len(content) == worker_count
+    assert_pageination_content(
+        content,
+        expected_page=expected_page,
+        expected_pages=expected_pages,
+        total_results=worker_count,
+        results_size=results_size
+    )
 
 
 def test_create_sculptor(db: Session, client: TestClient):

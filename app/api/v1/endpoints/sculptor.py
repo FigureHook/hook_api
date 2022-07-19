@@ -1,6 +1,7 @@
 from app import crud
 from app.api import deps
 from app.models import Sculptor
+from app.schemas.page import Page, PageParamsBase
 from app.schemas.worker import WorkerCreate, WorkerInDB, WorkerUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
@@ -19,18 +20,24 @@ def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -
     return sculptor
 
 
-@router.get('/', response_model=list[WorkerInDB])
+@router.get('/', response_model=Page[WorkerInDB])
 def get_sculptors(
     *,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
+    params: PageParamsBase = Depends()
 ):
-    workers = crud.sculptor.get_multi(db=db, skip=skip, limit=limit)
-    return [
+    skip = (params.page - 1) * params.size
+    workers = crud.sculptor.get_multi(db=db, skip=skip, limit=params.size)
+    workers_count = crud.sculptor.count(db=db)
+    workers_out = [
         WorkerInDB.from_orm(worker)
         for worker in workers
     ]
+    return Page.create(
+        results=workers_out,
+        total_results=workers_count,
+        params=params
+    )
 
 
 @router.post('/', response_model=WorkerInDB, status_code=status.HTTP_201_CREATED)
