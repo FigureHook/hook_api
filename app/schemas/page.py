@@ -10,13 +10,17 @@ from pydantic import conint
 T = TypeVar('T')
 
 
+class PageParamsBase(Params):
+    pass
+
+
 class Page(AbstractPage[T], Generic[T]):
     page: conint(ge=1)  # type: ignore
     total_pages: conint(ge=1)  # type: ignore
     total_results: conint(ge=0)  # type: ignore
     results: Sequence[T]
 
-    __params_type__ = Params
+    __params_type__ = PageParamsBase
 
     @classmethod
     def create(
@@ -25,7 +29,7 @@ class Page(AbstractPage[T], Generic[T]):
             total_results: int,
             params: AbstractParams,
     ) -> Page[T]:
-        if not isinstance(params, Params):
+        if not isinstance(params, PageParamsBase):
             raise ValueError("Page should be used with Params")
 
         return cls(
