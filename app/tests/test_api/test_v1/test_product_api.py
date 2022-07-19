@@ -8,7 +8,7 @@ from app.tests.utils.release_info import \
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from .util import v1_endpoint
+from .util import v1_endpoint, assert_pageination_content
 
 rich_content = {
     "series": {
@@ -67,17 +67,13 @@ def test_get_products(client: TestClient, db: Session):
     assert response.status_code == 200
 
     content = response.json()
-    assert 'page' in content
-    assert 'total_pages' in content
-    assert 'total_results' in content
-    assert 'results' in content
-
-    assert content.get('page') == expected_page
-    assert content.get('total_pages') == expected_pages
-    assert content.get('total_results') == products_count
-
-    assert type(content['results']) is list
-    assert len(content['results']) <= results_size
+    assert_pageination_content(
+        content,
+        expected_page=expected_page,
+        expected_pages=expected_pages,
+        total_results=products_count,
+        results_size=results_size
+    )
 
 
 def test_create_product(client: TestClient, db: Session):

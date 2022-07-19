@@ -14,14 +14,18 @@ def assert_pageination_content(
     total_results: int,
     results_size: int
 ):
-    assert 'page' in content
-    assert 'total_pages' in content
-    assert 'total_results' in content
+    assert 'info' in content
     assert 'results' in content
 
-    assert content.get('page') == expected_page
-    assert content.get('total_pages') == expected_pages
-    assert content.get('total_results') == total_results
+    info = content.get('info')
+    results = content.get('results')
 
-    assert type(content['results']) is list
-    assert len(content['results']) <= results_size
+    assert 'page' in info
+    assert 'total_pages' in info
+    assert 'total_results' in info
+    assert info.get('page') == expected_page
+    assert info.get('total_pages') == expected_pages
+    assert info.get('total_results') == total_results
+
+    assert type(results) is list
+    assert len(results) <= results_size
