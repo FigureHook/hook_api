@@ -18,7 +18,13 @@ def test_get_companies(db: Session, client: TestClient):
     for _ in range(company_count):
         create_random_company(db)
 
-    response = client.get(v1_endpoint("/companies"))
+    response = client.get(
+        url=v1_endpoint("/companies"),
+        params={
+            'page': expected_page,
+            'size': results_size
+        }
+    )
     assert response.status_code == 200
 
     content = response.json()
