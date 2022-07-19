@@ -38,7 +38,12 @@ def get_products(
     db: Session = Depends(deps.get_db),
     params: Params = Depends()
 ):
-    products = crud.product.get_multi(db=db, skip=0, limit=params.size)
+    skip = params.page - 1 * params.size
+    products = crud.product.get_multi(
+        db=db,
+        skip=skip,
+        limit=params.size
+    )
     products_count = crud.product.count(db=db)
     products_out = [
         map_product_model_to_schema(product)
