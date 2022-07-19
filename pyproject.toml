@@ -14,7 +14,7 @@ python-dotenv = "^0.20.0"
 pytz = "^2022.1"
 sqlalchemy-mixins = "^1.5.3"
 uvicorn = {extras = ["standard"], version = "^0.17.6"}
-deepdiff = "^5.8.1"
+fastapi-pagination = "^0.9.3"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.1"

@@ -5,6 +5,7 @@ from app.api import deps
 from app.models import Product
 from app.schemas.category import CategoryInDB
 from app.schemas.company import CompanyInDB
+from app.schemas.page import Page
 from app.schemas.product import (ProductCreate, ProductInDBRich,
                                  ProductOfficialImageInDB, ProductUpdate)
 from app.schemas.release_info import (ProductReleaseInfoCreate,
@@ -12,6 +13,7 @@ from app.schemas.release_info import (ProductReleaseInfoCreate,
 from app.schemas.series import SeriesInDB
 from app.schemas.worker import WorkerInDB
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_pagination import Params
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -29,19 +31,24 @@ def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> 
 
 @router.get(
     '/',
-    response_model=list[ProductInDBRich]
+    response_model=Page[ProductInDBRich]
 )
 def get_products(
     *,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
-) -> Any:
-    products = crud.product.get_multi(db=db, skip=skip, limit=limit)
-    return [
+    params: Params = Depends()
+):
+    products = crud.product.get_multi(db=db, skip=0, limit=params.size)
+    products_count = crud.product.count(db=db)
+    products_out = [
         map_product_model_to_schema(product)
         for product in products
     ]
+    return Page.create(
+        products_out,
+        total_results=products_count,
+        params=params
+    )
 
 
 @router.post(

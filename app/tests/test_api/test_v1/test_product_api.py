@@ -1,5 +1,6 @@
 import random
 from datetime import date, datetime
+from math import ceil
 
 from app.tests.utils.product import create_random_product
 from app.tests.utils.release_info import \
@@ -47,14 +48,36 @@ rich_content = {
 
 
 def test_get_products(client: TestClient, db: Session):
-    for _ in range(random.randint(0, 200)):
+    products_count = random.randint(0, 200)
+    results_size = random.randint(1, 100)
+    expected_pages = ceil(
+        products_count / results_size
+    ) if products_count else 1
+    expected_page = random.randint(1, expected_pages)
+    for _ in range(products_count):
         create_random_product(db)
 
-    response = client.get(v1_endpoint("/products"))
+    response = client.get(
+        url=v1_endpoint("/products/"),
+        params={
+            'page': expected_page,
+            'size': results_size
+        }
+    )
     assert response.status_code == 200
+
     content = response.json()
-    assert type(content) is list
-    assert len(content) <= 100
+    assert 'page' in content
+    assert 'total_pages' in content
+    assert 'total_results' in content
+    assert 'results' in content
+
+    assert content.get('page') == expected_page
+    assert content.get('total_pages') == expected_pages
+    assert content.get('total_results') == products_count
+
+    assert type(content['results']) is list
+    assert len(content['results']) <= results_size
 
 
 def test_create_product(client: TestClient, db: Session):
