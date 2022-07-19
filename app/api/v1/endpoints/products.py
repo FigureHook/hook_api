@@ -3,11 +3,9 @@ from typing import Any
 from app import crud
 from app.api import deps
 from app.models import Product
-from app.models.product import ProductOfficialImage
 from app.schemas.category import CategoryInDB
 from app.schemas.company import CompanyInDB
 from app.schemas.product import (ProductCreate, ProductInDBRich,
-                                 ProductOfficialImageCreate,
                                  ProductOfficialImageInDB, ProductUpdate)
 from app.schemas.release_info import (ProductReleaseInfoCreate,
                                       ProductReleaseInfoInDB)
@@ -69,7 +67,7 @@ def get_product(
     return obj_out
 
 
-@router.patch('/{product_id}', response_model=ProductInDBRich)
+@router.put('/{product_id}', response_model=ProductInDBRich)
 def update_product(
     *,
     db: Session = Depends(deps.get_db),
@@ -122,25 +120,6 @@ def get_product_release_infos(
     return [
         ProductReleaseInfoInDB.from_orm(info)
         for info in release_infos
-    ]
-
-
-@router.post(
-    '/{product_id}/official-images/',
-    response_model=list[ProductOfficialImageInDB],
-    status_code=status.HTTP_201_CREATED)
-def create_official_image(
-    *,
-    db: Session = Depends(deps.get_db),
-    image: ProductOfficialImageCreate,
-    product: Product = Depends(check_product_exist)
-):
-    product.official_images.append(ProductOfficialImage(url=image.url))
-    db.commit()
-
-    return [
-        ProductOfficialImageInDB.from_orm(image)
-        for image in product.official_images
     ]
 
 

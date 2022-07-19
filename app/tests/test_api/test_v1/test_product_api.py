@@ -1,11 +1,9 @@
 import random
 from datetime import date, datetime
 
-from app.tests.utils.faker import faker
 from app.tests.utils.product import create_random_product
 from app.tests.utils.release_info import \
     create_random_release_info_own_by_product
-from deepdiff import DeepDiff
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -97,25 +95,10 @@ def test_create_product(client: TestClient, db: Session):
         json=post_data
     )
     assert response.status_code == 201
-    content = response.json()
 
+    content = response.json()
     for key in post_data.keys():
         assert key in content
-        if key in rich_content:
-            out_obj = content.get(key)
-            struct = post_data.get(key)
-            if type(out_obj) is list:
-                for v in out_obj:
-                    diff = DeepDiff(v, struct)
-                    assert 'dictionary_item_added' not in diff
-                    assert 'dictionary_item_removed' not in diff
-            else:
-                diff = DeepDiff(out_obj, struct)
-                assert 'dictionary_item_added' not in diff
-                assert 'dictionary_item_removed' not in diff
-
-        if key not in rich_content:
-            assert content.get(key) == post_data.get(key)
 
 
 def test_get_product(client: TestClient, db: Session):
@@ -164,13 +147,11 @@ def test_delete_product(db: Session, client: TestClient):
     response = client.delete(
         v1_endpoint(f"/products/{product.id}")
     )
-
     assert response.status_code == 204
 
     response = client.delete(
         v1_endpoint("/products/122")
     )
-
     assert response.status_code == 404
 
 
@@ -207,35 +188,20 @@ def test_update_product(db: Session, client: TestClient):
             "/full/02.jpg"
         ]
     }
-    response = client.patch(
+    response = client.put(
         v1_endpoint(f"/products/{product.id}"),
         json=update_data
     )
     assert response.status_code == 200
+
     updated_product = response.json()
     for key in update_data.keys():
         assert key in updated_product
-        if key in rich_content:
-            out_obj = updated_product.get(key)
-            struct = update_data.get(key)
-            if type(out_obj) is list:
-                for v in out_obj:
-                    diff = DeepDiff(v, struct)
-                    assert 'dictionary_item_added' not in diff
-                    assert 'dictionary_item_removed' not in diff
-            else:
-                diff = DeepDiff(out_obj, struct)
-                assert 'dictionary_item_added' not in diff
-                assert 'dictionary_item_removed' not in diff
 
-        if key not in rich_content:
-            assert updated_product.get(key) == update_data.get(key)
-
-    response = client.patch(
+    response = client.put(
         v1_endpoint("/products/1235"),
         json=update_data
     )
-
     assert response.status_code == 404
 
 
@@ -285,29 +251,6 @@ def test_get_product_releases(db: Session, client: TestClient):
     response = client.get(
         v1_endpoint("/products/123123/release-infos"),
     )
-    assert response.status_code == 404
-
-
-def test_create_product_image(db: Session, client: TestClient):
-    product = create_random_product(db)
-    images_len = len(product.official_images)
-    img_uri = faker.uri()
-    response = client.post(v1_endpoint(
-        f"/products/{product.id}/official-images/"),
-        json={
-        'url': img_uri
-    })
-    assert response.status_code == 201
-
-    content = response.json()
-    assert len(content) == images_len + 1
-    assert content[-1].get('url') == img_uri
-
-    response = client.post(v1_endpoint(
-        f"/products/12341234/official-images/"),
-        json={
-        'url': img_uri
-    })
     assert response.status_code == 404
 
 
