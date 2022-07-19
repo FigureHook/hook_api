@@ -1,6 +1,7 @@
 from app import crud
 from app.api import deps
 from app.models import Series
+from app.schemas.page import Page, PageParamsBase
 from app.schemas.series import SeriesCreate, SeriesInDB, SeriesUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
@@ -21,19 +22,25 @@ def check_series_exist(series_id: str, db: Session = Depends(deps.get_db)) -> Se
 
 @router.get(
     '/',
-    response_model=list[SeriesInDB]
+    response_model=Page[SeriesInDB]
 )
 def get_series_multi(
     *,
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
+    params:  PageParamsBase = Depends()
 ):
-    series_list = crud.series.get_multi(db=db, skip=skip, limit=limit)
-    return [
+    skip = (params.page - 1) * params.size
+    series_list = crud.series.get_multi(db=db, skip=skip, limit=params.size)
+    series_count = crud.series.count(db=db)
+    series_out = [
         SeriesInDB.from_orm(series)
         for series in series_list
     ]
+    return Page.create(
+        results=series_out,
+        total_results=series_count,
+        params=params
+    )
 
 
 @router.post(
