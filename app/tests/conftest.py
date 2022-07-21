@@ -48,10 +48,16 @@ def check_test_database():
 
 
 @pytest.fixture(scope="module")
-def client() -> Generator:
+def raw_client() -> Generator:
     check_test_database()
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture(scope="module")
+def client(raw_client: TestClient) -> Generator:
+    raw_client.headers['x-auth-token'] = settings.API_TOKEN
+    yield raw_client
 
 
 @pytest.fixture(scope="function")

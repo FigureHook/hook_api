@@ -12,6 +12,7 @@ Secret = Union[str, bytes]
 
 class Settings(BaseSettings):
     DEBUG: bool = False
+    API_TOKEN: Secret = os.getenv('API_TOKEN', Fernet.generate_key())
     ENVIRONMENT: str
     SECRET_KEY: Secret = Fernet.generate_key()
     POSTGRES_SERVER: str
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     API_V1_ENDPOINT: str = "/api/v1"
+    MANAGEMENT_APP_NAME: str = 'management'
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
@@ -66,7 +68,7 @@ def get_settings() -> Settings:
     if env == 'test':
         return TestSettings(ENVIRONMENT=env)
 
-    return DevSettings()
+    return DevSettings(ENVIRONMENT='development')
 
 
 settings = get_settings()
