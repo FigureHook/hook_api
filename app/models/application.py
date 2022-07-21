@@ -1,7 +1,8 @@
 import secrets
+from datetime import datetime
 
 from app.db.model_base import UUIDPkModel
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, DateTime, String
 
 __all__ = ['Application']
 
@@ -19,4 +20,8 @@ class Application(UUIDPkModel):
 
     def refresh_token(self):
         self.token = _generate_token()
+        return self
+
+    def was_seen(self):
+        self.last_seen_at = datetime.now()
         return self

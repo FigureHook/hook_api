@@ -25,3 +25,8 @@ class TestApplication:
         new_token = application.token
 
         assert prev_token != new_token
+
+    def test_application_was_seen(self, db:Session):
+        application = Application(name="management")
+        application.was_seen()
+        assert application.last_seen_at
