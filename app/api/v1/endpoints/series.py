@@ -4,7 +4,7 @@ from app.models import Series
 from app.schemas.page import Page, PageParamsBase
 from app.schemas.series import SeriesCreate, SeriesInDB, SeriesUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -89,10 +89,11 @@ def udpate_series(
     return SeriesInDB.from_orm(series)
 
 
-@router.delete('/{series_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{series_id}')
 def delete_series(
     *,
     db: Session = Depends(deps.get_db),
     series: Series = Depends(check_series_exist),
 ):
     crud.series.remove(db=db, id=series.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

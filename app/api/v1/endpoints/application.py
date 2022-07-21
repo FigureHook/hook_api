@@ -4,7 +4,7 @@ from app import crud
 from app.api import deps
 from app.models import Application
 from app.schemas.application import ApplicationCreate, ApplicationInDB
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -49,13 +49,14 @@ def get_application(*, application: Application = Depends(check_application_exis
     return ApplicationInDB.from_orm(application)
 
 
-@router.delete('/{application_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{application_id}')
 def delete_application(
     *,
     db: Session = Depends(deps.get_db),
     application: Application = Depends(check_application_exist)
 ):
     crud.application.remove(db=db, id=application.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post('/{application_id}/refresh', response_model=ApplicationInDB)

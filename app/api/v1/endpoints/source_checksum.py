@@ -6,7 +6,7 @@ from app.schemas.source_checksum import (SourceChecksumCreate,
                                          SourceChecksumInDB,
                                          SourceChecksumUpdate)
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -85,11 +85,11 @@ def patch_source_checksum(
 
 
 @router.delete(
-    '/{source_checksum_id}',
-    status_code=status.HTTP_204_NO_CONTENT)
+    '/{source_checksum_id}')
 def delete_source_checksum(
     *,
     db: Session = Depends(deps.get_db),
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist)
 ):
     crud.source_checksum.remove(db=db, id=source_checksum.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

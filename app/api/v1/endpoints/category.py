@@ -4,7 +4,7 @@ from app.models import Category
 from app.schemas.category import CategoryCreate, CategoryInDB, CategoryUpdate
 from app.schemas.page import Page, PageParamsBase
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -92,8 +92,7 @@ def update_category(
 
 
 @router.delete(
-    '/{category_id}',
-    status_code=status.HTTP_204_NO_CONTENT
+    '/{category_id}'
 )
 def delete_category(
     *,
@@ -101,3 +100,4 @@ def delete_category(
     category: Category = Depends(check_category_exist)
 ):
     crud.category.remove(db=db, id=category.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

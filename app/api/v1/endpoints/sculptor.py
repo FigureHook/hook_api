@@ -4,7 +4,7 @@ from app.models import Sculptor
 from app.schemas.page import Page, PageParamsBase
 from app.schemas.worker import WorkerCreate, WorkerInDB, WorkerUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -83,10 +83,11 @@ def update_sculptor(
     return WorkerInDB.from_orm(sculptor)
 
 
-@router.delete('/{sculptor_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{sculptor_id}')
 def delete_sculptor(
     *,
     db: Session = Depends(deps.get_db),
     sculptor: Sculptor = Depends(check_sculptor_exist),
 ):
     crud.sculptor.remove(db=db, id=sculptor.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

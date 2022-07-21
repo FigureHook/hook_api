@@ -3,7 +3,7 @@ from app.api import deps
 from app.models import Company
 from app.schemas.company import CompanyCreate, CompanyInDB, CompanyUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 from app.schemas.page import Page, PageParamsBase
 
@@ -89,10 +89,11 @@ def udpate_company(
     return CompanyInDB.from_orm(company)
 
 
-@router.delete('/{company_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{company_id}')
 def delete_company(
     *,
     db: Session = Depends(deps.get_db),
     company: Company = Depends(check_company_exist),
 ):
     crud.company.remove(db=db, id=company.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

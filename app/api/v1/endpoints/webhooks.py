@@ -78,14 +78,14 @@ def update_webhook(
 
 
 @router.delete(
-    "/{channel_id}",
-    status_code=status.HTTP_204_NO_CONTENT)
+    "/{channel_id}")
 def delete_webhook(
     *,
     db: Session = Depends(deps.get_db),
     webhook: Webhook = Depends(check_webhook_exist)
 ):
     crud.webhook.remove(db=db, id=webhook.channel_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.patch(

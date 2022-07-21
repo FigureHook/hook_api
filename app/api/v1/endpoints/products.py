@@ -12,7 +12,7 @@ from app.schemas.release_info import (ProductReleaseInfoCreate,
                                       ProductReleaseInfoInDB)
 from app.schemas.series import SeriesInDB
 from app.schemas.worker import WorkerInDB
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -93,14 +93,14 @@ def update_product(
 
 
 @router.delete(
-    '/{product_id}',
-    status_code=status.HTTP_204_NO_CONTENT)
+    '/{product_id}')
 def deleted_product(
     *,
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
 ):
     crud.product.remove(db=db, id=product.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post(

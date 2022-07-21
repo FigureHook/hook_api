@@ -4,7 +4,7 @@ from app.models import Paintwork
 from app.schemas.page import Page, PageParamsBase
 from app.schemas.worker import WorkerCreate, WorkerInDB, WorkerUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -83,10 +83,11 @@ def update_paintwork(
     return WorkerInDB.from_orm(paintwork)
 
 
-@router.delete('/{paintwork_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{paintwork_id}')
 def delete_paintwork(
     *,
     db: Session = Depends(deps.get_db),
     paintwork: Paintwork = Depends(check_paintwork_exist),
 ):
     crud.paintwork.remove(db=db, id=paintwork.id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
