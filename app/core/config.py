@@ -2,12 +2,17 @@ import os
 from typing import Any, Dict, Optional, Union
 
 from cryptography.fernet import Fernet
+from dotenv import load_dotenv
 from pydantic import BaseSettings, PostgresDsn, validator
+
+load_dotenv()
 
 Secret = Union[str, bytes]
 
 
 class Settings(BaseSettings):
+    DEBUG: bool = False
+    ENVIRONMENT: str
     SECRET_KEY: Secret = Fernet.generate_key()
     POSTGRES_SERVER: str
     POSTGRES_USER: str
@@ -31,6 +36,7 @@ class Settings(BaseSettings):
 
 
 class DevSettings(Settings):
+    DEBUG: bool = True
     SECRET_KEY: Secret = Fernet.generate_key()
     POSTGRES_SERVER: str = 'db'
     POSTGRES_USER: str = 'kappa'
@@ -39,6 +45,7 @@ class DevSettings(Settings):
 
 
 class TestSettings(DevSettings):
+    ENVIRONMENT: str = 'test'
     POSTGRES_DB: str = 'hook_api_test'
 
 
@@ -53,11 +60,11 @@ class ProductionSettings(Settings):
 def get_settings() -> Settings:
     env = os.getenv('ENV')
     if env == 'development':
-        return DevSettings()
+        return DevSettings(ENVIRONMENT=env)
     if env == 'production':
-        return ProductionSettings()
+        return ProductionSettings(ENVIRONMENT=env)
     if env == 'test':
-        return TestSettings()
+        return TestSettings(ENVIRONMENT=env)
 
     return DevSettings()
 

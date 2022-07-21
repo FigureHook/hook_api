@@ -15,6 +15,7 @@ pytz = "^2022.1"
 sqlalchemy-mixins = "^1.5.3"
 uvicorn = {extras = ["standard"], version = "^0.17.6"}
 fastapi-pagination = "^0.9.3"
+asgi-correlation-id = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.1"
