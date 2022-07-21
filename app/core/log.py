@@ -24,6 +24,11 @@ def configure_logging() -> None:
                     "use_colors": False,
                     "fmt": '%(asctime)s - %(levelname)s - %(client_addr)s - %(correlation_id)s - "%(request_line)s" %(status_code)s',  # noqa: E501
                 },
+                'uvicorn_error': {
+                    "()": "uvicorn.logging.DefaultFormatter",
+                    "fmt": "%(asctime)s - %(levelname)s - %(correlation_id)s - %(message)s",
+                    "use_colors": False,
+                },
                 'console': {
                     'class': 'logging.Formatter',
                     'format': '%(asctime)s - %(levelname)s - %(correlation_id)s <%(name)s:%(lineno)d> %(message)s',
@@ -35,6 +40,16 @@ def configure_logging() -> None:
                     'filters': ['correlation_id'],
                     'formatter': 'access_console',
                     'stream': "ext://sys.stdout"
+                },
+                'uvicorn_error_file': {
+                    '()': 'logging.handlers.TimedRotatingFileHandler',
+                    'filename': '/workspace/app/logs/uvicorn/access.log',
+                    'when': 'D',
+                    'encoding': 'utf-8',
+                    'utc': True,
+                    'filters': ['correlation_id'],
+                    'level': 'ERROR',
+                    'formatter': 'uvicorn_error'
                 },
                 'uvicorn_access_file': {
                     '()': 'logging.handlers.TimedRotatingFileHandler',
@@ -65,6 +80,7 @@ def configure_logging() -> None:
             'loggers': {
                 # project logger
                 "app": {"handlers": ["app_default"], "level": "INFO"},
+                "uvicorn.error": {"handlers": ["uvicorn_error_file"], "level": "INFO"},
                 "uvicorn.access": {"handlers": ["uvicorn_access_console", "uvicorn_access_file"], "level": "INFO", "propagate": False},
                 'asgi_correlation_id': {'handlers': ['console'], 'level': 'WARNING'},
             },
