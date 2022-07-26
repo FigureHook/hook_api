@@ -40,7 +40,7 @@ class Page(AbstractPage[T], Generic[T]):
             page=params.page,
             total_pages=ceil(
                 total_results / params.size
-            ) if total_results is not 0 else 1,
+            ) if total_results else 1,
             total_results=total_results,
         )
 
