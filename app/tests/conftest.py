@@ -56,7 +56,7 @@ def raw_client() -> Generator:
 
 @pytest.fixture(scope="module")
 def client(raw_client: TestClient) -> Generator:
-    raw_client.headers['x-auth-token'] = settings.API_TOKEN
+    raw_client.headers['x-api-token'] = settings.API_TOKEN
     yield raw_client
 
 

@@ -1,5 +1,6 @@
 import os
 from typing import Any, Dict, Optional, Union
+from uuid import uuid4
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
 
     API_V1_ENDPOINT: str = "/api/v1"
     MANAGEMENT_APP_NAME: str = 'management'
+    MANAGEMENT_UUID: str = os.getenv('MANAGEMENT_UUID', str(uuid4()))
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
