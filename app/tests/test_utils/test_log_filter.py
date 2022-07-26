@@ -1,10 +1,7 @@
-from logging import LogRecord, INFO
+from logging import INFO, LogRecord
+
 import pytest
-from app.utils.log_filters import (
-    AccessApplicationFilter,
-    application_name,
-    application_uuid
-)
+from app.utils.log_filters import AccessApplicationFilter
 from faker import Faker
 
 
@@ -12,7 +9,7 @@ from faker import Faker
 def uuid(faker: Faker):
     """Set and return uuid of application"""
     uuid = faker.uuid4()
-    application_uuid.set(uuid)
+    AccessApplicationFilter.set_app_uuid(uuid)
     return uuid
 
 
@@ -20,7 +17,7 @@ def uuid(faker: Faker):
 def app_name(faker: Faker):
     """Set and return name of application"""
     name = faker.name()
-    application_name.set(name)
+    AccessApplicationFilter.set_app_name(name)
     return name
 
 

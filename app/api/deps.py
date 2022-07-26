@@ -3,7 +3,7 @@ from typing import Generator
 from app import crud
 from app.core.config import settings
 from app.db.session import pgsql_db
-from app.utils.log_filter import application_name, application_uuid
+from app.utils.log_filters import AccessApplicationFilter
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
@@ -22,15 +22,15 @@ def verify_token(api_token: str = Security(api_token), db: Session = Depends(get
     if api_token == settings.API_TOKEN:
         app_name = settings.MANAGEMENT_APP_NAME
         app_id = settings.MANAGEMENT_UUID
-        application_name.set(app_name)
-        application_uuid.set(app_id)
+        AccessApplicationFilter.set_app_name(app_name)
+        AccessApplicationFilter.set_app_uuid(app_id)
         return
 
     if api_token != settings.API_TOKEN:
         app = crud.application.get_by_token(db=db, token=api_token)
         if app:
-            application_name.set(app.name)
-            application_uuid.set(str(app.id))
+            AccessApplicationFilter.set_app_uuid(str(app.id))
+            AccessApplicationFilter.set_app_name(app.name)
             app.was_seen()
             db.add(app)
             db.commit()

@@ -13,6 +13,12 @@ def configure_logging() -> None:
                     '()': 'asgi_correlation_id.CorrelationIdFilter',
                     'uuid_length': 8 if not settings.ENVIRONMENT == 'development' else 32,
                 },
+                'application_uuid': {
+                    '()': 'app.utils.log_filters.AccessApplicationFilter',
+                },
+                'application_name': {
+                    '()': 'app.utils.log_filters.AccessApplicationFilter',
+                }
             },
             'formatters': {
                 "access_console": {
@@ -31,7 +37,7 @@ def configure_logging() -> None:
                 },
                 'console': {
                     'class': 'logging.Formatter',
-                    'format': '%(asctime)s - %(levelname)s - %(correlation_id)s <%(name)s:%(lineno)d> %(message)s',
+                    'format': '%(asctime)s - %(levelname)s - %(application_name)s - %(correlation_id)s - <%(name)s:%(lineno)d> %(message)s',
                 },
             },
             'handlers': {
@@ -66,7 +72,7 @@ def configure_logging() -> None:
                     'when': 'D',
                     'encoding': 'utf-8',
                     'utc': True,
-                    'filters': ['correlation_id'],
+                    'filters': ['correlation_id', 'application_uuid', 'application_name'],
                     'formatter': 'console'
                 },
                 'console': {
