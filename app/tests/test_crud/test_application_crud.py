@@ -34,3 +34,9 @@ def test_delete_application(db: Session):
     assert not fetched_application
     if deleted_application:
         assert deleted_application == db_obj
+
+
+def test_get_application_by_token(db: Session):
+    db_obj = create_random_application(db)
+    fetched_application = crud.application.get_by_token(db=db, token=db_obj.token)
+    assert db_obj == fetched_application
