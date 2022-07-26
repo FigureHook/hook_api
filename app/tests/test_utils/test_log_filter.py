@@ -1,6 +1,6 @@
 from logging import LogRecord, INFO
 import pytest
-from app.utils.log_filter import (
+from app.utils.log_filters import (
     AccessApplicationFilter,
     application_name,
     application_uuid
