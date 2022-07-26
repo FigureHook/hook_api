@@ -7,4 +7,5 @@ ENV='test'
 
 python -m app.clean_test_database
 
-pytest /workspace/app "$@"
+coverage run -m pytest /workspace/app "$@"
+coverage report -m --skip-covered
