@@ -1,3 +1,5 @@
+from typing import cast
+
 from app import crud
 from app.schemas.source_checksum import (SourceChecksumCreate,
                                          SourceChecksumUpdate)
@@ -50,3 +52,18 @@ def test_remove_source_checksum(db: Session):
     assert not fetched_db_obj
     if deleted_db_obj:
         assert deleted_db_obj == db_obj
+
+
+def test_get_multi_source_checksum_filter_by_source(db: Session):
+    db_objs = [
+        create_random_source_checksum(db=db)
+        for _ in range(10)
+    ]
+
+    for db_obj in db_objs:
+        objs = crud.source_checksum.get_multi_filter_by_source(
+            db=db,
+            source=cast(str, db_obj.source)
+        )
+        assert len(objs)
+        assert len(objs) <= len(db_objs)

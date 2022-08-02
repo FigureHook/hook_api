@@ -1,5 +1,3 @@
-from tabnanny import check
-
 from app import crud
 from app.schemas.source_checksum import SourceChecksumCreate
 from sqlalchemy.orm import Session

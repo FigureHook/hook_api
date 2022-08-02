@@ -1,6 +1,6 @@
 import random
-
 from datetime import datetime
+from typing import cast
 
 from app.tests.utils.faker import faker
 from app.tests.utils.source_checksum import create_random_source_checksum
@@ -95,3 +95,21 @@ def test_delete_source_checksum(db: Session, client: TestClient):
         v1_endpoint(f"/source-checksums/838828")
     )
     assert response.status_code == 404
+
+
+def test_get_source_checksums_by_name(db: Session, client: TestClient):
+    source_checksums = [
+        create_random_source_checksum(db)
+        for _ in range(10)
+    ]
+    for sc in source_checksums:
+        response = client.get(
+            v1_endpoint(f"/source-checksums"),
+            params={
+                'source': cast(str, sc.source)
+            }
+        )
+        assert response.status_code == 200
+        content = response.json()
+        assert len(content)
+        assert len(content) <= len(source_checksums)

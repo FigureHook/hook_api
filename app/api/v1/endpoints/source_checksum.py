@@ -1,3 +1,4 @@
+from typing import Optional
 
 from app import crud
 from app.api import deps
@@ -13,8 +14,8 @@ router = APIRouter()
 
 
 def check_source_checksum_exist(
-        source_checksum_id: int,
-        db: Session = Depends(deps.get_db)
+    source_checksum_id: int,
+    db: Session = Depends(deps.get_db)
 ) -> SourceChecksum:
     source_checksum = crud.source_checksum.get(db=db, id=source_checksum_id)
     if not source_checksum:
@@ -30,10 +31,15 @@ def get_source_checksums(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    source: Optional[str] = None
 ):
-    source_checksums = crud.source_checksum.get_multi(
-        db=db, skip=skip, limit=limit)
+    if source:
+        source_checksums = crud.source_checksum.get_multi_filter_by_source(
+            db=db, skip=skip, limit=limit, source=source)
+    else:
+        source_checksums = crud.source_checksum.get_multi(
+            db=db, skip=skip, limit=limit)
     return [
         SourceChecksumInDB.from_orm(source_checksum)
         for source_checksum in source_checksums
