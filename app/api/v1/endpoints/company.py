@@ -1,21 +1,26 @@
+import logging
+
 from app import crud
 from app.api import deps
 from app.models import Company
 from app.schemas.company import CompanyCreate, CompanyInDB, CompanyUpdate
+from app.schemas.page import Page, PageParamsBase
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse, Response
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from app.schemas.page import Page, PageParamsBase
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def check_company_exist(company_id: str, db: Session = Depends(deps.get_db)) -> Company:
     company = crud.company.get(db=db, id=company_id)
     if not company:
+        logger.info(f"Specified company didn't exist. (id={company_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Specified company(id:{company_id}) didn't exist."
+            detail=f"Specified company(id={company_id}) didn't exist."
         )
     return company
 
@@ -24,21 +29,22 @@ def check_company_exist(company_id: str, db: Session = Depends(deps.get_db)) -> 
     '/',
     response_model=Page[CompanyInDB]
 )
-def get_companys(
+def get_companies(
     *,
     db: Session = Depends(deps.get_db),
     params: PageParamsBase = Depends()
 ):
     skip = (params.page - 1) * params.size
-    companys = crud.company.get_multi(db=db, skip=skip, limit=params.size)
-    companys_count = crud.company.count(db=db)
-    companys_out = [
+    companies = crud.company.get_multi(db=db, skip=skip, limit=params.size)
+    companies_count = crud.company.count(db=db)
+    companies_out = [
         CompanyInDB.from_orm(company)
-        for company in companys
+        for company in companies
     ]
+    logger.info(f"Fetched the companies. (count={len(companies_out)})")
     return Page.create(
-        results=companys_out,
-        total_results=companys_count,
+        results=companies_out,
+        total_results=companies_count,
         params=params
     )
 
@@ -54,19 +60,18 @@ def create_company(
     db: Session = Depends(deps.get_db),
     company_in: CompanyCreate,
 ):
-    company = db.query(
-        Company
-    ).filter(
-        Company.name == company_in.name
-    ).first()
-
+    stmt = select(Company).filter_by(name=company_in.name).limit(1)
+    company = db.scalars(stmt).first()
     if company:
+        logger.info(
+            f"The company already exists. (id={company.id}, name={company.name})")
         return RedirectResponse(
             url=request.url_for('get_company', company_id=company.id),
             status_code=status.HTTP_303_SEE_OTHER
         )
 
     company = crud.company.create(db=db, obj_in=company_in)
+    logger.info(f"Created the company. (id={company.id})")
     return CompanyInDB.from_orm(company)
 
 
@@ -75,6 +80,7 @@ def get_company(
     *,
     company: Company = Depends(check_company_exist)
 ):
+    logger.info(f"Fetched the company. (id={company.id})")
     return CompanyInDB.from_orm(company)
 
 
@@ -86,6 +92,7 @@ def udpate_company(
     company_in: CompanyUpdate
 ):
     company = crud.company.update(db=db, db_obj=company, obj_in=company_in)
+    logger.info(f"Updated the company. (id={company.id})")
     return CompanyInDB.from_orm(company)
 
 
@@ -96,4 +103,5 @@ def delete_company(
     company: Company = Depends(check_company_exist),
 ):
     crud.company.remove(db=db, id=company.id)
+    logger.info(f"Removed the company. (id={company.id})")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

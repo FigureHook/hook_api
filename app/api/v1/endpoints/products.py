@@ -16,14 +16,14 @@ from app.schemas.worker import WorkerInDB
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
-logger = logging.getLogger(__name__)
-
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> Product:
     product = crud.product.get(db=db, id=product_id)
     if not product:
+        logger.info(f"Specified product didn't exist. (id={product_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Specified product didn't exist. (id={product_id})"
@@ -51,7 +51,7 @@ def get_products(
         map_product_model_to_schema(product)
         for product in products
     ]
-    logger.info(f"Fetched products. (count={len(products_out)})")
+    logger.info(f"Fetched the products. (count={len(products_out)})")
     return Page.create(
         products_out,
         total_results=products_count,
@@ -69,7 +69,7 @@ def create_product(
     product_in: ProductCreate,
 ) -> Any:
     db_obj = crud.product.create(db=db, obj_in=product_in)
-    logger.info(f"Created product. (id={db_obj.id})")
+    logger.info(f"Created the product. (id={db_obj.id})")
     obj_out = map_product_model_to_schema(db_obj)
     return obj_out
 
@@ -80,7 +80,7 @@ def get_product(
     product: Product = Depends(check_product_exist),
     product_id: int,
 ):
-    logger.info(f"Fetched product. (id:{product_id})")
+    logger.info(f"Fetched the product. (id:{product_id})")
     obj_out = map_product_model_to_schema(product)
     return obj_out
 
@@ -95,7 +95,7 @@ def update_product(
 ):
     updated_product = crud.product.update(
         db=db, db_obj=product, obj_in=product_in)
-    logger.info(f"Updated product. (id={product_id})")
+    logger.info(f"Updated the product. (id={product_id})")
     obj_out = map_product_model_to_schema(updated_product)
     return obj_out
 
@@ -109,7 +109,7 @@ def deleted_product(
     product_id: int,
 ):
     crud.product.remove(db=db, id=product.id)
-    logger.info(f"Removed product. (id={product_id})")
+    logger.info(f"Removed the product. (id={product_id})")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -127,7 +127,7 @@ def create_product_release_info(
     obj_out = crud.release_info.create_with_product(
         db=db, obj_in=release_info, product_id=product.id)
     logger.info(
-        f"Created release-info. (id={obj_out.id}, product_id={product_id})")
+        f"Created the release-info. (id={obj_out.id}, product_id={product_id})")
     return ProductReleaseInfoInDB.from_orm(obj_out)
 
 
@@ -143,7 +143,7 @@ def get_product_release_infos(
     release_infos = crud.release_info.get_by_product(
         db=db, product_id=product.id)
     logger.info(
-        f"Fetched release-infos. (count={len(release_infos)}, product_id={product_id})")
+        f"Fetched the release-infos. (count={len(release_infos)}, product_id={product_id})")
     return [
         ProductReleaseInfoInDB.from_orm(info)
         for info in release_infos
@@ -160,7 +160,7 @@ def get_official_images(
     product_id: int
 ):
     logger.info(
-        f"Fetched release-infos. (count={len(product.official_images)}, product_id={product_id})")
+        f"Fetched the release-infos. (count={len(product.official_images)}, product_id={product_id})")
     return [
         ProductOfficialImageInDB.from_orm(image)
         for image in product.official_images

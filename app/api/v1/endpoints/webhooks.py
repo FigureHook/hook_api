@@ -9,14 +9,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-logger = logging.getLogger(__name__)
-
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def check_webhook_exist(channel_id: str, db: Session = Depends(deps.get_db)) -> Webhook:
     webhook = crud.webhook.get(db=db, id=channel_id)
     if not webhook:
+        logger.info(
+            f"Specified webhook didn't exist. (channel_id={channel_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Specified webhook(channel_id:{channel_id}) didn't exist."
@@ -33,7 +34,7 @@ def get_webhooks(
     db: Session = Depends(deps.get_db)
 ):
     webhooks = db.query(Webhook).all()
-    logger.info(f"Fetched webhooks. (count={len(webhooks)})")
+    logger.info(f"Fetched the webhooks. (count={len(webhooks)})")
     return [
         DecryptedWebhookInDB.from_orm(webhook)
         for webhook in webhooks
@@ -48,7 +49,7 @@ def get_webhook(
     webhook: Webhook = Depends(check_webhook_exist),
     channel_id: str
 ):
-    logger.info(f"Fetched webhook. (channel_id={channel_id})")
+    logger.info(f"Fetched the webhook. (channel_id={channel_id})")
     return DecryptedWebhookInDB.from_orm(webhook)
 
 
@@ -67,7 +68,7 @@ def update_webhook(
     if webhook:
         crud.webhook.update(db=db, db_obj=webhook, obj_in=webhook_in)
         response.status_code = status.HTTP_200_OK
-        logger.info(f"Updated webhook. (channel_id={channel_id})")
+        logger.info(f"Updated the webhook. (channel_id={channel_id})")
     else:
         webhook_item = WebhookDBCreate(
             channel_id=channel_id,
@@ -80,7 +81,7 @@ def update_webhook(
         webhook_in = WebhookDBCreate.parse_obj(webhook_item)
         webhook = crud.webhook.create(db=db, obj_in=webhook_in)
         response.status_code = status.HTTP_201_CREATED
-        logger.info(f"Created webhook. (channel_id={channel_id})")
+        logger.info(f"Created the webhook. (channel_id={channel_id})")
 
     return DecryptedWebhookInDB.from_orm(webhook)
 
@@ -94,7 +95,7 @@ def delete_webhook(
     channel_id: str
 ):
     crud.webhook.remove(db=db, id=webhook.channel_id)
-    logger.info(f"Removed webhook. (channel_id={channel_id})")
+    logger.info(f"Removed the webhook. (channel_id={channel_id})")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -109,5 +110,5 @@ def patch_webhook(
     channel_id: str
 ):
     crud.webhook.update(db=db, db_obj=webhook, obj_in=patch_data)
-    logger.info(f"Updated webhook. (channel_id={channel_id})")
+    logger.info(f"Updated the webhook. (channel_id={channel_id})")
     return DecryptedWebhookInDB.from_orm(webhook)

@@ -1,3 +1,5 @@
+import logging
+
 from app import crud
 from app.api import deps
 from app.models import Sculptor
@@ -6,13 +8,16 @@ from app.schemas.worker import WorkerCreate, WorkerInDB, WorkerUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -> Sculptor:
     sculptor = crud.sculptor.get(db=db, id=sculptor_id)
     if not sculptor:
+        logger.info(f"Specified sculptor didn't exist. (id={sculptor_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Specified sculptor(id:{sculptor_id}) didn't exist."
@@ -33,6 +38,7 @@ def get_sculptors(
         WorkerInDB.from_orm(worker)
         for worker in workers
     ]
+    logger.info(f"Fetched the sculptors. (count={len(workers_out)})")
     return Page.create(
         results=workers_out,
         total_results=workers_count,
@@ -47,19 +53,18 @@ def create_sculptor(
     db: Session = Depends(deps.get_db),
     worker_in: WorkerCreate
 ):
-    sculptor = db.query(
-        Sculptor
-    ).filter(
-        Sculptor.name == worker_in.name
-    ).first()
-
+    stmt = select(Sculptor).filter_by(name=worker_in.name).limit(1)
+    sculptor = db.scalars(stmt).first()
     if sculptor:
+        logger.info(
+            f"The sculptor already exists. (id={sculptor.id}, name={sculptor.name})")
         return RedirectResponse(
             url=request.url_for('get_sculptor', sculptor_id=sculptor.id),
             status_code=status.HTTP_303_SEE_OTHER
         )
 
     sculptor = crud.sculptor.create(db=db, obj_in=worker_in)
+    logger.info(f"Created the sculptor. (id={sculptor.id})")
     return WorkerInDB.from_orm(sculptor)
 
 
@@ -68,6 +73,7 @@ def get_sculptor(
     *,
     sculptor: Sculptor = Depends(check_sculptor_exist)
 ):
+    logger.info(f"Fetched the sculptor. (id={sculptor.id})")
     return WorkerInDB.from_orm(sculptor)
 
 
@@ -80,6 +86,7 @@ def update_sculptor(
 ):
     sculptor = crud.sculptor.update(
         db=db, db_obj=sculptor, obj_in=worker_in)
+    logger.info(f"Updated the sculptor. (id={sculptor.id})")
     return WorkerInDB.from_orm(sculptor)
 
 
@@ -90,4 +97,5 @@ def delete_sculptor(
     sculptor: Sculptor = Depends(check_sculptor_exist),
 ):
     crud.sculptor.remove(db=db, id=sculptor.id)
+    logger.info(f"Removed the sculptor. (id={sculptor.id})")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

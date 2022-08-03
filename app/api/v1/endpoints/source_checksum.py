@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from app import crud
@@ -8,9 +9,11 @@ from app.schemas.source_checksum import (SourceChecksumCreate,
                                          SourceChecksumUpdate)
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse, Response
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def check_source_checksum_exist(
@@ -19,6 +22,8 @@ def check_source_checksum_exist(
 ) -> SourceChecksum:
     source_checksum = crud.source_checksum.get(db=db, id=source_checksum_id)
     if not source_checksum:
+        logger.info(
+            f"Specified source-checksum didn't exist. (id: {source_checksum_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Specified source-checksum(id: {source_checksum_id}) didn't exist."
@@ -40,6 +45,9 @@ def get_source_checksums(
     else:
         source_checksums = crud.source_checksum.get_multi(
             db=db, skip=skip, limit=limit)
+
+    logger.info(
+        f"Fetched the source-checksums. (count={len(source_checksums)})")
     return [
         SourceChecksumInDB.from_orm(source_checksum)
         for source_checksum in source_checksums
@@ -53,10 +61,12 @@ def create_source_checksum(
     db: Session = Depends(deps.get_db),
     source_checksum_in: SourceChecksumCreate
 ):
-    source_checksum = db.query(SourceChecksum).filter(
-        SourceChecksum.source == source_checksum_in.source
-    ).first()
+    stmt = select(SourceChecksum).filter_by(
+        source=source_checksum_in.source).limit(1)
+    source_checksum = db.scalars(stmt).first()
     if source_checksum:
+        logger.info(
+            f"The source-checksum already exists. (id={source_checksum.id}, source={source_checksum.source})")
         return RedirectResponse(
             request.url_for(
                 'get_source_checksum',
@@ -66,7 +76,9 @@ def create_source_checksum(
 
     source_checksum = crud.source_checksum.create(
         db=db,
-        obj_in=source_checksum_in)
+        obj_in=source_checksum_in
+    )
+    logger.info(f"Created the source-checksum. (id={source_checksum.id})")
     return SourceChecksumInDB.from_orm(source_checksum)
 
 
@@ -75,6 +87,7 @@ def get_source_checksum(
     *,
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist)
 ):
+    logger.info(f"Fetched the source-checksum. (id={source_checksum.id})")
     return SourceChecksumInDB.from_orm(source_checksum)
 
 
@@ -87,6 +100,7 @@ def patch_source_checksum(
 ):
     source_checksum = crud.source_checksum.update(
         db=db, db_obj=source_checksum, obj_in=update_source_checksum)
+    logger.info(f"Updated the source-checksum. (id={source_checksum.id})")
     return SourceChecksumInDB.from_orm(source_checksum)
 
 
@@ -98,4 +112,5 @@ def delete_source_checksum(
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist)
 ):
     crud.source_checksum.remove(db=db, id=source_checksum.id)
+    logger.info(f"Removed the source-checksum. (id={source_checksum.id})")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
