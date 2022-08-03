@@ -29,4 +29,7 @@ class TestApplication:
     def test_application_was_seen(self, db:Session):
         application = Application(name="management")
         application.was_seen()
+        db.add(application)
+        db.commit()
+        db.refresh(application)
         assert application.last_seen_at
