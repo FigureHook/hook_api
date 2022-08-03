@@ -35,9 +35,9 @@ def configure_logging() -> None:
                     "fmt": "%(asctime)s - %(levelname)s - %(correlation_id)s - %(message)s",
                     "use_colors": False,
                 },
-                'console': {
+                'api_default': {
                     'class': 'logging.Formatter',
-                    'format': '%(asctime)s - %(levelname)s - %(application_name)s - %(correlation_id)s - <%(name)s:%(lineno)d> %(message)s',
+                    'format': '%(asctime)s - %(levelname)s - %(application_name)s [%(application_uuid)s] - %(correlation_id)s - <%(name)s:%(lineno)d> %(message)s',
                 },
             },
             'handlers': {
@@ -73,12 +73,11 @@ def configure_logging() -> None:
                     'encoding': 'utf-8',
                     'utc': True,
                     'filters': ['correlation_id', 'application_uuid', 'application_name'],
-                    'formatter': 'console'
+                    'formatter': 'api_default'
                 },
                 'console': {
                     'class': 'logging.StreamHandler',
                     'filters': ['correlation_id'],
-                    'formatter': 'console',
                     'stream': "ext://sys.stdout"
                 }
             },
@@ -88,7 +87,6 @@ def configure_logging() -> None:
                 "app": {"handlers": ["app_default"], "level": "INFO"},
                 "uvicorn.error": {"handlers": ["uvicorn_error_file"], "level": "INFO"},
                 "uvicorn.access": {"handlers": ["uvicorn_access_console", "uvicorn_access_file"], "level": "INFO", "propagate": False},
-                'asgi_correlation_id': {'handlers': ['console'], 'level': 'WARNING'},
             },
         }
     )
