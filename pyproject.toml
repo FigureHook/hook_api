@@ -5,7 +5,7 @@ name = "hook_api"
 version = "0.0.1"
 
 [tool.poetry.dependencies]
-SQLAlchemy = {extras = ["mypy"], version = "^1.4.36"}
+SQLAlchemy = {extras = ["mypy"], version = "^1.4.39"}
 fastapi = "^0.78.0"
 psycopg2 = "^2.9.3"
 pydantic = "^1.9.1"
