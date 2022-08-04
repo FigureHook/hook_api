@@ -32,10 +32,9 @@ def check_company_exist(company_id: str, db: Session = Depends(deps.get_db)) -> 
 def get_companies(
     *,
     db: Session = Depends(deps.get_db),
-    params: PageParamsBase = Depends()
+    page_params: PageParamsBase = Depends()
 ):
-    skip = (params.page - 1) * params.size
-    companies = crud.company.get_multi(db=db, skip=skip, limit=params.size)
+    companies = crud.company.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
     companies_count = crud.company.count(db=db)
     companies_out = [
         CompanyInDB.from_orm(company)
@@ -45,7 +44,7 @@ def get_companies(
     return Page.create(
         results=companies_out,
         total_results=companies_count,
-        params=params
+        params=page_params
     )
 
 

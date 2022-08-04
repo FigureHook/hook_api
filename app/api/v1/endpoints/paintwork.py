@@ -29,10 +29,9 @@ def check_paintwork_exist(paintwork_id: int, db: Session = Depends(deps.get_db))
 def get_paintworks(
     *,
     db: Session = Depends(deps.get_db),
-    params: PageParamsBase = Depends()
+    page_params: PageParamsBase = Depends()
 ):
-    skip = (params.page - 1) * params.size
-    workers = crud.paintwork.get_multi(db=db, skip=skip, limit=params.size)
+    workers = crud.paintwork.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
     workers_count = crud.paintwork.count(db=db)
     workers_out = [
         WorkerInDB.from_orm(worker)
@@ -42,7 +41,7 @@ def get_paintworks(
     return Page.create(
         results=workers_out,
         total_results=workers_count,
-        params=params
+        params=page_params
     )
 
 

@@ -29,10 +29,9 @@ def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -
 def get_sculptors(
     *,
     db: Session = Depends(deps.get_db),
-    params: PageParamsBase = Depends()
+    page_params: PageParamsBase = Depends()
 ):
-    skip = (params.page - 1) * params.size
-    workers = crud.sculptor.get_multi(db=db, skip=skip, limit=params.size)
+    workers = crud.sculptor.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
     workers_count = crud.sculptor.count(db=db)
     workers_out = [
         WorkerInDB.from_orm(worker)
@@ -42,7 +41,7 @@ def get_sculptors(
     return Page.create(
         results=workers_out,
         total_results=workers_count,
-        params=params
+        params=page_params
     )
 
 

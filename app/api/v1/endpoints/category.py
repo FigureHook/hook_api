@@ -29,10 +29,9 @@ def check_category_exist(category_id: int, db: Session = Depends(deps.get_db)) -
 def get_categories(
     *,
     db: Session = Depends(deps.get_db),
-    params: PageParamsBase = Depends()
+    page_params: PageParamsBase = Depends()
 ):
-    skip = (params.page - 1) * params.size
-    categories = crud.category.get_multi(db=db, skip=skip, limit=params.size)
+    categories = crud.category.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
     categories_count = crud.category.count(db=db)
     categories_out = [
         CategoryInDB.from_orm(category)
@@ -42,7 +41,7 @@ def get_categories(
     return Page.create(
         results=categories_out,
         total_results=categories_count,
-        params=params
+        params=page_params
     )
 
 

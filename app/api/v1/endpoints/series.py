@@ -34,10 +34,9 @@ def check_series_exist(series_id: str, db: Session = Depends(deps.get_db)) -> Se
 def get_series_multi(
     *,
     db: Session = Depends(deps.get_db),
-    params:  PageParamsBase = Depends()
+    page_params:  PageParamsBase = Depends()
 ):
-    skip = (params.page - 1) * params.size
-    series_list = crud.series.get_multi(db=db, skip=skip, limit=params.size)
+    series_list = crud.series.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
     series_count = crud.series.count(db=db)
     series_out = [
         SeriesInDB.from_orm(series)
@@ -47,7 +46,7 @@ def get_series_multi(
     return Page.create(
         results=series_out,
         total_results=series_count,
-        params=params
+        params=page_params
     )
 
 
