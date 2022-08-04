@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, Optional
 
 from app import crud
 from app.api import deps
@@ -14,6 +14,7 @@ from app.schemas.release_info import (ProductReleaseInfoCreate,
 from app.schemas.series import SeriesInDB
 from app.schemas.worker import WorkerInDB
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -38,14 +39,22 @@ def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> 
 def get_products(
     *,
     db: Session = Depends(deps.get_db),
-    params: PageParamsBase = Depends()
+    page_params: PageParamsBase = Depends(),
+    source_url: Optional[str] = None
 ):
-    skip = (params.page - 1) * params.size
-    products = crud.product.get_multi(
-        db=db,
-        skip=skip,
-        limit=params.size
-    )
+    if source_url:
+        stmt = select(Product).filter_by(
+            url=source_url
+        ).limit(page_params.size).offset(page_params.skip)
+
+        products = db.scalars(stmt).unique().all()
+    else:
+        products = crud.product.get_multi(
+            db=db,
+            skip=page_params.skip,
+            limit=page_params.size
+        )
+
     products_count = crud.product.count(db=db)
     products_out = [
         map_product_model_to_schema(product)
@@ -55,7 +64,7 @@ def get_products(
     return Page.create(
         products_out,
         total_results=products_count,
-        params=params
+        params=page_params
     )
 
 

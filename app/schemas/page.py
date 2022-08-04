@@ -11,7 +11,9 @@ T = TypeVar('T')
 
 
 class PageParamsBase(Params):
-    pass
+    @property
+    def skip(self):
+        return (self.page - 1) * self.size
 
 
 class PageInfo(BaseModel):

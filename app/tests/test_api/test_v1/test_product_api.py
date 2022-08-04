@@ -8,7 +8,7 @@ from app.tests.utils.release_info import \
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from .util import v1_endpoint, assert_pageination_content
+from .util import assert_pageination_content, v1_endpoint
 
 rich_content = {
     "series": {
@@ -74,6 +74,27 @@ def test_get_products(client: TestClient, db: Session):
         total_results=products_count,
         results_size=results_size
     )
+
+
+def test_get_products_by_url(db: Session, client: TestClient):
+    products_count = random.randint(0, 20)
+    db_products = [
+        create_random_product(db)
+        for _ in range(products_count)
+    ]
+    choiced_product = random.choice(db_products)
+    response = client.get(
+        url=v1_endpoint("/products"),
+        params={
+            'source_url': choiced_product.url
+        }
+    )
+    assert response.status_code == 200
+
+    content = response.json()
+    results = content.get('results')
+    assert len(results) == 1, 'It should be at least one result.'
+    assert results[0].get('url') == choiced_product.url
 
 
 def test_create_product(client: TestClient, db: Session):
