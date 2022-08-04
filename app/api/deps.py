@@ -42,8 +42,6 @@ async def verify_token(api_token: str = Security(api_token), db: Session = Depen
             db.refresh(app)
             return
 
-        logger.info(f"{api_token} is not a valid token.")
-
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect token."
