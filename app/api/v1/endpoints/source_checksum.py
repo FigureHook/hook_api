@@ -23,7 +23,7 @@ def check_source_checksum_exist(
     source_checksum = crud.source_checksum.get(db=db, id=source_checksum_id)
     if not source_checksum:
         logger.info(
-            f"Specified source-checksum didn't exist. (id: {source_checksum_id})")
+            f"Specified source-checksum didn't exist. (id={source_checksum_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Specified source-checksum(id: {source_checksum_id}) didn't exist."
