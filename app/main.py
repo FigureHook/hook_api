@@ -3,12 +3,12 @@ import logging
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
+from sqlalchemy.exc import SQLAlchemyError
 
 from .api.v1.api import api_router
 from .core.config import settings
 from .core.logging import configure_logging
-
-logger = logging.getLogger(__name__)
+from .handlers.exception_handlers import sqlalchemy_exception_handler
 
 app = FastAPI(
     title="FigureHook",
@@ -20,8 +20,11 @@ app = FastAPI(
 app.add_middleware(GZipMiddleware)
 app.add_middleware(CorrelationIdMiddleware)
 
+app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
+
 app.include_router(api_router, prefix=settings.API_V1_ENDPOINT)
 
+
 if settings.ENVIRONMENT == 'development':
-    logger = logging.getLogger('uvicorn')
-    logger.info(f"Token: {settings.API_TOKEN}")
+    console_logger = logging.getLogger('uvicorn')
+    console_logger.info(f"Token: {settings.API_TOKEN}")
