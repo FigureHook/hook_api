@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Union, cast
+from typing import Optional, Union, cast
 
 from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
                         SmallInteger, String)
@@ -42,7 +42,7 @@ class ProductOfficialImage(PkModel):
 class ProductReleaseInfo(PkModelWithTimestamps):
     __tablename__ = "product_release_info"
 
-    price = Column(Integer)
+    price = cast(int, Column(Integer))
     tax_including = cast(bool, Column(Boolean))
     initial_release_date = Column(Date, nullable=True)
     adjusted_release_date = Column(Date)
@@ -53,7 +53,7 @@ class ProductReleaseInfo(PkModelWithTimestamps):
 
     @property
     def release_date(self):
-        return self.adjusted_release_date or self.initial_release_date
+        return cast(Optional[date], self.adjusted_release_date or self.initial_release_date)
 
     def adjust_release_date_to(self, delay_date: Union[date, datetime, None]):
         if not delay_date:

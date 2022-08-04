@@ -3,12 +3,14 @@ from typing import Any, Optional
 
 from app import crud
 from app.api import deps
-from app.models import Product
+from app.models import (Company, Product, ProductOfficialImage,
+                        ProductReleaseInfo, Series)
 from app.schemas.category import CategoryInDB
 from app.schemas.company import CompanyInDB
 from app.schemas.page import Page, PageParamsBase
 from app.schemas.product import (ProductCreate, ProductInDBRich,
                                  ProductOfficialImageInDB, ProductUpdate)
+from app.schemas.release_feed import ReleaseFeed
 from app.schemas.release_info import (ProductReleaseInfoCreate,
                                       ProductReleaseInfoInDB)
 from app.schemas.series import SeriesInDB
@@ -16,6 +18,7 @@ from app.schemas.worker import WorkerInDB
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import and_
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -24,10 +27,10 @@ logger = logging.getLogger(__name__)
 def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> Product:
     product = crud.product.get(db=db, id=product_id)
     if not product:
-        logger.info(f"Specified product didn't exist. (id={product_id})")
+        logger.info(f"Specified product doesn't exist. (id={product_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Specified product didn't exist. (id={product_id})"
+            detail=f"Specified product doesn't exist. (id={product_id})"
         )
     return product
 
@@ -157,6 +160,63 @@ def get_product_release_infos(
         ProductReleaseInfoInDB.from_orm(info)
         for info in release_infos
     ]
+
+
+@router.get(
+    '/{product_id}/release-infos/{release_info_id}/feed',
+    response_model=ReleaseFeed)
+def get_reelase_info_feed(
+    *,
+    db: Session = Depends(deps.get_db),
+    product_id: int,
+    release_info_id: int
+):
+    # FIXME: need to check the generated SQL query is efficient or not.
+    stmt = select(
+        ProductReleaseInfo
+    ).filter_by(
+        product_id=product_id,
+        id=release_info_id
+    ).join(
+        Product
+    ).join(
+        Company,
+        Company.id == Product.manufacturer_id
+    ).join(
+        Series,
+        Series.id == Product.series_id,
+        isouter=True
+    ).join(
+        ProductOfficialImage,
+        and_(Product.id == ProductOfficialImage.product_id,
+             ProductOfficialImage.order == 1),
+    )
+    release: Optional[ProductReleaseInfo] = db.scalars(stmt).first()
+    if not release:
+        logger.info(
+            f"Specified release-info doesn't exist. (id={release_info_id}, product_id={product_id})")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Specified release-info doesn't exist. (id={release_info_id}, product_id={product_id})")
+
+    logger.info(f"Fetched feed of release-info. (id={release_info_id})")
+    return ReleaseFeed(
+        product_id=product_id,
+        release_info_id=release_info_id,
+        name=release.product.name,
+        source_url=release.product.url,
+        is_nsfw=release.product.adult,
+        is_rerelease=release.product.rerelease,
+        series=release.product.series.name,
+        manufacturer=release.product.manufacturer.name,
+        size=release.product.size,
+        scale=release.product.scale,
+        price=release.price,
+        release_date=release.release_date,
+        image_url=release.product.official_images[0].url,
+        og_image=release.product.og_image,
+        manufacturer_logo=None
+    )
 
 
 @router.get(

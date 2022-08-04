@@ -307,3 +307,27 @@ def test_get_product_images(db: Session, client: TestClient):
     response = client.get(v1_endpoint(
         f"/products/12351235/official-images"))
     assert response.status_code == 404
+
+
+def test_get_product_release_info_feed(db: Session, client: TestClient):
+    release_info_count = random.randint(1, 5)
+
+    product = create_random_product(db)
+    release_infos = [
+        create_random_release_info_own_by_product(db, product_id=product.id)
+        for _ in range(release_info_count)
+    ]
+    choiced_release_info = random.choice(release_infos)
+    path = v1_endpoint(
+        f"/products/{product.id}/release-infos/{choiced_release_info.id}/feed")
+    response = client.get(path)
+    assert response.status_code == 200
+
+    content = response.json()
+    assert content.get('product_id') == product.id
+    assert content.get('release_info_id') == choiced_release_info.id
+
+    path = v1_endpoint(
+        f"/products/{product.id}/release-infos/45654/feed")
+    response = client.get(path)
+    assert response.status_code == 404
