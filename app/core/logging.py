@@ -14,10 +14,10 @@ def configure_logging() -> None:
                     'uuid_length': 8 if not settings.ENVIRONMENT == 'development' else 32,
                 },
                 'application_uuid': {
-                    '()': 'app.utils.log_filters.AccessApplicationFilter',
+                    '()': 'app.utils.logging.log_filters.AccessApplicationFilter',
                 },
                 'application_name': {
-                    '()': 'app.utils.log_filters.AccessApplicationFilter',
+                    '()': 'app.utils.logging.log_filters.AccessApplicationFilter',
                 }
             },
             'formatters': {

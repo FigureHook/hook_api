@@ -4,7 +4,7 @@ from typing import Generator
 from app import crud
 from app.core.config import settings
 from app.db.session import pgsql_db
-from app.utils.log_filters import application_name, application_uuid
+from app.utils.logging.log_filters import application_name, application_uuid
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
