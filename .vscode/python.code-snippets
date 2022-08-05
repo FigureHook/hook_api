@@ -1,0 +1,20 @@
+{
+    "Test API client": {
+		"prefix": "test-client",
+		"body": [
+            "def test_${1:test_name}(db: Session, client: TestClient):",
+            "\t${0:raise NotImplementedError}"
+        ],
+		"description": "Test snippet for api-client",
+        "scope": "python"
+	},
+    "Import client-test module": {
+        "prefix": "test-client-import",
+        "body": [
+            "from fastapi.testclient import TestClient",
+            "from sqlalchemy.orm import Session"
+        ],
+        "description": "Import necessary module for testing client.",
+        "scope": "python"
+    }
+}
