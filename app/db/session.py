@@ -1,12 +1,20 @@
-from contextlib import contextmanager
+import logging
 
 from app.core.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+logging.getLogger('sqlalchemy.engine').setLevel(
+    logging.WARNING if settings.ENVIRONMENT == 'production' else logging.INFO
+)
+
+
 engine = create_engine(
     str(settings.SQLALCHEMY_DATABASE_URI),
-    pool_pre_ping=True, echo=False, future=True)
+    pool_pre_ping=True,
+    echo=settings.ENVIRONMENT != 'production',
+    future=True
+)
 
 
 class PostgreSQLDB:

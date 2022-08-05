@@ -39,6 +39,10 @@ def configure_logging() -> None:
                     'class': 'logging.Formatter',
                     'format': '%(asctime)s - %(levelname)s - %(application_name)s [%(application_uuid)s] - %(correlation_id)s - <%(name)s:%(lineno)d> %(message)s',
                 },
+                'orm_echo': {
+                    'calss': 'logging.Fromatter',
+                    'format': '%(asctime)s - %(levelname)s - %(application_name)s [%(application_uuid)s] - %(correlation_id)s - %(message)s',
+                }
             },
             'handlers': {
                 'uvicorn_access_console': {
@@ -79,12 +83,22 @@ def configure_logging() -> None:
                     'class': 'logging.StreamHandler',
                     'filters': ['correlation_id'],
                     'stream': "ext://sys.stdout"
+                },
+                'orm': {
+                    '()': 'logging.handlers.TimedRotatingFileHandler',
+                    'filename': '/workspace/app/logs/orm/echo.log',
+                    'when': 'D',
+                    'encoding': 'utf-8',
+                    'utc': True,
+                    'filters': ['correlation_id', 'application_uuid', 'application_name'],
+                    'formatter': 'orm_echo'
                 }
             },
             # Loggers can be specified to set the log-level to log, and which handlers to use
             'loggers': {
                 # project logger
                 "app": {"handlers": ["app_default"], "level": "INFO"},
+                "sqlalchemy.engine": {"handlers": ["orm"]},
                 "uvicorn.error": {"handlers": ["uvicorn_error_file"], "level": "INFO"},
                 "uvicorn.access": {"handlers": ["uvicorn_access_console", "uvicorn_access_file"], "level": "INFO", "propagate": False},
             },
