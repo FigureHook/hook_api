@@ -1,7 +1,7 @@
 from app.api import deps
 from fastapi import APIRouter, Depends, Response
 
-from .endpoints import (application, category, company, paintwork, products,
+from .endpoints import (application, category, company, paintwork, products, release_tickets,
                         sculptor, series, source_checksum, webhooks)
 
 api_router = APIRouter(dependencies=[Depends(deps.verify_token)])
@@ -24,3 +24,6 @@ api_router.include_router(
     source_checksum.router, prefix='/source-checksums', tags=['source-checksum'])
 api_router.include_router(
     application.router, prefix='/applications', tags=['application'])
+api_router.include_router(
+    release_tickets.router, prefix='/release-tickets', tags=['feed']
+)
