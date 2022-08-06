@@ -29,7 +29,7 @@ def check_webhook_exist(channel_id: str, db: Session = Depends(deps.get_db)) -> 
     "/",
     response_model=list[DecryptedWebhookInDB],
     response_model_exclude_none=True)
-def get_webhooks(
+async def get_webhooks(
     *,
     db: Session = Depends(deps.get_db)
 ):
@@ -44,7 +44,7 @@ def get_webhooks(
 @router.get(
     "/{channel_id}",
     response_model=DecryptedWebhookInDB)
-def get_webhook(
+async def get_webhook(
     *,
     webhook: Webhook = Depends(check_webhook_exist),
     channel_id: str
@@ -56,7 +56,7 @@ def get_webhook(
 @router.put(
     "/{channel_id}",
     response_model=DecryptedWebhookInDB)
-def update_webhook(
+async def update_webhook(
     *,
     response: Response,
     db: Session = Depends(deps.get_db),
@@ -88,7 +88,7 @@ def update_webhook(
 
 @router.delete(
     "/{channel_id}")
-def delete_webhook(
+async def delete_webhook(
     *,
     db: Session = Depends(deps.get_db),
     webhook: Webhook = Depends(check_webhook_exist),
@@ -102,7 +102,7 @@ def delete_webhook(
 @router.patch(
     "/{channel_id}",
     response_model=DecryptedWebhookInDB)
-def patch_webhook(
+async def patch_webhook(
     *,
     db: Session = Depends(deps.get_db),
     webhook: Webhook = Depends(check_webhook_exist),

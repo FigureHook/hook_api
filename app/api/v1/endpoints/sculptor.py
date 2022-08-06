@@ -26,7 +26,7 @@ def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -
 
 
 @router.get('/', response_model=Page[WorkerInDB])
-def get_sculptors(
+async def get_sculptors(
     *,
     db: Session = Depends(deps.get_db),
     page_params: PageParamsBase = Depends()
@@ -46,7 +46,7 @@ def get_sculptors(
 
 
 @router.post('/', response_model=WorkerInDB, status_code=status.HTTP_201_CREATED)
-def create_sculptor(
+async def create_sculptor(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -68,7 +68,7 @@ def create_sculptor(
 
 
 @router.get('/{sculptor_id}', response_model=WorkerInDB)
-def get_sculptor(
+async def get_sculptor(
     *,
     sculptor: Sculptor = Depends(check_sculptor_exist)
 ):
@@ -77,7 +77,7 @@ def get_sculptor(
 
 
 @router.put('/{sculptor_id}', response_model=WorkerInDB)
-def update_sculptor(
+async def update_sculptor(
     *,
     db: Session = Depends(deps.get_db),
     sculptor: Sculptor = Depends(check_sculptor_exist),
@@ -90,7 +90,7 @@ def update_sculptor(
 
 
 @router.delete('/{sculptor_id}')
-def delete_sculptor(
+async def delete_sculptor(
     *,
     db: Session = Depends(deps.get_db),
     sculptor: Sculptor = Depends(check_sculptor_exist),

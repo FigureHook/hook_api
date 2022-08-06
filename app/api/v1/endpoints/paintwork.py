@@ -26,7 +26,7 @@ def check_paintwork_exist(paintwork_id: int, db: Session = Depends(deps.get_db))
 
 
 @router.get('/', response_model=Page[WorkerInDB])
-def get_paintworks(
+async def get_paintworks(
     *,
     db: Session = Depends(deps.get_db),
     page_params: PageParamsBase = Depends()
@@ -46,7 +46,7 @@ def get_paintworks(
 
 
 @router.post('/', response_model=WorkerInDB, status_code=status.HTTP_201_CREATED)
-def create_paintwork(
+async def create_paintwork(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -68,7 +68,7 @@ def create_paintwork(
 
 
 @router.get('/{paintwork_id}', response_model=WorkerInDB)
-def get_paintwork(
+async def get_paintwork(
     *,
     paintwork: Paintwork = Depends(check_paintwork_exist)
 ):
@@ -77,7 +77,7 @@ def get_paintwork(
 
 
 @router.put('/{paintwork_id}', response_model=WorkerInDB)
-def update_paintwork(
+async def update_paintwork(
     *,
     db: Session = Depends(deps.get_db),
     paintwork: Paintwork = Depends(check_paintwork_exist),
@@ -90,7 +90,7 @@ def update_paintwork(
 
 
 @router.delete('/{paintwork_id}')
-def delete_paintwork(
+async def delete_paintwork(
     *,
     db: Session = Depends(deps.get_db),
     paintwork: Paintwork = Depends(check_paintwork_exist),

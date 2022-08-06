@@ -39,7 +39,7 @@ def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> 
     '/',
     response_model=Page[ProductInDBRich]
 )
-def get_products(
+async def get_products(
     *,
     db: Session = Depends(deps.get_db),
     page_params: PageParamsBase = Depends(),
@@ -75,7 +75,7 @@ def get_products(
     '/',
     response_model=ProductInDBRich,
     status_code=status.HTTP_201_CREATED)
-def create_product(
+async def create_product(
     *,
     db: Session = Depends(deps.get_db),
     product_in: ProductCreate,
@@ -87,7 +87,7 @@ def create_product(
 
 
 @router.get('/{product_id}', response_model=ProductInDBRich)
-def get_product(
+async def get_product(
     *,
     product: Product = Depends(check_product_exist),
     product_id: int,
@@ -98,7 +98,7 @@ def get_product(
 
 
 @router.put('/{product_id}', response_model=ProductInDBRich)
-def update_product(
+async def update_product(
     *,
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
@@ -114,7 +114,7 @@ def update_product(
 
 @router.delete(
     '/{product_id}')
-def deleted_product(
+async def deleted_product(
     *,
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
@@ -129,7 +129,7 @@ def deleted_product(
     '/{product_id}/release-infos',
     response_model=ProductReleaseInfoInDB,
     status_code=status.HTTP_201_CREATED)
-def create_product_release_info(
+async def create_product_release_info(
     *,
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
@@ -146,7 +146,7 @@ def create_product_release_info(
 @router.get(
     '/{product_id}/release-infos',
     response_model=list[ProductReleaseInfoInDB])
-def get_product_release_infos(
+async def get_product_release_infos(
     *,
     db: Session = Depends(deps.get_db),
     product: Product = Depends(check_product_exist),
@@ -165,7 +165,7 @@ def get_product_release_infos(
 @router.get(
     '/{product_id}/release-infos/{release_info_id}/feed',
     response_model=ReleaseFeed)
-def get_reelase_info_feed(
+async def get_reelase_info_feed(
     *,
     db: Session = Depends(deps.get_db),
     product_id: int,
@@ -214,7 +214,6 @@ def get_reelase_info_feed(
         price=release.price,
         release_date=release.release_date,
         image_url=release.product.official_images[0].url,
-        og_image=release.product.og_image,
         manufacturer_logo=None
     )
 

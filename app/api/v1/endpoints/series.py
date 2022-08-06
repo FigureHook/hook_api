@@ -31,7 +31,7 @@ def check_series_exist(series_id: str, db: Session = Depends(deps.get_db)) -> Se
     '/',
     response_model=Page[SeriesInDB]
 )
-def get_series_multi(
+async def get_series_multi(
     *,
     db: Session = Depends(deps.get_db),
     page_params:  PageParamsBase = Depends()
@@ -55,7 +55,7 @@ def get_series_multi(
     response_model=SeriesInDB,
     status_code=status.HTTP_201_CREATED,
 )
-def create_series(
+async def create_series(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -77,7 +77,7 @@ def create_series(
 
 
 @router.get('/{series_id}', response_model=SeriesInDB)
-def get_series(
+async def get_series(
     *,
     series: Series = Depends(check_series_exist)
 ):
@@ -86,7 +86,7 @@ def get_series(
 
 
 @router.put('/{series_id}', response_model=SeriesInDB)
-def udpate_series(
+async def udpate_series(
     *,
     db: Session = Depends(deps.get_db),
     series: Series = Depends(check_series_exist),
@@ -98,7 +98,7 @@ def udpate_series(
 
 
 @router.delete('/{series_id}')
-def delete_series(
+async def delete_series(
     *,
     db: Session = Depends(deps.get_db),
     series: Series = Depends(check_series_exist),

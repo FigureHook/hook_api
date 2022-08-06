@@ -25,7 +25,7 @@ def check_application_exist(application_id: uuid.UUID, db: Session = Depends(dep
 
 
 @router.get('/', response_model=list[ApplicationInDB])
-def get_applications(
+async def get_applications(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -40,7 +40,7 @@ def get_applications(
 
 
 @router.post('/', response_model=ApplicationInDB, status_code=status.HTTP_201_CREATED)
-def create_applications(
+async def create_applications(
     *,
     db: Session = Depends(deps.get_db),
     application_in: ApplicationCreate
@@ -51,13 +51,13 @@ def create_applications(
 
 
 @router.get('/{application_id}', response_model=ApplicationInDB)
-def get_application(*, application: Application = Depends(check_application_exist)):
+async def get_application(*, application: Application = Depends(check_application_exist)):
     logger.info(f"Fetched the application. (id={application.id})")
     return ApplicationInDB.from_orm(application)
 
 
 @router.delete('/{application_id}')
-def delete_application(
+async def delete_application(
     *,
     db: Session = Depends(deps.get_db),
     application: Application = Depends(check_application_exist)
@@ -68,7 +68,7 @@ def delete_application(
 
 
 @router.post('/{application_id}/refresh', response_model=ApplicationInDB)
-def refresh_application(
+async def refresh_application(
     *,
     db: Session = Depends(deps.get_db),
     application: Application = Depends(check_application_exist)

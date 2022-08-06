@@ -26,7 +26,7 @@ def check_category_exist(category_id: int, db: Session = Depends(deps.get_db)) -
 
 
 @router.get('/', response_model=Page[CategoryInDB])
-def get_categories(
+async def get_categories(
     *,
     db: Session = Depends(deps.get_db),
     page_params: PageParamsBase = Depends()
@@ -50,7 +50,7 @@ def get_categories(
     response_model=CategoryInDB,
     status_code=status.HTTP_201_CREATED
 )
-def create_category(
+async def create_category(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -75,7 +75,7 @@ def create_category(
     '/{category_id}',
     response_model=CategoryInDB
 )
-def get_category(
+async def get_category(
     *,
     db: Session = Depends(deps.get_db),
     category: Category = Depends(check_category_exist)
@@ -88,7 +88,7 @@ def get_category(
     '/{category_id}',
     response_model=CategoryInDB
 )
-def update_category(
+async def update_category(
     *,
     db: Session = Depends(deps.get_db),
     category: Category = Depends(check_category_exist),
@@ -102,7 +102,7 @@ def update_category(
 @router.delete(
     '/{category_id}'
 )
-def delete_category(
+async def delete_category(
     *,
     db: Session = Depends(deps.get_db),
     category: Category = Depends(check_category_exist)

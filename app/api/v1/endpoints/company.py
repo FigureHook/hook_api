@@ -29,7 +29,7 @@ def check_company_exist(company_id: str, db: Session = Depends(deps.get_db)) -> 
     '/',
     response_model=Page[CompanyInDB]
 )
-def get_companies(
+async def get_companies(
     *,
     db: Session = Depends(deps.get_db),
     page_params: PageParamsBase = Depends()
@@ -53,7 +53,7 @@ def get_companies(
     response_model=CompanyInDB,
     status_code=status.HTTP_201_CREATED,
 )
-def create_company(
+async def create_company(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -75,7 +75,7 @@ def create_company(
 
 
 @router.get('/{company_id}', response_model=CompanyInDB)
-def get_company(
+async def get_company(
     *,
     company: Company = Depends(check_company_exist)
 ):
@@ -84,7 +84,7 @@ def get_company(
 
 
 @router.put('/{company_id}', response_model=CompanyInDB)
-def udpate_company(
+async def udpate_company(
     *,
     db: Session = Depends(deps.get_db),
     company: Company = Depends(check_company_exist),
@@ -96,7 +96,7 @@ def udpate_company(
 
 
 @router.delete('/{company_id}')
-def delete_company(
+async def delete_company(
     *,
     db: Session = Depends(deps.get_db),
     company: Company = Depends(check_company_exist),

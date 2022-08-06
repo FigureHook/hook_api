@@ -32,7 +32,7 @@ def check_source_checksum_exist(
 
 
 @router.get('/', response_model=list[SourceChecksumInDB])
-def get_source_checksums(
+async def get_source_checksums(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -55,7 +55,7 @@ def get_source_checksums(
 
 
 @router.post('/', response_model=SourceChecksumInDB, status_code=status.HTTP_201_CREATED)
-def create_source_checksum(
+async def create_source_checksum(
     *,
     request: Request,
     db: Session = Depends(deps.get_db),
@@ -83,7 +83,7 @@ def create_source_checksum(
 
 
 @router.get('/{source_checksum_id}', response_model=SourceChecksumInDB)
-def get_source_checksum(
+async def get_source_checksum(
     *,
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist)
 ):
@@ -92,7 +92,7 @@ def get_source_checksum(
 
 
 @router.patch('/{source_checksum_id}', response_model=SourceChecksumInDB)
-def patch_source_checksum(
+async def patch_source_checksum(
     *,
     db: Session = Depends(deps.get_db),
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist),
@@ -106,7 +106,7 @@ def patch_source_checksum(
 
 @router.delete(
     '/{source_checksum_id}')
-def delete_source_checksum(
+async def delete_source_checksum(
     *,
     db: Session = Depends(deps.get_db),
     source_checksum: SourceChecksum = Depends(check_source_checksum_exist)
