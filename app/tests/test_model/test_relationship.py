@@ -1,9 +1,13 @@
+import random
 from datetime import date
 
 import pytest
 from app.models import (Category, Company, Paintwork, Product,
-                        ProductOfficialImage, ProductReleaseInfo, Sculptor,
-                        Series)
+                        ProductOfficialImage, ProductReleaseInfo,
+                        ReleaseTicket, Sculptor, Series)
+from app.tests.utils.product import create_random_product
+from app.tests.utils.release_info import \
+    create_random_release_info_own_by_product
 from sqlalchemy.orm import Session
 
 
@@ -215,7 +219,7 @@ class TestRelationShip:
         assert f_p
         assert f_p.sculptors
 
-    def test_delete_sculptor_and_association_but_not_effect_product(self, db: Session):
+    def test_delete_sculptor_and_association_but_not_affect_product(self, db: Session):
         from app.models.relation_table import (product_paintwork_table,
                                                product_sculptor_table)
         p = Product(name="foo")
@@ -238,3 +242,35 @@ class TestRelationShip:
         f_p = db.query(Product).first()
         assert f_p
         assert not f_p.sculptors
+
+
+@pytest.mark.usefixtures("db")
+class TestReleaseFeedTicketRealtionShip:
+
+    def test_delete_ticket_not_affect_release_info(self, db: Session):
+        product = create_random_product(db)
+        release_infos = [
+            create_random_release_info_own_by_product(
+                db, product_id=product.id)
+            for _ in range(random.randint(1, 3))
+        ]
+        ticket = ReleaseTicket(release_infos=release_infos)
+        db.add(ticket)
+        db.commit()
+        assert len(ticket.release_infos) == len(release_infos)
+
+        db.delete(ticket)
+        assert len(product.release_infos) == len(release_infos)
+
+    def test_delete_release_info_not_affect_ticket(self, db: Session):
+        product = create_random_product(db)
+        release_infos = [
+            create_random_release_info_own_by_product(
+                db, product_id=product.id)
+            for _ in range(random.randint(1, 3))
+        ]
+        ticket = ReleaseTicket(release_infos=release_infos)
+        db.add(ticket)
+        db.commit()
+        db.delete(random.choice(release_infos))
+        assert len(ticket.release_infos) == len(product.release_infos)

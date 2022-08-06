@@ -5,6 +5,7 @@ from .application import *
 from .category import *
 from .company import *
 from .product import *
+from .release_ticket import *
 from .series import *
 from .source_checksum import *
 from .task import *

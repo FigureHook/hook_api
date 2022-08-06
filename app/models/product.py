@@ -4,7 +4,7 @@ from typing import Optional, Union, cast
 from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
                         SmallInteger, String)
 from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, relationship, Mapped
 
 from ..db.model_base import PkModel, PkModelWithTimestamps
 from .category import Category
@@ -23,7 +23,7 @@ __all__ = [
 class ProductOfficialImage(PkModel):
     __tablename__ = "product_official_image"
 
-    url = Column(String)
+    url: Mapped[str] = Column(String)  # type: ignore
     order = Column(Integer)
     product_id = Column(Integer, ForeignKey(
         "product.id", ondelete="CASCADE"))
@@ -44,12 +44,14 @@ class ProductReleaseInfo(PkModelWithTimestamps):
 
     price = cast(int, Column(Integer))
     tax_including = cast(bool, Column(Boolean))
-    initial_release_date = Column(Date, nullable=True)
-    adjusted_release_date = Column(Date)
+    initial_release_date: Mapped[Optional[date]] = Column(Date, nullable=True)  # type: ignore
+    adjusted_release_date: Mapped[Optional[date]] = Column(Date)  # type: ignore
     announced_at = Column(Date)
     shipped_at = Column(Date)
     product_id = Column(Integer, ForeignKey(
         "product.id", ondelete="CASCADE"), nullable=False)
+    product = cast('Product', relationship(
+        'Product', back_populates='release_infos'))
 
     @property
     def release_date(self):
@@ -146,7 +148,7 @@ class Product(PkModelWithTimestamps):
     # ---relationships field---
     release_infos = cast(list[ProductReleaseInfo], relationship(
         ProductReleaseInfo,
-        backref="product",
+        back_populates="product",
         order_by="nulls_first(asc(ProductReleaseInfo.initial_release_date))",
         cascade="all, delete",
         passive_deletes=True,
