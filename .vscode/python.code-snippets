@@ -16,5 +16,15 @@
         ],
         "description": "Import necessary module for testing client.",
         "scope": "python"
+    },
+    "Fast basic router": {
+        "prefix": "fast-router",
+        "body": [
+            "import logging",
+            "from fastapi import APIRouter, Depends, HTTPException, Response, status",
+            "from sqlalchemy.orm import Session",
+            "\nrouter = APIRouter()",
+            "logger = logging.getLogger(__name__)"
+        ]
     }
 }
