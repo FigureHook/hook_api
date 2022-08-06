@@ -4,5 +4,6 @@ data/
 **/.mypy_cache/
 **/.pytest_cache/
 **/__pycache__
-**/logs
+**.log
+**.log.**
 .coverage
