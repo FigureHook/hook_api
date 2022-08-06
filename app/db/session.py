@@ -5,14 +5,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 logging.getLogger('sqlalchemy.engine').setLevel(
-    logging.WARNING if settings.ENVIRONMENT == 'production' else logging.INFO
+    logging.INFO if settings.ENVIRONMENT == 'development' else logging.WARNING
 )
 
 
 engine = create_engine(
     str(settings.SQLALCHEMY_DATABASE_URI),
     pool_pre_ping=True,
-    echo=settings.ENVIRONMENT != 'production',
+    echo=settings.ENVIRONMENT == 'development',
     future=True
 )
 
