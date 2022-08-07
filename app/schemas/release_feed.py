@@ -8,8 +8,12 @@ class ReleaseTicketCreate(BaseModel):
     from_: datetime = Field(..., alias='from')
 
 
-class ReleaseTicketOut(BaseModel):
-    release_ids: list[int]
+class ReleaseTicketInDB(BaseModel):
+    id: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
 
 
 class ReleaseFeed(BaseModel):

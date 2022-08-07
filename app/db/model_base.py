@@ -38,7 +38,7 @@ class UUIDPkModel(Model, TimestampsMixin):
     """
     __abstract__ = True
 
-    id: Mapped[UUID] = Column(
+    id: Mapped[uuid.UUID] = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)  # type: ignore
 
 

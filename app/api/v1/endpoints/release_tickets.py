@@ -5,10 +5,11 @@ from app.api import deps
 from app.helpers.orm_helper import ReleaseFeedOrmHelper
 from app.models import ReleaseTicket
 from app.models.product import ProductReleaseInfo
+from app.schemas.page import Page, PageParamsBase
 from app.schemas.release_feed import (ReleaseFeed, ReleaseTicketCreate,
-                                      ReleaseTicketOut)
+                                      ReleaseTicketInDB)
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -41,9 +42,37 @@ def check_ticket_exist(
     )
 
 
+@router.get(
+    '/',
+    response_model=Page[ReleaseTicketInDB]
+)
+async def get_multi_release_tickets(
+    *,
+    db: Session = Depends(deps.get_db),
+    page_params: PageParamsBase = Depends()
+):
+    stmt = select(ReleaseTicket).offset(
+        page_params.skip).limit(page_params.size)
+    tickets = db.scalars(stmt).unique().all()
+
+    count_stmt = select(func.count(ReleaseTicket.id))
+    tickets_count = db.scalar(count_stmt)
+
+    tickets_out = [
+        ReleaseTicketInDB(id=ticket.id.hex, created_at=ticket.created_at)
+        for ticket in tickets
+    ]
+
+    return Page.create(
+        results=tickets_out,
+        total_results=tickets_count,
+        params=page_params
+    )
+
+
 @router.post(
     '/',
-    response_model=ReleaseTicketOut,
+    response_model=ReleaseTicketInDB,
     status_code=status.HTTP_201_CREATED
 )
 async def create_ticket(
@@ -62,11 +91,9 @@ async def create_ticket(
     db.add(ticket)
     db.commit()
 
-    logger.info(f"Created the release-ticket. (id={ticket.id}, from={ticket_info.from_.isoformat()})")
-    return ReleaseTicketOut(release_ids=[
-        release.id
-        for release in ticket.release_infos
-    ])
+    logger.info(
+        f"Created the release-ticket. (id={ticket.id}, from={ticket_info.from_.isoformat()})")
+    return ReleaseTicketInDB(id=ticket.id.hex, created_at=ticket.created_at)
 
 
 @router.get(

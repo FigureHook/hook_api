@@ -1,3 +1,4 @@
+import math
 import random
 import uuid
 from datetime import datetime
@@ -11,7 +12,7 @@ from app.tests.utils.release_ticket import create_random_release_ticket
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from .util import v1_endpoint
+from .util import assert_pageination_content, v1_endpoint
 
 
 def count_future_release(
@@ -31,22 +32,47 @@ def count_future_release(
     return count
 
 
+def test_get_multi_release_tickets(db: Session, client: TestClient):
+    tickets = [
+        create_random_release_ticket(db)
+        for _ in range(random.randint(1, 10))
+    ]
+    tickets_count = len(tickets)
+    results_size = random.randint(1, 20)
+    expected_pages = math.ceil(
+        tickets_count / results_size
+    ) if tickets_count else 1
+    expected_page = random.randint(1, expected_pages)
+    response = client.get(
+        url=v1_endpoint("/release-tickets"),
+        params={
+            'page': expected_page,
+            'size': results_size
+        }
+    )
+    assert response.status_code == 200
+
+    content = response.json()
+    assert_pageination_content(
+        content=content,
+        expected_page=expected_page,
+        expected_pages=expected_pages,
+        total_results=tickets_count,
+        results_size=results_size
+    )
+    for result in content['results']:
+        assert 'id' in result
+        assert 'created_at' in result
+
+
 def test_create_release_ticket(db: Session, client: TestClient):
-    products = [
-        create_random_product(db)
-        for _ in range(random.randint(1, 50))
-    ]
-    release_infos = [
-        create_random_release_info_own_by_product(db, product_id=p.id)
-        for _ in range(random.randint(1, 3))
-        for p in products
-    ]
+    for _ in range(random.randint(1, 50)):
+        product = create_random_product(db)
+        for _ in range(random.randint(1, 3)):
+            create_random_release_info_own_by_product(
+                db, product_id=product.id)
 
     base_datetime = datetime.now()
-    expected_count = count_future_release(
-        release_infos=release_infos,
-        from_=base_datetime
-    )
 
     response = client.post(
         url=v1_endpoint("/release-tickets/"),
@@ -57,8 +83,7 @@ def test_create_release_ticket(db: Session, client: TestClient):
     assert response.status_code == 201
 
     content = response.json()
-    assert 'release_ids' in content
-    assert len(content['release_ids']) == expected_count
+    assert 'id' in content
 
 
 def test_get_release_ticket(db: Session, client: TestClient):
