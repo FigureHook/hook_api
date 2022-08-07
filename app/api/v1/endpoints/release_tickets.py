@@ -75,7 +75,7 @@ async def get_multi_release_tickets(
     response_model=ReleaseTicketInDB,
     status_code=status.HTTP_201_CREATED
 )
-async def create_ticket(
+async def create_release_ticket(
     *,
     db: Session = Depends(deps.get_db),
     ticket_info: ReleaseTicketCreate
@@ -100,7 +100,7 @@ async def create_ticket(
     '/{ticket_id}',
     response_model=list[ReleaseFeed]
 )
-async def get_ticket(
+async def get_release_ticket(
     *,
     ticket: ReleaseTicket = Depends(check_ticket_exist),
     db: Session = Depends(deps.get_db)
@@ -121,7 +121,7 @@ async def get_ticket(
     '/{ticket_id}',
     status_code=204
 )
-async def delete_ticket(
+async def delete_release_ticket(
     *,
     ticket: ReleaseTicket = Depends(check_ticket_exist),
     db: Session = Depends(deps.get_db)

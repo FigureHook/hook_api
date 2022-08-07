@@ -164,7 +164,9 @@ async def get_product_release_infos(
 
 @router.get(
     '/{product_id}/release-infos/{release_info_id}/feed',
-    response_model=ReleaseFeed)
+    response_model=ReleaseFeed,
+    tags=['release-feed']
+    )
 async def get_reelase_info_feed(
     *,
     db: Session = Depends(deps.get_db),
