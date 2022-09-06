@@ -27,4 +27,4 @@ app.include_router(api_router, prefix=settings.API_V1_ENDPOINT)
 
 if settings.ENVIRONMENT == 'development':
     console_logger = logging.getLogger('uvicorn')
-    console_logger.info(f"Token: {settings.API_TOKEN}")
+    console_logger.info(f"Token: {str(settings.API_TOKEN)}")

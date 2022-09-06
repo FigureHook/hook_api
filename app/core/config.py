@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import BaseSettings, Field, PostgresDsn, validator
 
 load_dotenv()
 
@@ -54,11 +54,15 @@ class TestSettings(DevSettings):
 
 
 class ProductionSettings(Settings):
-    SECRET_KEY: Secret = os.getenv("SECRET_KEY", Fernet.generate_key())
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_URL", 'db')
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER", 'postgres')
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", 'password')
-    POSTGRES_DB: str = os.getenv("POSTGRES_DATABASE", 'hook_api')
+    SECRET_KEY: Secret = Field(..., env='SECRET_KEY')
+    POSTGRES_SERVER: str = Field(..., env='POSTGRES_URL')
+    POSTGRES_USER: str = Field(..., env='POSTGRES_USER')
+    POSTGRES_PASSWORD: str = Field(..., env='POSTGRES_PASSWORD')
+    POSTGRES_DB: str = Field(..., env='POSTGRES_DATABASE')
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
 
 
 def get_settings() -> Settings:
@@ -66,7 +70,7 @@ def get_settings() -> Settings:
     if env == 'development':
         return DevSettings(ENVIRONMENT=env)
     if env == 'production':
-        return ProductionSettings(ENVIRONMENT=env)
+        return ProductionSettings(ENVIRONMENT=env)  # type: ignore
     if env == 'test':
         return TestSettings(ENVIRONMENT=env)
 

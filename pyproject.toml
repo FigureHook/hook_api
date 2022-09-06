@@ -28,9 +28,12 @@ pytest = "^7.1.2"
 pytest-mock = "^3.7.0"
 types-pytz = "^2021.3.8"
 pytest-xdist = "^2.5.0"
+types-psycopg2 = "^2.9.21"
 
 [tool.mypy]
 python_version = "3.9"
+files = ["app/"]
+exclude = ["app/tests"]
 warn_unused_configs = true
 plugins = "sqlalchemy.ext.mypy.plugin"
 

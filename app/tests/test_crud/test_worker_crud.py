@@ -2,15 +2,15 @@ from typing import Generic, TypeVar
 
 from app import crud
 from app.crud.base import CRUDBase
-from app.db.model_base import Model
 from app.models import Paintwork, Sculptor
+from app.models.worker import Worker
 from app.schemas.worker import WorkerCreate, WorkerUpdate
 from app.tests.utils.faker import faker
 from app.tests.utils.worker import (create_random_paintwork,
                                     create_random_sculptor)
 from sqlalchemy.orm import Session
 
-Worker_T = TypeVar('Worker_T', bound=Model)
+Worker_T = TypeVar('Worker_T', bound=Worker)
 
 
 class WorkerTestCase(Generic[Worker_T]):
