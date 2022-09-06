@@ -1,7 +1,7 @@
 from typing import List, Optional, Type, TypeVar
 
 from sqlalchemy import Column, String
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Mapped
 
 from ..db.model_base import PkModel, UniqueMixin
 
@@ -16,7 +16,7 @@ Worker_T = TypeVar('Worker_T', bound='Worker')
 class Worker(UniqueMixin, PkModel):
     __abstract__ = True
 
-    name = Column(String, nullable=False)
+    name: Mapped[str] = Column(String, nullable=False)  # type: ignore
 
     @classmethod
     def unique_hash(cls, name):

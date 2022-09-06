@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from app.core.config import settings
 from sqlalchemy import create_engine
@@ -18,7 +19,7 @@ engine = create_engine(
 
 
 class PostgreSQLDB:
-    __instance__ = None
+    __instance__: Optional['PostgreSQLDB'] = None
 
     def __new__(cls):
         if not cls.__instance__:

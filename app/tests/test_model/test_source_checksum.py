@@ -18,5 +18,5 @@ class TestSourceChecksum:
         db.commit()
 
         fetched_source = SourceChecksum.as_unique(
-            db, SourceSite.GSC_ANNOUNCEMENT)
+            db, source=SourceSite.GSC_ANNOUNCEMENT)
         assert fetched_source == s

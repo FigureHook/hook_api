@@ -23,7 +23,7 @@ __all__ = [
 class ProductOfficialImage(PkModel):
     __tablename__ = "product_official_image"
 
-    url: Mapped[str] = Column(String)  # type: ignore
+    url: str = Column(String)  # type: ignore
     order = Column(Integer)
     product_id = Column(Integer, ForeignKey(
         "product.id", ondelete="CASCADE"))
