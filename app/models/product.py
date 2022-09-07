@@ -23,10 +23,10 @@ __all__ = [
 class ProductOfficialImage(PkModel):
     __tablename__ = "product_official_image"
 
-    url: Mapped[str] = Column(String)
-    order: Mapped[int] = Column(Integer)
+    url: Mapped[str] = Column(String)  # type: ignore
+    order: Mapped[int] = Column(Integer)  # type: ignore
     product_id: Mapped[int] = Column(Integer, ForeignKey(
-        "product.id", ondelete="CASCADE"))
+        "product.id", ondelete="CASCADE"))  # type: ignore
 
     @classmethod
     def create_image_list(cls, image_urls: list[str]) -> list['ProductOfficialImage']:
@@ -42,16 +42,16 @@ class ProductOfficialImage(PkModel):
 class ProductReleaseInfo(PkModelWithTimestamps):
     __tablename__ = "product_release_info"
 
-    price: Mapped[Optional[int]] = Column(Integer)
-    tax_including: Mapped[bool] = Column(Boolean)
+    price: Mapped[Optional[int]] = Column(Integer)  # type: ignore
+    tax_including: Mapped[bool] = Column(Boolean)  # type: ignore
     initial_release_date: Mapped[Optional[date]] = Column(
         Date, nullable=True)  # type: ignore
     adjusted_release_date: Mapped[Optional[date]] = Column(Date)  # type: ignore
-    announced_at: Mapped[Optional[date]] = Column(Date)
-    shipped_at: Mapped[Optional[date]] = Column(Date)
+    announced_at: Mapped[Optional[date]] = Column(Date)  # type: ignore
+    shipped_at: Mapped[Optional[date]] = Column(Date)  # type: ignore
     product_id: Mapped[int] = Column(Integer, ForeignKey(
-        "product.id", ondelete="CASCADE"), nullable=False)
-    product: Mapped['Product'] = relationship('Product', back_populates='release_infos')
+        "product.id", ondelete="CASCADE"), nullable=False)  # type: ignore
+    product: Mapped['Product'] = relationship('Product', back_populates='release_infos')  # type: ignore
 
     @property
     def release_date(self):
@@ -107,42 +107,43 @@ class Product(PkModelWithTimestamps):
     og_image: Mapped[str] = Column(String)  # type: ignore
 
     # ---Foreign key columns---
-    series_id: Mapped[int] = Column(Integer, ForeignKey("series.id"))
+    series_id: Mapped[int] = Column(Integer, ForeignKey("series.id"))  # type: ignore
     series: Mapped[Series] = relationship(
         "Series",
+        back_populates='products',
         lazy="joined",
-    )
+    )  # type: ignore
 
-    category_id: Mapped[int] = Column(Integer, ForeignKey("category.id"))
+    category_id: Mapped[int] = Column(Integer, ForeignKey("category.id"))  # type: ignore
     category: Mapped[Category] = relationship(
         "Category",
         backref="products",
         lazy="joined",
-    )
+    )  # type: ignore
 
-    manufacturer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    manufacturer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))  # type: ignore
     manufacturer: Mapped[Company] = relationship(
         "Company",
         backref="made_products",
         primaryjoin="Product.manufacturer_id == Company.id",
         lazy="joined"
-    )
+    )  # type: ignore
 
-    releaser_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    releaser_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))  # type: ignore
     releaser: Mapped[Company] = relationship(
         "Company",
         backref="released_products",
         primaryjoin="Product.releaser_id == Company.id",
         lazy="joined"
-    )
+    )  # type: ignore
 
-    distributer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    distributer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))  # type: ignore
     distributer: Mapped[Company] = relationship(
         "Company",
         backref="distributed_products",
         primaryjoin="Product.distributer_id == Company.id",
         lazy="joined"
-    )
+    )  # type: ignore
 
     # ---relationships field---
     release_infos: Mapped[list[ProductReleaseInfo]] = relationship(
@@ -152,7 +153,7 @@ class Product(PkModelWithTimestamps):
         cascade="all, delete",
         passive_deletes=True,
         uselist=True
-    )
+    )  # type: ignore
     official_images: Mapped[list[ProductOfficialImage]] = relationship(
         ProductOfficialImage,
         backref="product",
@@ -160,19 +161,19 @@ class Product(PkModelWithTimestamps):
         collection_class=ordering_list("order", count_from=1),
         cascade="all, delete",
         passive_deletes=True
-    )
+    )  # type: ignore
     sculptors: Mapped[list[Sculptor]] = relationship(
         "Sculptor",
         secondary=product_sculptor_table,
         backref="products",
         lazy="joined",
-    )
+    )  # type: ignore
     paintworks: Mapped[list[Paintwork]] = relationship(
         "Paintwork",
         secondary=product_paintwork_table,
         backref="products",
         lazy="joined",
-    )
+    )  # type: ignore
 
     @property
     def last_release(self) -> Union[ProductReleaseInfo, None]:

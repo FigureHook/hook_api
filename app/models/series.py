@@ -1,6 +1,5 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import Mapped, Query, relationship
-from .product import Product
 
 from ..db.model_base import PkModel, UniqueMixin
 
@@ -11,7 +10,7 @@ class Series(UniqueMixin, PkModel):
     __tablename__ = "series"
 
     name: Mapped[str] = Column(String, unique=True)  # type: ignore
-    products: Mapped[list[Product]] = relationship('Product', uselist=True)
+    products: Mapped[list] = relationship('Product', back_populates='series', uselist=True)  # type: ignore
 
     @classmethod
     def unique_hash(cls, name):

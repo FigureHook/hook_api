@@ -16,9 +16,9 @@ def _generate_token():
 class Application(UUIDPkModel):
     __tablename__ = "application"
 
-    name: Mapped[str] = Column(String, nullable=False)
-    token: Mapped[str] = Column(String, default=_generate_token)
-    last_seen_at: Mapped[datetime] = Column(DateTime)
+    name: Mapped[str] = Column(String, nullable=False)  # type: ignore
+    token: Mapped[str] = Column(String, default=_generate_token)  # type: ignore
+    last_seen_at: Mapped[datetime] = Column(DateTime)  # type: ignore
 
     def refresh_token(self):
         self.token = _generate_token()
