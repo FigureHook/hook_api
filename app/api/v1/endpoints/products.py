@@ -46,8 +46,8 @@ async def get_products(
     source_url: Optional[str] = None
 ):
     if source_url:
-        stmt = select(Product).filter_by(
-            url=source_url
+        stmt = select(Product).filter(
+            Product.url.like(f"%{source_url}%")
         ).limit(page_params.size).offset(page_params.skip)
 
         products = db.scalars(stmt).unique().all()
@@ -166,7 +166,7 @@ async def get_product_release_infos(
     '/{product_id}/release-infos/{release_info_id}/feed',
     response_model=ReleaseFeed,
     tags=['release-feed']
-    )
+)
 async def get_reelase_info_feed(
     *,
     db: Session = Depends(deps.get_db),
