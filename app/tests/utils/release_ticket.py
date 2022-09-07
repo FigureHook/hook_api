@@ -15,7 +15,11 @@ __all__ = (
 )
 
 
-def create_random_release_ticket(db: Session, from_datetime: Optional[datetime] = None, create_product: bool = True) -> ReleaseTicket:
+def create_random_release_ticket(
+    db: Session,
+    from_datetime: Optional[datetime] = None,
+    create_product: bool = True
+) -> ReleaseTicket:
     if not from_datetime:
         from_datetime = faker.past_datetime()
 
@@ -27,7 +31,7 @@ def create_random_release_ticket(db: Session, from_datetime: Optional[datetime] 
                     db, product_id=product.id)
 
     stmt = select(ProductReleaseInfo).filter(
-        ProductReleaseInfo.announced_at != None,
+        ProductReleaseInfo.announced_at is not None,
         ProductReleaseInfo.announced_at > from_datetime,
         ProductReleaseInfo.created_at >= from_datetime,
     )

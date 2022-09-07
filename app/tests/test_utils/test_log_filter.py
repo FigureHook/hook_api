@@ -1,8 +1,8 @@
 from logging import INFO, LogRecord
 
 import pytest
-from app.utils.logging.log_filters import (AccessApplicationFilter, application_name,
-                                   application_uuid)
+from app.utils.logging.log_filters import (AccessApplicationFilter,
+                                           application_name, application_uuid)
 from faker import Faker
 
 

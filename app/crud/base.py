@@ -1,6 +1,6 @@
 from typing import Any, Generic, List, Optional, Type, TypeVar
 
-from app.db.model_base import Model, UniqueMixin
+from app.db.model_base import Model
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session

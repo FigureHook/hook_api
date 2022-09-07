@@ -105,7 +105,7 @@ def test_update_webhook_status(db: Session, client: TestClient):
     assert content.get('is_existed') is exist_status
 
     response = client.patch(
-        v1_endpoint(f"/webhooks/123412341234"),
+        v1_endpoint("/webhooks/123412341234"),
         json={
             'is_existed': exist_status
         }

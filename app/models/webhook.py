@@ -28,7 +28,7 @@ class Webhook(Model, TimestampsMixin):
 
     @property
     def decrypted_token(self):
-        return EncryptHelper.decrypt(self.token)  # type: ignore
+        return EncryptHelper.decrypt(self.token)
 
 
 @listens_for(target=Webhook.token, identifier='set', retval=True)

@@ -81,7 +81,7 @@ async def create_release_ticket(
     ticket_info: ReleaseTicketCreate
 ):
     stmt = select(ProductReleaseInfo).filter(
-        ProductReleaseInfo.announced_at != None,
+        ProductReleaseInfo.announced_at is not None,
         ProductReleaseInfo.announced_at > ticket_info.from_,
         ProductReleaseInfo.created_at >= ticket_info.from_,
     )

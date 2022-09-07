@@ -85,7 +85,7 @@ def test_update_category(db: Session, client: TestClient):
     assert content.get('name') == update_data.get('name')
 
     response = client.put(
-        v1_endpoint(f"/categories/1235345"),
+        v1_endpoint("/categories/1235345"),
         json=update_data
     )
     assert response.status_code == 404

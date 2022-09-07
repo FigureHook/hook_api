@@ -1,6 +1,6 @@
 from app import crud
 from app.constants import WebhookCurrency, WebhookLang
-from app.schemas.webhook import WebhookCreate, WebhookUpdate, WebhookDBCreate
+from app.schemas.webhook import WebhookCreate, WebhookDBCreate
 from app.tests.utils.faker import faker
 from app.tests.utils.webhook import create_random_webhook
 from sqlalchemy.orm import Session

@@ -22,10 +22,12 @@ def count_future_release(
 ) -> int:
     count = 0
     for info in release_infos:
-        if info.created_at >= from_:
-            if compare_announced_date:
-                if info.announced_at < from_:
-                    continue
+        if info.created_at:
+            if info.created_at >= from_:
+                if compare_announced_date:
+                    if info.announced_at:
+                        if info.announced_at < from_:
+                            continue
 
             count += 1
 
@@ -104,7 +106,7 @@ def test_get_release_ticket(db: Session, client: TestClient):
     assert response.status_code == 404
 
     response = client.get(
-        url=v1_endpoint(f"/release-tickets/123")
+        url=v1_endpoint("/release-tickets/123")
     )
     assert response.status_code == 404
 

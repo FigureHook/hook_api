@@ -4,7 +4,7 @@ from typing import Optional, Union, cast
 from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
                         SmallInteger, String)
 from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.orm import Mapped, relationship, Mapped
+from sqlalchemy.orm import Mapped, relationship
 
 from ..db.model_base import PkModel, PkModelWithTimestamps
 from .category import Category
@@ -23,9 +23,9 @@ __all__ = [
 class ProductOfficialImage(PkModel):
     __tablename__ = "product_official_image"
 
-    url: str = Column(String)  # type: ignore
-    order = Column(Integer)
-    product_id = Column(Integer, ForeignKey(
+    url: Mapped[str] = Column(String)
+    order: Mapped[int] = Column(Integer)
+    product_id: Mapped[int] = Column(Integer, ForeignKey(
         "product.id", ondelete="CASCADE"))
 
     @classmethod
@@ -42,16 +42,16 @@ class ProductOfficialImage(PkModel):
 class ProductReleaseInfo(PkModelWithTimestamps):
     __tablename__ = "product_release_info"
 
-    price = cast(int, Column(Integer))
-    tax_including = cast(bool, Column(Boolean))
-    initial_release_date: Mapped[Optional[date]] = Column(Date, nullable=True)  # type: ignore
+    price: Mapped[Optional[int]] = Column(Integer)
+    tax_including: Mapped[bool] = Column(Boolean)
+    initial_release_date: Mapped[Optional[date]] = Column(
+        Date, nullable=True)  # type: ignore
     adjusted_release_date: Mapped[Optional[date]] = Column(Date)  # type: ignore
-    announced_at = Column(Date)
-    shipped_at = Column(Date)
-    product_id = Column(Integer, ForeignKey(
+    announced_at: Mapped[Optional[date]] = Column(Date)
+    shipped_at: Mapped[Optional[date]] = Column(Date)
+    product_id: Mapped[int] = Column(Integer, ForeignKey(
         "product.id", ondelete="CASCADE"), nullable=False)
-    product = cast('Product', relationship(
-        'Product', back_populates='release_infos'))
+    product: Mapped['Product'] = relationship('Product', back_populates='release_infos')
 
     @property
     def release_date(self):
@@ -107,72 +107,72 @@ class Product(PkModelWithTimestamps):
     og_image: Mapped[str] = Column(String)  # type: ignore
 
     # ---Foreign key columns---
-    series_id = Column(Integer, ForeignKey("series.id"))
-    series = cast(Series, relationship(
+    series_id: Mapped[int] = Column(Integer, ForeignKey("series.id"))
+    series: Mapped[Series] = relationship(
         "Series",
-        backref="products",
         lazy="joined",
-    ))
+    )
 
-    category_id = Column(Integer, ForeignKey("category.id"))
-    category = cast(Category, relationship(
+    category_id: Mapped[int] = Column(Integer, ForeignKey("category.id"))
+    category: Mapped[Category] = relationship(
         "Category",
         backref="products",
         lazy="joined",
-    ))
+    )
 
-    manufacturer_id = Column(Integer, ForeignKey("company.id"))
-    manufacturer = cast(Company, relationship(
+    manufacturer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    manufacturer: Mapped[Company] = relationship(
         "Company",
         backref="made_products",
         primaryjoin="Product.manufacturer_id == Company.id",
         lazy="joined"
-    ))
+    )
 
-    releaser_id = Column(Integer, ForeignKey("company.id"))
-    releaser = cast(Company, relationship(
+    releaser_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    releaser: Mapped[Company] = relationship(
         "Company",
         backref="released_products",
         primaryjoin="Product.releaser_id == Company.id",
         lazy="joined"
-    ))
+    )
 
-    distributer_id = Column(Integer, ForeignKey("company.id"))
-    distributer = cast(Company, relationship(
+    distributer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))
+    distributer: Mapped[Company] = relationship(
         "Company",
         backref="distributed_products",
         primaryjoin="Product.distributer_id == Company.id",
         lazy="joined"
-    ))
+    )
 
     # ---relationships field---
-    release_infos = cast(list[ProductReleaseInfo], relationship(
+    release_infos: Mapped[list[ProductReleaseInfo]] = relationship(
         ProductReleaseInfo,
         back_populates="product",
         order_by="nulls_first(asc(ProductReleaseInfo.initial_release_date))",
         cascade="all, delete",
         passive_deletes=True,
-    ))
-    official_images = cast(list[ProductOfficialImage], relationship(
+        uselist=True
+    )
+    official_images: Mapped[list[ProductOfficialImage]] = relationship(
         ProductOfficialImage,
         backref="product",
         order_by="ProductOfficialImage.order",
         collection_class=ordering_list("order", count_from=1),
         cascade="all, delete",
         passive_deletes=True
-    ))
-    sculptors = cast(list[Sculptor], relationship(
+    )
+    sculptors: Mapped[list[Sculptor]] = relationship(
         "Sculptor",
         secondary=product_sculptor_table,
         backref="products",
         lazy="joined",
-    ))
-    paintworks = cast(list[Paintwork], relationship(
+    )
+    paintworks: Mapped[list[Paintwork]] = relationship(
         "Paintwork",
         secondary=product_paintwork_table,
         backref="products",
         lazy="joined",
-    ))
+    )
 
     @property
     def last_release(self) -> Union[ProductReleaseInfo, None]:

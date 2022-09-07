@@ -1,5 +1,4 @@
 import random
-from uuid import UUID
 
 from app.tests.utils.application import create_random_application
 from app.tests.utils.faker import faker

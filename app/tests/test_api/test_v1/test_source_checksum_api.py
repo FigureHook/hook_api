@@ -57,7 +57,7 @@ def test_get_source_checksum(db: Session, client: TestClient):
         assert content.get(key) == orm_attr
 
     response = client.get(v1_endpoint(
-        f"/source-checksums/123541"))
+        "/source-checksums/123541"))
     assert response.status_code == 404
 
 
@@ -78,7 +78,7 @@ def test_update_source_checksum(db: Session, client: TestClient):
         assert udpate_data.get(key) == content.get(key)
 
     response = client.patch(
-        url=v1_endpoint(f"/source-checksums/938722"),
+        url=v1_endpoint("/source-checksums/938722"),
         json=udpate_data
     )
     assert response.status_code == 404
@@ -92,7 +92,7 @@ def test_delete_source_checksum(db: Session, client: TestClient):
     assert response.status_code == 204
 
     response = client.delete(
-        v1_endpoint(f"/source-checksums/838828")
+        v1_endpoint("/source-checksums/838828")
     )
     assert response.status_code == 404
 
@@ -104,7 +104,7 @@ def test_get_source_checksums_by_name(db: Session, client: TestClient):
     ]
     for sc in source_checksums:
         response = client.get(
-            v1_endpoint(f"/source-checksums"),
+            v1_endpoint("/source-checksums"),
             params={
                 'source': cast(str, sc.source)
             }

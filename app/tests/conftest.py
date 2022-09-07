@@ -28,14 +28,14 @@ def check_test_database():
             password=settings.POSTGRES_PASSWORD,
         )
 
-    except:
+    except:  # noqa: E722
         print('Database not connected.')
 
     if connection is not None:
         connection.autocommit = True
 
         cur = connection.cursor()
-        cur.execute(f"SELECT datname FROM pg_database;")
+        cur.execute("SELECT datname FROM pg_database;")
 
         list_database = cur.fetchall()
         database_name = settings.POSTGRES_DB

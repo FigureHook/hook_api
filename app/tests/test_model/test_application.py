@@ -26,7 +26,7 @@ class TestApplication:
 
         assert prev_token != new_token
 
-    def test_application_was_seen(self, db:Session):
+    def test_application_was_seen(self, db: Session):
         application = Application(name="management")
         application.was_seen()
         db.add(application)

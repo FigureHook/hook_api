@@ -1,4 +1,4 @@
-from typing import List, Optional, Type, TypeVar
+from typing import List, Type, TypeVar
 
 from sqlalchemy import Column, String
 from sqlalchemy.orm import Session, Mapped

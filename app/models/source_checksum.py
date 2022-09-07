@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TypeVar, cast
+from typing import TypeVar
 
 from app.db.model_base import PkModel, UniqueMixin
 from sqlalchemy import Column, DateTime, String
@@ -18,7 +18,7 @@ class SourceChecksum(UniqueMixin, PkModel):
     __datetime_callback__ = func.now
 
     source: Mapped[str] = Column(String)  # type: ignore
-    checksum = cast(str, Column(String))
+    checksum: Mapped[str] = Column(String)  # type: ignore
     checked_at: Mapped[datetime] = Column(
         DateTime,
         default=__datetime_callback__()

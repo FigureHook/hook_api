@@ -1,6 +1,5 @@
 from app.models import Paintwork, Sculptor
 from app.schemas.worker import WorkerCreate, WorkerUpdate
-from sqlalchemy.orm import Session
 
 from .base import CRUDBase
 

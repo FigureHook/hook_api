@@ -1,6 +1,5 @@
 from app.models import Series
 from app.schemas.series import SeriesCreate, SeriesUpdate
-from sqlalchemy.orm import Session
 
 from .base import CRUDBase
 

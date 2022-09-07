@@ -1,4 +1,3 @@
-from pyparsing import Optional
 from app.models import SourceChecksum
 from app.schemas.source_checksum import (SourceChecksumCreate,
                                          SourceChecksumUpdate)

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, Query
 
 from ..db.model_base import PkModel, UniqueMixin
 
@@ -17,8 +17,8 @@ class Company(UniqueMixin, PkModel):
         return name
 
     @classmethod
-    def unique_filter(cls, query, name):
-        return query.filter(Company.name == name)
+    def unique_filter(cls, query: Query, *args, **kwargs):
+        return query.filter(Company.name == kwargs.get('name'))
 
     def __repr__(self):
         return self.name

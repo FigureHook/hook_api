@@ -1,8 +1,9 @@
 from app.api import deps
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends
 
-from .endpoints import (application, category, company, paintwork, products, release_tickets,
-                        sculptor, series, source_checksum, webhooks)
+from .endpoints import (application, category, company, paintwork, products,
+                        release_tickets, sculptor, series, source_checksum,
+                        webhooks)
 
 api_router = APIRouter(dependencies=[Depends(deps.verify_token)])
 

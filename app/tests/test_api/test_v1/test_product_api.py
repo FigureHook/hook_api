@@ -305,7 +305,7 @@ def test_get_product_images(db: Session, client: TestClient):
     assert len(content) == len(product.official_images)
 
     response = client.get(v1_endpoint(
-        f"/products/12351235/official-images"))
+        "/products/12351235/official-images"))
     assert response.status_code == 404
 
 

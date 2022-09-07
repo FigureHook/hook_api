@@ -61,7 +61,7 @@ def test_get_paintwork(db: Session, client: TestClient):
     content = response.json()
     assert content.get('name') == paintwork.name
 
-    response = client.get(v1_endpoint(f'/paintworks/1234235'))
+    response = client.get(v1_endpoint('/paintworks/1234235'))
     assert response.status_code == 404
 
 
@@ -79,7 +79,7 @@ def test_update_paintwork(db: Session, client: TestClient):
     assert content.get('name') == update_data.get('name')
 
     response = client.put(
-        v1_endpoint(f'/paintworks/12341234'),
+        v1_endpoint('/paintworks/12341234'),
         json=update_data)
     assert response.status_code == 404
 

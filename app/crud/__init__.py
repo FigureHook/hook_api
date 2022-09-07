@@ -1,3 +1,4 @@
+# flake8: noqa
 from .application import application
 from .category import category
 from .company import company

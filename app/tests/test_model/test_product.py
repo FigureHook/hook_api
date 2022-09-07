@@ -81,7 +81,7 @@ class TestProductReleaseInfo:
         assert info_2.release_date == date(2020, 5, 1)
 
         info_3 = ProductReleaseInfo(price=12960, product_id=p.id)
-        assert info_3.release_date == None
+        assert info_3.release_date is None
 
 
 @pytest.mark.usefixtures("db")

@@ -1,8 +1,9 @@
 import secrets
-from typing import cast
+from datetime import datetime
 
 from app.db.model_base import UUIDPkModel
 from sqlalchemy import Column, DateTime, String
+from sqlalchemy.orm import Mapped
 from sqlalchemy.sql import func
 
 __all__ = ['Application']
@@ -15,9 +16,9 @@ def _generate_token():
 class Application(UUIDPkModel):
     __tablename__ = "application"
 
-    name = cast(str, Column(String, nullable=False))
-    token = cast(str, Column(String, default=_generate_token))
-    last_seen_at = Column(DateTime)
+    name: Mapped[str] = Column(String, nullable=False)
+    token: Mapped[str] = Column(String, default=_generate_token)
+    last_seen_at: Mapped[datetime] = Column(DateTime)
 
     def refresh_token(self):
         self.token = _generate_token()

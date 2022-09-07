@@ -61,7 +61,7 @@ def test_get_sculptor(db: Session, client: TestClient):
     content = response.json()
     assert content.get('name') == sculptor.name
 
-    response = client.get(v1_endpoint(f'/sculptors/1234235'))
+    response = client.get(v1_endpoint('/sculptors/1234235'))
     assert response.status_code == 404
 
 
@@ -78,7 +78,7 @@ def test_update_sculptor(db: Session, client: TestClient):
     assert content.get('name') == update_data.get('name')
 
     response = client.put(v1_endpoint(
-        f'/sculptors/12341234'), json=update_data)
+        '/sculptors/12341234'), json=update_data)
     assert response.status_code == 404
 
 

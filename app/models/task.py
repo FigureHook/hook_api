@@ -1,5 +1,4 @@
 from datetime import datetime
-from sqlite3 import Date
 from app.db.model_base import PkModel, UniqueMixin
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import Mapped
