@@ -27,3 +27,9 @@ load-env: # Load environment variable from .env file.
 
 freeze: # Export the requirements.txt file.
 	poetry export --without-hashes -f requirements.txt --output requirements.txt
+
+gen-openapi-json: # Generate openapi.json in assets.
+	python app/generate_openapi_json.py
+
+gen-secret: # Generate random secret.
+	openssl rand -base64 32
