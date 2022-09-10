@@ -8,13 +8,11 @@ from sqlalchemy.orm import Session
 class TestSourceChecksum:
     def test_sourcechecksum_as_unique(self, db: Session):
         checksum = "kappa"
-        s = SourceChecksum(
-            source=SourceSite.GSC_ANNOUNCEMENT,
-            checksum=checksum
-        )
+        s = SourceChecksum(source=SourceSite.GSC_ANNOUNCEMENT, checksum=checksum)
         db.add(s)
         db.commit()
 
         fetched_source = SourceChecksum.as_unique(
-            db, source=SourceSite.GSC_ANNOUNCEMENT)
+            db, source=SourceSite.GSC_ANNOUNCEMENT
+        )
         assert fetched_source == s

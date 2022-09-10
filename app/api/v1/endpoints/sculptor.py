@@ -14,52 +14,47 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-def check_sculptor_exist(sculptor_id: int, db: Session = Depends(deps.get_db)) -> Sculptor:
+def check_sculptor_exist(
+    sculptor_id: int, db: Session = Depends(deps.get_db)
+) -> Sculptor:
     sculptor = crud.sculptor.get(db=db, id=sculptor_id)
     if not sculptor:
         logger.info(f"Specified sculptor didn't exist. (id={sculptor_id})")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Specified sculptor(id:{sculptor_id}) didn't exist."
+            detail=f"Specified sculptor(id:{sculptor_id}) didn't exist.",
         )
     return sculptor
 
 
-@router.get('/', response_model=Page[WorkerInDB])
+@router.get("/", response_model=Page[WorkerInDB])
 async def get_sculptors(
-    *,
-    db: Session = Depends(deps.get_db),
-    page_params: PageParamsBase = Depends()
+    *, db: Session = Depends(deps.get_db), page_params: PageParamsBase = Depends()
 ):
-    workers = crud.sculptor.get_multi(db=db, skip=page_params.skip, limit=page_params.size)
+    workers = crud.sculptor.get_multi(
+        db=db, skip=page_params.skip, limit=page_params.size
+    )
     workers_count = crud.sculptor.count(db=db)
-    workers_out = [
-        WorkerInDB.from_orm(worker)
-        for worker in workers
-    ]
+    workers_out = [WorkerInDB.from_orm(worker) for worker in workers]
     logger.info(f"Fetched the sculptors. (count={len(workers_out)})")
     return Page.create(
-        results=workers_out,
-        total_results=workers_count,
-        params=page_params
+        results=workers_out, total_results=workers_count, params=page_params
     )
 
 
-@router.post('/', response_model=WorkerInDB, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=WorkerInDB, status_code=status.HTTP_201_CREATED)
 async def create_sculptor(
-    *,
-    request: Request,
-    db: Session = Depends(deps.get_db),
-    worker_in: WorkerCreate
+    *, request: Request, db: Session = Depends(deps.get_db), worker_in: WorkerCreate
 ):
     stmt = select(Sculptor).filter_by(name=worker_in.name).limit(1)
     sculptor = db.scalars(stmt).first()
     if sculptor:
         logger.info(
-            f"The sculptor already exists. (id={sculptor.id}, name={sculptor.name})")
+            f"The sculptor already exists. (id={sculptor.id}, name={sculptor.name})"
+        )
         return RedirectResponse(
-            url=request.url_for('get_sculptor', sculptor_id=sculptor.id),
-            status_code=status.HTTP_303_SEE_OTHER
+            url=request.url_for("get_sculptor", sculptor_id=sculptor.id),
+            status_code=status.HTTP_303_SEE_OTHER,
         )
 
     sculptor = crud.sculptor.create(db=db, obj_in=worker_in)
@@ -67,29 +62,25 @@ async def create_sculptor(
     return WorkerInDB.from_orm(sculptor)
 
 
-@router.get('/{sculptor_id}', response_model=WorkerInDB)
-async def get_sculptor(
-    *,
-    sculptor: Sculptor = Depends(check_sculptor_exist)
-):
+@router.get("/{sculptor_id}", response_model=WorkerInDB)
+async def get_sculptor(*, sculptor: Sculptor = Depends(check_sculptor_exist)):
     logger.info(f"Fetched the sculptor. (id={sculptor.id})")
     return WorkerInDB.from_orm(sculptor)
 
 
-@router.put('/{sculptor_id}', response_model=WorkerInDB)
+@router.put("/{sculptor_id}", response_model=WorkerInDB)
 async def update_sculptor(
     *,
     db: Session = Depends(deps.get_db),
     sculptor: Sculptor = Depends(check_sculptor_exist),
-    worker_in: WorkerUpdate
+    worker_in: WorkerUpdate,
 ):
-    sculptor = crud.sculptor.update(
-        db=db, db_obj=sculptor, obj_in=worker_in)
+    sculptor = crud.sculptor.update(db=db, db_obj=sculptor, obj_in=worker_in)
     logger.info(f"Updated the sculptor. (id={sculptor.id})")
     return WorkerInDB.from_orm(sculptor)
 
 
-@router.delete('/{sculptor_id}')
+@router.delete("/{sculptor_id}")
 async def delete_sculptor(
     *,
     db: Session = Depends(deps.get_db),

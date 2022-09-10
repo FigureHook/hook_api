@@ -2,12 +2,19 @@ import random
 from datetime import date
 
 import pytest
-from app.models import (Category, Company, Paintwork, Product,
-                        ProductOfficialImage, ProductReleaseInfo,
-                        ReleaseTicket, Sculptor, Series)
+from app.models import (
+    Category,
+    Company,
+    Paintwork,
+    Product,
+    ProductOfficialImage,
+    ProductReleaseInfo,
+    ReleaseTicket,
+    Sculptor,
+    Series,
+)
 from app.tests.utils.product import create_random_product
-from app.tests.utils.release_info import \
-    create_random_release_info_own_by_product
+from app.tests.utils.release_info import create_random_release_info_own_by_product
 from sqlalchemy.orm import Session
 
 
@@ -16,9 +23,11 @@ class TestRelationShip:
     def test_product_has_many_product_release_infos(self, db: Session):
         product = Product(name="figure")
         initial_info = ProductReleaseInfo(
-            price=12960, initial_release_date=date(2020, 2, 12))
+            price=12960, initial_release_date=date(2020, 2, 12)
+        )
         resale_info = ProductReleaseInfo(
-            price=15800, initial_release_date=date(2021, 2, 12))
+            price=15800, initial_release_date=date(2021, 2, 12)
+        )
 
         product.release_infos.extend([initial_info, resale_info])
         db.add(product)
@@ -33,9 +42,11 @@ class TestRelationShip:
     def test_fetech_product_last_product_release_infos(self, db):
         product = Product(name="figure")
         initial_info = ProductReleaseInfo(
-            price=12960, initial_release_date=date(2020, 2, 12))
+            price=12960, initial_release_date=date(2020, 2, 12)
+        )
         resale_info = ProductReleaseInfo(
-            price=15800, initial_release_date=date(2021, 2, 12))
+            price=15800, initial_release_date=date(2021, 2, 12)
+        )
 
         product.release_infos.extend([initial_info, resale_info])
         db.add(product)
@@ -49,9 +60,11 @@ class TestRelationShip:
     def test_product_release_infos_is_nullsfirst(self, db):
         product = Product(name="figure")
         initial_info = ProductReleaseInfo(
-            price=12960, initial_release_date=date(2020, 2, 12))
+            price=12960, initial_release_date=date(2020, 2, 12)
+        )
         resale_info = ProductReleaseInfo(
-            price=15800, initial_release_date=date(2021, 2, 12))
+            price=15800, initial_release_date=date(2021, 2, 12)
+        )
         stall_info = ProductReleaseInfo(price=16000)
 
         product.release_infos.extend([initial_info, resale_info, stall_info])
@@ -175,8 +188,11 @@ class TestRelationShip:
         assert not db.query(ProductReleaseInfo).all()
 
     def test_delete_product_and_association_but_not_effect_worker(self, db: Session):
-        from app.models.relation_table import (product_paintwork_table,
-                                               product_sculptor_table)
+        from app.models.relation_table import (
+            product_paintwork_table,
+            product_sculptor_table,
+        )
+
         p = Product(name="foo")
         master = Sculptor(name="master")
         newbie = Paintwork(name="newbie")
@@ -197,8 +213,11 @@ class TestRelationShip:
         assert db.query(Paintwork).all()
 
     def test_delete_paintwork_and_association_but_not_effect_product(self, db: Session):
-        from app.models.relation_table import (product_paintwork_table,
-                                               product_sculptor_table)
+        from app.models.relation_table import (
+            product_paintwork_table,
+            product_sculptor_table,
+        )
+
         p = Product(name="foo")
         master = Sculptor(name="master")
         newbie = Paintwork(name="newbie")
@@ -220,8 +239,11 @@ class TestRelationShip:
         assert f_p.sculptors
 
     def test_delete_sculptor_and_association_but_not_affect_product(self, db: Session):
-        from app.models.relation_table import (product_paintwork_table,
-                                               product_sculptor_table)
+        from app.models.relation_table import (
+            product_paintwork_table,
+            product_sculptor_table,
+        )
+
         p = Product(name="foo")
         master = Sculptor(name="master")
         newbie = Paintwork(name="newbie")
@@ -246,12 +268,10 @@ class TestRelationShip:
 
 @pytest.mark.usefixtures("db")
 class TestReleaseFeedTicketRealtionShip:
-
     def test_delete_ticket_not_affect_release_info(self, db: Session):
         product = create_random_product(db)
         release_infos = [
-            create_random_release_info_own_by_product(
-                db, product_id=product.id)
+            create_random_release_info_own_by_product(db, product_id=product.id)
             for _ in range(random.randint(1, 3))
         ]
         ticket = ReleaseTicket(release_infos=release_infos)
@@ -265,8 +285,7 @@ class TestReleaseFeedTicketRealtionShip:
     def test_delete_release_info_not_affect_ticket(self, db: Session):
         product = create_random_product(db)
         release_infos = [
-            create_random_release_info_own_by_product(
-                db, product_id=product.id)
+            create_random_release_info_own_by_product(db, product_id=product.id)
             for _ in range(random.randint(1, 3))
         ]
         ticket = ReleaseTicket(release_infos=release_infos)

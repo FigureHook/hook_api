@@ -6,11 +6,10 @@ from app.models import Paintwork, Sculptor
 from app.models.worker import Worker
 from app.schemas.worker import WorkerCreate, WorkerUpdate
 from app.tests.utils.faker import faker
-from app.tests.utils.worker import (create_random_paintwork,
-                                    create_random_sculptor)
+from app.tests.utils.worker import create_random_paintwork, create_random_sculptor
 from sqlalchemy.orm import Session
 
-Worker_T = TypeVar('Worker_T', bound=Worker)
+Worker_T = TypeVar("Worker_T", bound=Worker)
 
 
 class WorkerTestCase(Generic[Worker_T]):
@@ -35,7 +34,8 @@ class WorkerTestCase(Generic[Worker_T]):
         db_obj = self.generate_worker(db)
         update_obj = WorkerUpdate(name=faker.name())
         updated_db_obj = self.crud_module.update(
-            db=db, db_obj=db_obj, obj_in=update_obj)
+            db=db, db_obj=db_obj, obj_in=update_obj
+        )
 
         assert update_obj.name == updated_db_obj.name
 

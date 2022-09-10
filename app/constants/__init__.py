@@ -15,12 +15,12 @@ class PeriodicTask(Enum):
 
 
 class WebhookCurrency(str, Enum):
-    JPY = 'JPY'
-    USD = 'USD'
-    EUR = 'EUR'
+    JPY = "JPY"
+    USD = "USD"
+    EUR = "EUR"
 
 
-class WebhookLang(str,  Enum):
-    ZH_TW = 'zh-TW'
-    EN = 'en'
-    JA = 'ja'
+class WebhookLang(str, Enum):
+    ZH_TW = "zh-TW"
+    EN = "en"
+    JA = "ja"

@@ -1,4 +1,3 @@
-
 import pytest
 from app.models import Company
 from sqlalchemy.orm import Session

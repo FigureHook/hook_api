@@ -5,12 +5,9 @@ from sqlalchemy.orm import Session, Mapped
 
 from ..db.model_base import PkModel, UniqueMixin
 
-__all__ = [
-    "Paintwork",
-    "Sculptor"
-]
+__all__ = ["Paintwork", "Sculptor"]
 
-Worker_T = TypeVar('Worker_T', bound='Worker')
+Worker_T = TypeVar("Worker_T", bound="Worker")
 
 
 class Worker(UniqueMixin, PkModel):
@@ -27,7 +24,9 @@ class Worker(UniqueMixin, PkModel):
         return query.filter(cls.name == name)
 
     @classmethod
-    def multiple_as_unique(cls: Type[Worker_T], session: Session, worker_names: List[str]) -> List[Worker_T]:
+    def multiple_as_unique(
+        cls: Type[Worker_T], session: Session, worker_names: List[str]
+    ) -> List[Worker_T]:
         workers: List[Worker_T] = []
         for name in worker_names:
             worker = cls.as_unique(session, name=name)

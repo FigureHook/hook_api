@@ -9,8 +9,7 @@ __all__ = ["Company"]
 class Company(UniqueMixin, PkModel):
     __tablename__ = "company"
 
-    name: Mapped[str] = Column(
-        String, nullable=False, unique=True)  # type: ignore
+    name: Mapped[str] = Column(String, nullable=False, unique=True)  # type: ignore
 
     @classmethod
     def unique_hash(cls, name):
@@ -18,7 +17,7 @@ class Company(UniqueMixin, PkModel):
 
     @classmethod
     def unique_filter(cls, query: Query, *args, **kwargs):
-        return query.filter(Company.name == kwargs.get('name'))
+        return query.filter(Company.name == kwargs.get("name"))
 
     def __repr__(self):
         return self.name

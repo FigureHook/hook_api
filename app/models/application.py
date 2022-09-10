@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.sql import func
 
-__all__ = ['Application']
+__all__ = ["Application"]
 
 
 def _generate_token():

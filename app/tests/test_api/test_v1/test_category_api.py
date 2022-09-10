@@ -11,19 +11,14 @@ from .util import assert_pageination_content, v1_endpoint
 def test_get_categories(db: Session, client: TestClient):
     categories_count = random.randint(0, 20)
     results_size = random.randint(1, 100)
-    expected_pages = ceil(
-        categories_count / results_size
-    ) if categories_count else 1
+    expected_pages = ceil(categories_count / results_size) if categories_count else 1
     expected_page = random.randint(1, expected_pages)
     for _ in range(categories_count):
         create_random_category(db)
 
     response = client.get(
         url=v1_endpoint("/categories"),
-        params={
-            'page': expected_page,
-            'size': results_size
-        }
+        params={"page": expected_page, "size": results_size},
     )
     assert response.status_code == 200
 
@@ -33,31 +28,29 @@ def test_get_categories(db: Session, client: TestClient):
         expected_page=expected_page,
         expected_pages=expected_pages,
         total_results=categories_count,
-        results_size=results_size
+        results_size=results_size,
     )
 
-    for category in content['results']:
-        assert 'id' in category
-        assert 'name' in category
+    for category in content["results"]:
+        assert "id" in category
+        assert "name" in category
 
 
 def test_create_category(db: Session, client: TestClient):
-    data = {
-        'name': 'Doll'
-    }
+    data = {"name": "Doll"}
 
     response = client.post(v1_endpoint("/categories/"), json=data)
     assert response.status_code == 201
 
     content = response.json()
-    assert 'id' in content
-    assert 'name' in content
-    assert content.get('name') == data.get('name')
+    assert "id" in content
+    assert "name" in content
+    assert content.get("name") == data.get("name")
 
     response = client.post(v1_endpoint("/categories/"), json=data)
     assert response.status_code == 303
-    assert 'Location' in response.headers
-    assert f"/categories/{content.get('id')}" in response.headers['Location']
+    assert "Location" in response.headers
+    assert f"/categories/{content.get('id')}" in response.headers["Location"]
 
 
 def test_get_category(db: Session, client: TestClient):
@@ -72,33 +65,21 @@ def test_get_category(db: Session, client: TestClient):
 
 def test_update_category(db: Session, client: TestClient):
     category = create_random_category(db)
-    update_data = {
-        'name': "Doll"
-    }
-    response = client.put(
-        v1_endpoint(f"/categories/{category.id}"),
-        json=update_data
-    )
+    update_data = {"name": "Doll"}
+    response = client.put(v1_endpoint(f"/categories/{category.id}"), json=update_data)
     assert response.status_code == 200
 
     content = response.json()
-    assert content.get('name') == update_data.get('name')
+    assert content.get("name") == update_data.get("name")
 
-    response = client.put(
-        v1_endpoint("/categories/1235345"),
-        json=update_data
-    )
+    response = client.put(v1_endpoint("/categories/1235345"), json=update_data)
     assert response.status_code == 404
 
 
 def test_delete_category(db: Session, client: TestClient):
     category = create_random_category(db)
-    response = client.delete(
-        v1_endpoint(f"/categories/{category.id}")
-    )
+    response = client.delete(v1_endpoint(f"/categories/{category.id}"))
     assert response.status_code == 204
 
-    response = client.delete(
-        v1_endpoint(f"/categories/{category.id}")
-    )
+    response = client.delete(v1_endpoint(f"/categories/{category.id}"))
     assert response.status_code == 404

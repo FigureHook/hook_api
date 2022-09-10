@@ -7,14 +7,14 @@ from .util import v1_endpoint
 
 
 def test_unauth(db: Session, raw_client: TestClient):
-    raw_client.headers['x-api-token'] = 'kappa'
+    raw_client.headers["x-api-token"] = "kappa"
     response = raw_client.get(v1_endpoint("/products"))
     assert response.status_code == 401
 
 
 def test_application_api_token(db: Session, raw_client: TestClient):
     app = create_random_application(db)
-    raw_client.headers['x-api-token'] = app.token
+    raw_client.headers["x-api-token"] = app.token
     response = raw_client.get(v1_endpoint("/products"))
     assert response.status_code == 200
 

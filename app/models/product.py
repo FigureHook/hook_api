@@ -1,8 +1,16 @@
 from datetime import date, datetime
 from typing import Optional, Union, cast
 
-from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
-                        SmallInteger, String)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    SmallInteger,
+    String,
+)
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import Mapped, relationship
 
@@ -13,11 +21,7 @@ from .relation_table import product_paintwork_table, product_sculptor_table
 from .series import Series
 from .worker import Paintwork, Sculptor
 
-__all__ = [
-    "ProductOfficialImage",
-    "ProductReleaseInfo",
-    "Product"
-]
+__all__ = ["ProductOfficialImage", "ProductReleaseInfo", "Product"]
 
 
 class ProductOfficialImage(PkModel):
@@ -25,12 +29,13 @@ class ProductOfficialImage(PkModel):
 
     url: Mapped[str] = Column(String)  # type: ignore
     order: Mapped[int] = Column(Integer)  # type: ignore
-    product_id: Mapped[int] = Column(Integer, ForeignKey(
-        "product.id", ondelete="CASCADE"))  # type: ignore
+    product_id: Mapped[int] = Column(
+        Integer, ForeignKey("product.id", ondelete="CASCADE")
+    )  # type: ignore
 
     @classmethod
-    def create_image_list(cls, image_urls: list[str]) -> list['ProductOfficialImage']:
-        images: list['ProductOfficialImage'] = []
+    def create_image_list(cls, image_urls: list[str]) -> list["ProductOfficialImage"]:
+        images: list["ProductOfficialImage"] = []
 
         for url in image_urls:
             image = ProductOfficialImage(url=url)
@@ -45,17 +50,21 @@ class ProductReleaseInfo(PkModelWithTimestamps):
     price: Mapped[Optional[int]] = Column(Integer)  # type: ignore
     tax_including: Mapped[bool] = Column(Boolean)  # type: ignore
     initial_release_date: Mapped[Optional[date]] = Column(
-        Date, nullable=True)  # type: ignore
+        Date, nullable=True
+    )  # type: ignore
     adjusted_release_date: Mapped[Optional[date]] = Column(Date)  # type: ignore
     announced_at: Mapped[Optional[date]] = Column(Date)  # type: ignore
     shipped_at: Mapped[Optional[date]] = Column(Date)  # type: ignore
-    product_id: Mapped[int] = Column(Integer, ForeignKey(
-        "product.id", ondelete="CASCADE"), nullable=False)  # type: ignore
-    product: Mapped['Product'] = relationship('Product', back_populates='release_infos')  # type: ignore
+    product_id: Mapped[int] = Column(
+        Integer, ForeignKey("product.id", ondelete="CASCADE"), nullable=False
+    )  # type: ignore
+    product: Mapped["Product"] = relationship("Product", back_populates="release_infos")  # type: ignore
 
     @property
     def release_date(self):
-        return cast(Optional[date], self.adjusted_release_date or self.initial_release_date)
+        return cast(
+            Optional[date], self.adjusted_release_date or self.initial_release_date
+        )
 
     def adjust_release_date_to(self, delay_date: Union[date, datetime, None]):
         if not delay_date:
@@ -65,7 +74,8 @@ class ProductReleaseInfo(PkModelWithTimestamps):
             delay_date = delay_date.date()
 
         assert isinstance(
-            delay_date, date), f"{delay_date} must be `date` or `datetime`"
+            delay_date, date
+        ), f"{delay_date} must be `date` or `datetime`"
 
         has_init_release_date = bool(self.initial_release_date)
 
@@ -88,6 +98,7 @@ class Product(PkModelWithTimestamps):
     ## Column
     + checksum: MD5 value, one of methods to check the product should be updated.
     """
+
     __tablename__ = "product"
 
     # ---native columns---
@@ -110,7 +121,7 @@ class Product(PkModelWithTimestamps):
     series_id: Mapped[int] = Column(Integer, ForeignKey("series.id"))  # type: ignore
     series: Mapped[Series] = relationship(
         "Series",
-        back_populates='products',
+        back_populates="products",
         lazy="joined",
     )  # type: ignore
 
@@ -126,7 +137,7 @@ class Product(PkModelWithTimestamps):
         "Company",
         backref="made_products",
         primaryjoin="Product.manufacturer_id == Company.id",
-        lazy="joined"
+        lazy="joined",
     )  # type: ignore
 
     releaser_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))  # type: ignore
@@ -134,7 +145,7 @@ class Product(PkModelWithTimestamps):
         "Company",
         backref="released_products",
         primaryjoin="Product.releaser_id == Company.id",
-        lazy="joined"
+        lazy="joined",
     )  # type: ignore
 
     distributer_id: Mapped[int] = Column(Integer, ForeignKey("company.id"))  # type: ignore
@@ -142,7 +153,7 @@ class Product(PkModelWithTimestamps):
         "Company",
         backref="distributed_products",
         primaryjoin="Product.distributer_id == Company.id",
-        lazy="joined"
+        lazy="joined",
     )  # type: ignore
 
     # ---relationships field---
@@ -152,7 +163,7 @@ class Product(PkModelWithTimestamps):
         order_by="nulls_first(asc(ProductReleaseInfo.initial_release_date))",
         cascade="all, delete",
         passive_deletes=True,
-        uselist=True
+        uselist=True,
     )  # type: ignore
     official_images: Mapped[list[ProductOfficialImage]] = relationship(
         ProductOfficialImage,
@@ -160,7 +171,7 @@ class Product(PkModelWithTimestamps):
         order_by="ProductOfficialImage.order",
         collection_class=ordering_list("order", count_from=1),
         cascade="all, delete",
-        passive_deletes=True
+        passive_deletes=True,
     )  # type: ignore
     sculptors: Mapped[list[Sculptor]] = relationship(
         "Sculptor",

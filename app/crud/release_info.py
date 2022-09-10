@@ -5,13 +5,11 @@ from .base import CRUDBase
 from fastapi.encoders import jsonable_encoder
 
 
-class CRUDReleaseInfo(CRUDBase[ProductReleaseInfo, ProductReleaseInfoCreate, ProductReleaseInfoUpdate]):
+class CRUDReleaseInfo(
+    CRUDBase[ProductReleaseInfo, ProductReleaseInfoCreate, ProductReleaseInfoUpdate]
+):
     def create_with_product(
-        self,
-        *,
-        db: Session,
-        obj_in: ProductReleaseInfoCreate,
-        product_id: int
+        self, *, db: Session, obj_in: ProductReleaseInfoCreate, product_id: int
     ) -> ProductReleaseInfo:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data, product_id=product_id)
@@ -21,10 +19,7 @@ class CRUDReleaseInfo(CRUDBase[ProductReleaseInfo, ProductReleaseInfoCreate, Pro
         return db_obj
 
     def get_by_product(
-        self,
-        *,
-        db: Session,
-        product_id: int
+        self, *, db: Session, product_id: int
     ) -> list[ProductReleaseInfo]:
         return db.query(self.model).filter(self.model.product_id == product_id).all()
 

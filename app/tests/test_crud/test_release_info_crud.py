@@ -1,12 +1,10 @@
 import random
 
 from app import crud
-from app.schemas.release_info import (ProductReleaseInfoCreate,
-                                      ProductReleaseInfoUpdate)
+from app.schemas.release_info import ProductReleaseInfoCreate, ProductReleaseInfoUpdate
 from app.tests.utils.faker import faker
 from app.tests.utils.product import create_random_product
-from app.tests.utils.release_info import \
-    create_random_release_info_own_by_product
+from app.tests.utils.release_info import create_random_release_info_own_by_product
 from sqlalchemy.orm import Session
 
 
@@ -17,11 +15,12 @@ def test_create_release_info(db: Session):
         initial_release_date=faker.date_this_year(),
         adjusted_release_date=None,
         announced_at=None,
-        shipped_at=None
+        shipped_at=None,
     )
     product = create_random_product(db)
     db_obj = crud.release_info.create_with_product(
-        db=db, obj_in=obj_in, product_id=product.id)
+        db=db, obj_in=obj_in, product_id=product.id
+    )
 
     assert db_obj.price == obj_in.price
     assert db_obj.tax_including == obj_in.tax_including
@@ -39,11 +38,12 @@ def test_get_release_info(db: Session):
         initial_release_date=faker.date_this_year(),
         adjusted_release_date=None,
         announced_at=None,
-        shipped_at=None
+        shipped_at=None,
     )
     product = create_random_product(db)
     db_obj = crud.release_info.create_with_product(
-        db=db, obj_in=obj_in, product_id=product.id)
+        db=db, obj_in=obj_in, product_id=product.id
+    )
     fetched_db_obj = crud.release_info.get(db=db, id=db_obj.id)
 
     assert fetched_db_obj == db_obj
@@ -56,7 +56,7 @@ def test_update_release_info(db: Session):
         initial_release_date=faker.date_this_year(),
         adjusted_release_date=None,
         announced_at=None,
-        shipped_at=None
+        shipped_at=None,
     )
     obj_in = ProductReleaseInfoUpdate(
         price=faker.pyint(min_value=1),
@@ -64,13 +64,13 @@ def test_update_release_info(db: Session):
         initial_release_date=faker.date_this_year(),
         adjusted_release_date=None,
         announced_at=None,
-        shipped_at=None
+        shipped_at=None,
     )
     product = create_random_product(db)
     db_obj = crud.release_info.create_with_product(
-        db=db, obj_in=create_obj_in, product_id=product.id)
-    updated_db_obj = crud.release_info.update(
-        db=db, db_obj=db_obj, obj_in=obj_in)
+        db=db, obj_in=create_obj_in, product_id=product.id
+    )
+    updated_db_obj = crud.release_info.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
     assert updated_db_obj.price == obj_in.price
     assert updated_db_obj.tax_including == obj_in.tax_including
@@ -88,11 +88,12 @@ def test_remove_release_info(db: Session):
         initial_release_date=faker.date_this_year(),
         adjusted_release_date=None,
         announced_at=None,
-        shipped_at=None
+        shipped_at=None,
     )
     product = create_random_product(db)
     db_obj = crud.release_info.create_with_product(
-        db=db, obj_in=obj_in, product_id=product.id)
+        db=db, obj_in=obj_in, product_id=product.id
+    )
 
     deleted_db_obj = crud.release_info.remove(db=db, id=db_obj.id)
     fetched_db_obj = crud.release_info.get(db=db, id=db_obj.id)
@@ -107,7 +108,6 @@ def test_get_release_infos_by_product(db: Session):
     for _ in range(count):
         create_random_release_info_own_by_product(db, product_id=product.id)
 
-    release_infos = crud.release_info.get_by_product(
-        db=db, product_id=product.id)
+    release_infos = crud.release_info.get_by_product(db=db, product_id=product.id)
 
     assert len(release_infos) is count

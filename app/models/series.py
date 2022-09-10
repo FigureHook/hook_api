@@ -10,7 +10,7 @@ class Series(UniqueMixin, PkModel):
     __tablename__ = "series"
 
     name: Mapped[str] = Column(String, unique=True)  # type: ignore
-    products: Mapped[list] = relationship('Product', back_populates='series', uselist=True)  # type: ignore
+    products: Mapped[list] = relationship("Product", back_populates="series", uselist=True)  # type: ignore
 
     @classmethod
     def unique_hash(cls, name):
@@ -18,4 +18,4 @@ class Series(UniqueMixin, PkModel):
 
     @classmethod
     def unique_filter(cls, query: Query, *args, **kwargs):
-        return query.filter(Series.name == kwargs.get('name'))
+        return query.filter(Series.name == kwargs.get("name"))

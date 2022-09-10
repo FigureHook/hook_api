@@ -18,7 +18,7 @@ def _create_product_obj():
         url=faker.uri(),
         id_by_official=faker.ean13(),
         jan=faker.ean13(),
-        checksum=faker.lexify(text='???????????????????'),
+        checksum=faker.lexify(text="???????????????????"),
         series=faker.name(),
         category=faker.name(),
         manufacturer=faker.name(),
@@ -54,7 +54,7 @@ def _create_update_product_obj():
         copyright=faker.paragraph(nb_sentences=1),
         url=faker.uri(),
         jan=faker.ean13(),
-        checksum=faker.lexify(text='???????????????????'),
+        checksum=faker.lexify(text="???????????????????"),
         series=faker.name(),
         id_by_official=faker.ean13(),
         category=faker.name(),
@@ -64,7 +64,7 @@ def _create_update_product_obj():
         sculptors=[faker.name() for _ in range(2)],
         paintworks=[faker.name() for _ in range(2)],
         order_period_start=order_period_start,
-        order_period_end=order_period_end
+        order_period_end=order_period_end,
     )
 
     return obj_in

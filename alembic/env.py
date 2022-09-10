@@ -1,4 +1,3 @@
-
 from logging.config import fileConfig
 
 from app.db.model_base import Model
@@ -32,6 +31,7 @@ target_metadata = Model.metadata
 
 def get_db_url() -> str:
     from app.core.config import settings
+
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 
@@ -75,9 +75,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

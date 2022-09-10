@@ -8,8 +8,8 @@ from sqlalchemy_mixins.repr import ReprMixin
 from sqlalchemy_mixins.serialize import SerializeMixin
 from sqlalchemy_mixins.timestamp import TimestampsMixin
 
-T = TypeVar('T')
-Model_T = TypeVar('Model_T', bound='Model')
+T = TypeVar("T")
+Model_T = TypeVar("Model_T", bound="Model")
 
 
 class Model(ReprMixin, SerializeMixin):
@@ -23,29 +23,32 @@ class PkModel(Model):
 
     __abstract__ = True
 
-    id: Mapped[int] = Column(Integer, primary_key=True,
-                             autoincrement=True)  # type: ignore
+    id: Mapped[int] = Column(
+        Integer, primary_key=True, autoincrement=True
+    )  # type: ignore
 
 
 class PkModelWithTimestamps(PkModel, TimestampsMixin):
-    """Model class with a `primary key` column in auto-increment interger named `uuid` timestamps.
-    """
+    """Model class with a `primary key` column in auto-increment interger named `uuid` timestamps."""
+
     __abstract__ = True
 
 
 class UUIDPkModel(Model, TimestampsMixin):
-    """Model class with a `primary key` column in UUID named `uuid` with timestamps.
-    """
+    """Model class with a `primary key` column in UUID named `uuid` with timestamps."""
+
     __abstract__ = True
 
     id: Mapped[uuid.UUID] = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)  # type: ignore
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )  # type: ignore
 
 
 class UniqueMixin:
     """
     https://github.com/sqlalchemy/sqlalchemy/wiki/UniqueObject
     """
+
     __abstract__ = True
 
     @classmethod
@@ -58,26 +61,22 @@ class UniqueMixin:
 
     @classmethod
     def as_unique(cls, session: Session, *arg: Any, **kw: Any):
-        return _unique(
-            session,
-            cls,
-            cls.unique_hash,
-            cls.unique_filter,
-            cls,
-            arg, kw
-        )
+        return _unique(session, cls, cls.unique_hash, cls.unique_filter, cls, arg, kw)
 
 
 def _unique(
-        session: Session,
-        cls: Type[T],
-        hashfunc: Callable,
-        queryfunc: Callable,
-        constructor, arg, kw) -> Optional[T]:
-    cache = getattr(session, '_unique_cache', None)
+    session: Session,
+    cls: Type[T],
+    hashfunc: Callable,
+    queryfunc: Callable,
+    constructor,
+    arg,
+    kw,
+) -> Optional[T]:
+    cache = getattr(session, "_unique_cache", None)
     if cache is None:
         cache = {}
-        setattr(session, '_unique_cache', cache)
+        setattr(session, "_unique_cache", cache)
 
     hash_value = hashfunc(*arg, **kw)
     if not hash_value:

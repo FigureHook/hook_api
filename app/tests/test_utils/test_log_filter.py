@@ -1,8 +1,11 @@
 from logging import INFO, LogRecord
 
 import pytest
-from app.utils.logging.log_filters import (AccessApplicationFilter,
-                                           application_name, application_uuid)
+from app.utils.logging.log_filters import (
+    AccessApplicationFilter,
+    application_name,
+    application_uuid,
+)
 from faker import Faker
 
 
@@ -26,13 +29,7 @@ def app_name(faker: Faker):
 def log_record():
     """Create a log record at INFO-level."""
     record = LogRecord(
-        name="",
-        level=INFO,
-        pathname="",
-        lineno=0,
-        msg="Kappa",
-        args=(),
-        exc_info=None
+        name="", level=INFO, pathname="", lineno=0, msg="Kappa", args=(), exc_info=None
     )
     return record
 

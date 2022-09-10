@@ -6,7 +6,5 @@ from .faker import faker
 
 
 def create_random_task(db: Session):
-    obj_data = TaskCreate(
-        name=faker.name(),
-        executed_at=faker.date_time_ad())
+    obj_data = TaskCreate(name=faker.name(), executed_at=faker.date_time_ad())
     return crud.task.create(db=db, obj_in=obj_data)

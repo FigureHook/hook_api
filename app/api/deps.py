@@ -22,7 +22,9 @@ def get_db() -> Generator[Session, None, None]:
         session.close()
 
 
-async def verify_token(api_token: str = Security(api_token), db: Session = Depends(get_db)):
+async def verify_token(
+    api_token: str = Security(api_token), db: Session = Depends(get_db)
+):
     if api_token and api_token == settings.API_TOKEN:
         app_name = settings.MANAGEMENT_APP_NAME
         app_id = settings.MANAGEMENT_UUID
@@ -31,8 +33,7 @@ async def verify_token(api_token: str = Security(api_token), db: Session = Depen
         return
 
     if api_token and api_token != settings.API_TOKEN:
-        app = crud.application.get_by_token(
-            db=db, token=api_token)  # type: ignore
+        app = crud.application.get_by_token(db=db, token=api_token)
         if app:
             application_uuid.set(str(app.id))
             application_name.set(app.name)
@@ -43,6 +44,5 @@ async def verify_token(api_token: str = Security(api_token), db: Session = Depen
             return
 
     raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrect token."
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect token."
     )

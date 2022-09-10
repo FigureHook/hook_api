@@ -20,9 +20,7 @@ def test_get_application(db: Session):
 def test_update_application(db: Session):
     db_obj = create_random_application(db)
     update_obj = ApplicationUpdate(name=faker.name())
-    updated_db_obj = crud.application.update(
-        db=db, db_obj=db_obj, obj_in=update_obj
-    )
+    updated_db_obj = crud.application.update(db=db, db_obj=db_obj, obj_in=update_obj)
     assert updated_db_obj.name == update_obj.name
 
 

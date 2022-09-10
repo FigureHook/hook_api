@@ -8,7 +8,7 @@ from .faker import faker
 def create_random_source_checksum(db: Session):
     obj_data = SourceChecksumCreate(
         source=faker.name(),
-        checksum=faker.lexify(text='???????????????????'),
-        checked_at=faker.date_time_ad()
+        checksum=faker.lexify(text="???????????????????"),
+        checked_at=faker.date_time_ad(),
     )
     return crud.source_checksum.create(db=db, obj_in=obj_data)

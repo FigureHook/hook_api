@@ -21,8 +21,7 @@ def test_get_company(db: Session):
 def test_update_company(db: Session):
     db_obj = create_random_company(db)
     update_obj = CompanyUpdate(name=faker.name())
-    updated_db_obj = crud.company.update(
-        db=db, db_obj=db_obj, obj_in=update_obj)
+    updated_db_obj = crud.company.update(db=db, db_obj=db_obj, obj_in=update_obj)
 
     assert update_obj.name == updated_db_obj.name
 

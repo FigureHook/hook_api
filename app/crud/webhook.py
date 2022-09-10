@@ -6,7 +6,9 @@ from app.schemas.webhook import WebhookCreate, WebhookUpdate
 from .base import CRUDBase
 
 
-class CRUDWebhook(CRUDBase[Webhook, WebhookCreate, Union[WebhookCreate, WebhookUpdate]]):
+class CRUDWebhook(
+    CRUDBase[Webhook, WebhookCreate, Union[WebhookCreate, WebhookUpdate]]
+):
     pass
 
 

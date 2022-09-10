@@ -6,11 +6,9 @@ from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import Mapped, Query
 from sqlalchemy.sql import func
 
-__all__ = [
-    "SourceChecksum"
-]
+__all__ = ["SourceChecksum"]
 
-T = TypeVar('T', bound='SourceChecksum')
+T = TypeVar("T", bound="SourceChecksum")
 
 
 class SourceChecksum(UniqueMixin, PkModel):
@@ -20,8 +18,7 @@ class SourceChecksum(UniqueMixin, PkModel):
     source: Mapped[str] = Column(String)  # type: ignore
     checksum: Mapped[str] = Column(String)  # type: ignore
     checked_at: Mapped[datetime] = Column(
-        DateTime,
-        default=__datetime_callback__()
+        DateTime, default=__datetime_callback__()
     )  # type: ignore
 
     @classmethod
@@ -30,4 +27,4 @@ class SourceChecksum(UniqueMixin, PkModel):
 
     @classmethod
     def unique_filter(cls, query: Query, *args, **kwargs):
-        return query.filter(cls.source == kwargs.get('source'))
+        return query.filter(cls.source == kwargs.get("source"))

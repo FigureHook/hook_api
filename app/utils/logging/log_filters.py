@@ -7,15 +7,18 @@ if TYPE_CHECKING:
 
 
 application_uuid: ContextVar[Optional[str]] = ContextVar(
-    'application_uuid', default=None)
+    "application_uuid", default=None
+)
 
 application_name: ContextVar[Optional[str]] = ContextVar(
-    'application_name', default=None)
+    "application_name", default=None
+)
 
 
 class AccessApplicationFilter(Filter):
     """Logging filter to attached application name and UUIDs to log records"""
-    def filter(self, record: 'LogRecord') -> bool:
+
+    def filter(self, record: "LogRecord") -> bool:
         """
         Attach the accessing application name and UUID to the log record.
         """

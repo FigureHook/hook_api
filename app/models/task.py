@@ -5,9 +5,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import Query
 from sqlalchemy.sql import func
 
-__all__ = [
-    "Task"
-]
+__all__ = ["Task"]
 
 
 class Task(UniqueMixin, PkModel):
@@ -16,8 +14,7 @@ class Task(UniqueMixin, PkModel):
 
     name: Mapped[str] = Column(String)  # type: ignore
     executed_at: Mapped[datetime] = Column(
-        DateTime,
-        default=__datetime_callback__()
+        DateTime, default=__datetime_callback__()
     )  # type: ignore
 
     @classmethod
@@ -26,4 +23,4 @@ class Task(UniqueMixin, PkModel):
 
     @classmethod
     def unique_filter(cls, query: Query, *args, **kwargs):
-        return query.filter(cls.name == kwargs.get('name'))
+        return query.filter(cls.name == kwargs.get("name"))

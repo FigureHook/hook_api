@@ -21,8 +21,7 @@ def test_get_category(db: Session):
 def test_update_category(db: Session):
     db_obj = create_random_series(db)
     update_obj = SeriesUpdate(name=faker.name())
-    updated_db_obj = crud.series.update(
-        db=db, db_obj=db_obj, obj_in=update_obj)
+    updated_db_obj = crud.series.update(db=db, db_obj=db_obj, obj_in=update_obj)
 
     assert update_obj.name == updated_db_obj.name
 

@@ -1,8 +1,7 @@
 from typing import cast
 
 from app import crud
-from app.schemas.source_checksum import (SourceChecksumCreate,
-                                         SourceChecksumUpdate)
+from app.schemas.source_checksum import SourceChecksumCreate, SourceChecksumUpdate
 from app.tests.utils.faker import faker
 from app.tests.utils.source_checksum import create_random_source_checksum
 from sqlalchemy.orm import Session
@@ -11,7 +10,7 @@ from sqlalchemy.orm import Session
 def test_create_source_checksum(db: Session):
     obj_in = SourceChecksumCreate(
         source=faker.name(),
-        checksum=faker.lexify(text='???????????????????'),
+        checksum=faker.lexify(text="???????????????????"),
         checked_at=faker.date_time_ad(),
     )
 
@@ -32,12 +31,11 @@ def test_update_source_checksum(db: Session):
     db_obj = create_random_source_checksum(db=db)
     obj_in = SourceChecksumUpdate(
         source=faker.name(),
-        checksum=faker.lexify(text='???????????????????'),
+        checksum=faker.lexify(text="???????????????????"),
         checked_at=faker.date_time_ad(),
     )
 
-    updated_db_obj = crud.source_checksum.update(
-        db=db, db_obj=db_obj, obj_in=obj_in)
+    updated_db_obj = crud.source_checksum.update(db=db, db_obj=db_obj, obj_in=obj_in)
     assert obj_in.source == updated_db_obj.source
     assert obj_in.checksum == updated_db_obj.checksum
     assert obj_in.checked_at == updated_db_obj.checked_at
@@ -55,15 +53,11 @@ def test_remove_source_checksum(db: Session):
 
 
 def test_get_multi_source_checksum_filter_by_source(db: Session):
-    db_objs = [
-        create_random_source_checksum(db=db)
-        for _ in range(10)
-    ]
+    db_objs = [create_random_source_checksum(db=db) for _ in range(10)]
 
     for db_obj in db_objs:
         objs = crud.source_checksum.get_multi_filter_by_source(
-            db=db,
-            source=cast(str, db_obj.source)
+            db=db, source=cast(str, db_obj.source)
         )
         assert len(objs)
         assert len(objs) <= len(db_objs)

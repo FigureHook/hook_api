@@ -17,8 +17,7 @@ class TestProduct:
 
     def test_checksum_comparison(self):
         checksum = "111"
-        product = Product(
-            name="foo figure", url="www.foo.com", checksum="111")
+        product = Product(name="foo figure", url="www.foo.com", checksum="111")
 
         assert product.check_checksum(checksum)
 
@@ -66,18 +65,24 @@ class TestProductReleaseInfo:
     def test_stall_release(self):
         p = Product(name="foo")
         info = ProductReleaseInfo(
-            price=12960, initial_release_date=date(2020, 1, 1), product_id=p.id)
+            price=12960, initial_release_date=date(2020, 1, 1), product_id=p.id
+        )
         info.stall()
         assert not info.initial_release_date
 
     def test_get_release_date(self):
         p = Product(name="foo")
         info_1 = ProductReleaseInfo(
-            price=12960, initial_release_date=date(2020, 1, 1), product_id=p.id)
+            price=12960, initial_release_date=date(2020, 1, 1), product_id=p.id
+        )
         assert info_1.release_date == date(2020, 1, 1)
 
-        info_2 = ProductReleaseInfo(price=12960, initial_release_date=date(2020, 1, 1),
-                                    adjusted_release_date=date(2020, 5, 1), product_id=p.id)
+        info_2 = ProductReleaseInfo(
+            price=12960,
+            initial_release_date=date(2020, 1, 1),
+            adjusted_release_date=date(2020, 5, 1),
+            product_id=p.id,
+        )
         assert info_2.release_date == date(2020, 5, 1)
 
         info_3 = ProductReleaseInfo(price=12960, product_id=p.id)

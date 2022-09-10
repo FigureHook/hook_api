@@ -5,10 +5,10 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-Model_T = TypeVar('Model_T', bound=Model)
+Model_T = TypeVar("Model_T", bound=Model)
 
-CreateSchema_T = TypeVar('CreateSchema_T', bound=BaseModel)
-UpdateSchema_T = TypeVar('UpdateSchema_T', bound=BaseModel)
+CreateSchema_T = TypeVar("CreateSchema_T", bound=BaseModel)
+UpdateSchema_T = TypeVar("UpdateSchema_T", bound=BaseModel)
 
 
 class CRUDBase(Generic[Model_T, CreateSchema_T, UpdateSchema_T]):
@@ -31,7 +31,9 @@ class CRUDBase(Generic[Model_T, CreateSchema_T, UpdateSchema_T]):
         db.refresh(db_obj)
         return db_obj
 
-    def update(self, *, db: Session, db_obj: Model_T, obj_in: UpdateSchema_T) -> Model_T:
+    def update(
+        self, *, db: Session, db_obj: Model_T, obj_in: UpdateSchema_T
+    ) -> Model_T:
         db_obj_data = db_obj.to_dict()
         update_data = obj_in.dict(exclude_unset=True)
         for field in update_data:

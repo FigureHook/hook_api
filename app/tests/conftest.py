@@ -3,9 +3,9 @@ from typing import Generator
 
 import pytest
 
-os.environ['ENV'] = "test"
+os.environ["ENV"] = "test"
 
-if os.environ['ENV'] == "test":
+if os.environ["ENV"] == "test":
     import psycopg2
     from app.core.config import settings
     from app.db.base import Model
@@ -29,7 +29,7 @@ def check_test_database():
         )
 
     except:  # noqa: E722
-        print('Database not connected.')
+        print("Database not connected.")
 
     if connection is not None:
         connection.autocommit = True
@@ -56,7 +56,7 @@ def raw_client() -> Generator:
 
 @pytest.fixture(scope="module")
 def client(raw_client: TestClient) -> Generator:
-    raw_client.headers['x-api-token'] = settings.API_TOKEN
+    raw_client.headers["x-api-token"] = settings.API_TOKEN
     yield raw_client
 
 

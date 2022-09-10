@@ -8,8 +8,7 @@ __all__ = ["Category"]
 class Category(UniqueMixin, PkModel):
     __tablename__ = "category"
 
-    name: Mapped[str] = Column(
-        String, nullable=False, unique=True)  # type: ignore
+    name: Mapped[str] = Column(String, nullable=False, unique=True)  # type: ignore
 
     @classmethod
     def unique_hash(cls, name):
@@ -17,4 +16,4 @@ class Category(UniqueMixin, PkModel):
 
     @classmethod
     def unique_filter(cls, query: Query, *args, **kwargs):
-        return query.filter(Category.name == kwargs.get('name'))
+        return query.filter(Category.name == kwargs.get("name"))

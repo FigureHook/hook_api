@@ -8,14 +8,12 @@ from sqlalchemy.orm import Session
 
 def test_create_webhook(db: Session):
     obj_in = WebhookDBCreate(
-        channel_id=faker.numerify(
-            text='%################'),
-        id=faker.numerify(
-            text='%################'),
-        token=faker.lexify(text='???????????????????'),
+        channel_id=faker.numerify(text="%################"),
+        id=faker.numerify(text="%################"),
+        token=faker.lexify(text="???????????????????"),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
         lang=faker.random_choices(elements=WebhookLang)[0],
-        currency=faker.random_choices(elements=WebhookCurrency)[0]
+        currency=faker.random_choices(elements=WebhookCurrency)[0],
     )
 
     db_obj = crud.webhook.create(db=db, obj_in=obj_in)
@@ -38,8 +36,8 @@ def test_update_webhook(db: Session):
     db_obj = create_random_webhook(db=db)
 
     obj_in = WebhookCreate(
-        id=faker.numerify(text='%################'),
-        token=faker.lexify(text='???????????????????'),
+        id=faker.numerify(text="%################"),
+        token=faker.lexify(text="???????????????????"),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
         lang=faker.random_choices(elements=WebhookLang)[0],
         currency=faker.random_choices(elements=WebhookCurrency)[0],

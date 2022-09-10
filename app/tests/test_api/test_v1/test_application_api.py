@@ -21,14 +21,12 @@ def test_get_applications(db: Session, client: TestClient):
 
 
 def test_create_application(db: Session, client: TestClient):
-    data = {
-        'name': faker.slug()
-    }
+    data = {"name": faker.slug()}
     response = client.post(v1_endpoint("/applications/"), json=data)
     assert response.status_code == 201
 
     content = response.json()
-    assert content.get('name') == data.get('name')
+    assert content.get("name") == data.get("name")
 
 
 def test_get_application(db: Session, client: TestClient):
@@ -37,9 +35,9 @@ def test_get_application(db: Session, client: TestClient):
     assert response.status_code == 200
 
     content = response.json()
-    assert str(getattr(app, 'id')) == content.get('id')
-    assert getattr(app, 'name') == content.get('name')
-    assert getattr(app, 'token') == content.get('token')
+    assert str(getattr(app, "id")) == content.get("id")
+    assert getattr(app, "name") == content.get("name")
+    assert getattr(app, "token") == content.get("token")
 
     response = client.get(v1_endpoint(f"/applications/{faker.uuid4()}"))
     assert response.status_code == 404
@@ -61,8 +59,7 @@ def test_refresh_application_token(db: Session, client: TestClient):
     assert response.status_code == 200
 
     content = response.json()
-    assert content['token'] != original_token
+    assert content["token"] != original_token
 
-    response = client.post(v1_endpoint(
-        f"/applications/{faker.uuid4()}/refresh"))
+    response = client.post(v1_endpoint(f"/applications/{faker.uuid4()}/refresh"))
     assert response.status_code == 404

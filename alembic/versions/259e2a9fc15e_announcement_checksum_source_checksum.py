@@ -12,30 +12,30 @@ from sqlalchemy.dialects import postgresql
 from app.constants import SourceSite
 
 # revision identifiers, used by Alembic.
-revision = '259e2a9fc15e'
-down_revision = 'a5f25e7d894f'
+revision = "259e2a9fc15e"
+down_revision = "a5f25e7d894f"
 branch_labels = None
 depends_on = None
 
 source_site_mapping = {
-    'ALTER': SourceSite.ALTER_ANNOUNCEMENT,
-    'GSC': SourceSite.GSC_ANNOUNCEMENT,
-    'NATIVE': SourceSite.NATIVE_ANNOUNCEMENT
+    "ALTER": SourceSite.ALTER_ANNOUNCEMENT,
+    "GSC": SourceSite.GSC_ANNOUNCEMENT,
+    "NATIVE": SourceSite.NATIVE_ANNOUNCEMENT,
 }
 
 
 def upgrade():
     bind = op.get_bind()
     session = sa.orm.Session(bind=bind)
-    old_checksums_result = session.execute(
-        f"SELECT * FROM announcement_checksum;")
+    old_checksums_result = session.execute(f"SELECT * FROM announcement_checksum;")
 
-    op.create_table('source_checksum',
-                    sa.Column('source', sa.String(), nullable=False),
-                    sa.Column('checksum', sa.String(), nullable=True),
-                    sa.Column('checked_at', sa.DateTime(), nullable=True),
-                    sa.PrimaryKeyConstraint('source')
-                    )
+    op.create_table(
+        "source_checksum",
+        sa.Column("source", sa.String(), nullable=False),
+        sa.Column("checksum", sa.String(), nullable=True),
+        sa.Column("checked_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("source"),
+    )
 
     for row in old_checksums_result:
         source = source_site_mapping[row[0]]
@@ -45,7 +45,7 @@ def upgrade():
             f"INSERT INTO source_checksum (source, checksum, checked_at) VALUES ('{source}', '{checksum_value}', '{checked_at}');"
         )
 
-    op.drop_table('announcement_checksum')
+    op.drop_table("announcement_checksum")
     session.execute("DROP TYPE sourcesite;")
     session.commit()
     session.close()
@@ -56,16 +56,20 @@ def downgrade():
     session = sa.orm.Session(bind=bind)
     checksums_result = session.execute(f"SELECT * FROM source_checksum;")
 
-    op.create_table('announcement_checksum',
-                    sa.Column('site', sa.Enum('GSC', 'ALTER', 'NATIVE',
-                              name='sourcesite'), autoincrement=False, nullable=False),
-                    sa.Column('checksum', sa.VARCHAR(),
-                              autoincrement=False, nullable=True),
-                    sa.Column('checked_at', postgresql.TIMESTAMP(),
-                              autoincrement=False, nullable=True),
-                    sa.PrimaryKeyConstraint(
-                        'site', name='announcement_checksum_pkey')
-                    )
+    op.create_table(
+        "announcement_checksum",
+        sa.Column(
+            "site",
+            sa.Enum("GSC", "ALTER", "NATIVE", name="sourcesite"),
+            autoincrement=False,
+            nullable=False,
+        ),
+        sa.Column("checksum", sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            "checked_at", postgresql.TIMESTAMP(), autoincrement=False, nullable=True
+        ),
+        sa.PrimaryKeyConstraint("site", name="announcement_checksum_pkey"),
+    )
 
     for row in checksums_result:
         source = row[0]
@@ -80,4 +84,4 @@ def downgrade():
 
     session.commit()
     session.close()
-    op.drop_table('source_checksum')
+    op.drop_table("source_checksum")

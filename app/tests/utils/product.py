@@ -17,7 +17,7 @@ def create_random_product(db: Session):
         copyright=faker.paragraph(nb_sentences=1),
         url=faker.uri(),
         jan=faker.ean13(),
-        checksum=faker.lexify(text='???????????????????'),
+        checksum=faker.lexify(text="???????????????????"),
         id_by_official=faker.ean13(),
         series=faker.name(),
         category=faker.name(),

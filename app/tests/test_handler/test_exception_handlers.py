@@ -6,10 +6,10 @@ def test_sqlalchemy_exception_handler():
     from sqlalchemy.exc import SQLAlchemyError
 
     async def fake_endpoint():
-        raise SQLAlchemyError('A SqlAlchemyError.')
+        raise SQLAlchemyError("A SqlAlchemyError.")
 
-    error_endpoint = '/sqlalchemy-error'
-    app.add_api_route(error_endpoint, fake_endpoint, methods=['GET'])
+    error_endpoint = "/sqlalchemy-error"
+    app.add_api_route(error_endpoint, fake_endpoint, methods=["GET"])
 
     with TestClient(app) as client:
         response = client.get(error_endpoint)
