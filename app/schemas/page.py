@@ -7,7 +7,7 @@ from fastapi_pagination import Params
 from fastapi_pagination.bases import AbstractPage, AbstractParams
 from pydantic import BaseModel, conint
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class PageParamsBase(Params):
@@ -30,19 +30,17 @@ class Page(AbstractPage[T], Generic[T]):
 
     @classmethod
     def create(
-            cls,
-            results: Sequence[T],
-            total_results: int,
-            params: AbstractParams,
+        cls,
+        results: Sequence[T],
+        total_results: int,
+        params: AbstractParams,
     ) -> Page[T]:
         if not isinstance(params, PageParamsBase):
             raise ValueError("Page should be used with Params")
 
         info = PageInfo(
             page=params.page,
-            total_pages=ceil(
-                total_results / params.size
-            ) if total_results else 1,
+            total_pages=ceil(total_results / params.size) if total_results else 1,
             total_results=total_results,
         )
 

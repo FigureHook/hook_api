@@ -5,12 +5,12 @@ from pydantic import BaseModel, Field, NonNegativeInt
 
 
 class ProductReleaseInfoBase(BaseModel):
-    price: Optional[NonNegativeInt]
+    price: Optional[NonNegativeInt] = Field(nullable=True)
     tax_including: bool = Field(default=False)
-    initial_release_date: Optional[date]
-    adjusted_release_date: Optional[date]
-    announced_at: Optional[date]
-    shipped_at: Optional[date]
+    initial_release_date: Optional[date] = Field(nullable=True)
+    adjusted_release_date: Optional[date] = Field(nullable=True)
+    announced_at: Optional[date] = Field(nullable=True)
+    shipped_at: Optional[date] = Field(nullable=True)
 
 
 class ProductReleaseInfoCreate(ProductReleaseInfoBase):

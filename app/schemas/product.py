@@ -21,8 +21,8 @@ class ProductOfficialImageUpdate(ProductOfficialImageBase):
     order: NonNegativeInt = Field(
         default=0,
         title="The order of images.",
-        description='''Specified the order of image.
-        By default, 0 is for the last image.'''
+        description="Specified the order of image."
+        "By default, 0 is for the last image.",
     )
 
 
@@ -35,8 +35,8 @@ class ProductOfficialImageInDB(ProductOfficialImageBase):
 
 class ProductBase(BaseModel):
     name: str
-    size: Optional[PositiveInt]
-    scale: Optional[PositiveInt]
+    size: Optional[PositiveInt] = Field(nullable=True)
+    scale: Optional[PositiveInt] = Field(nullable=True)
     rerelease: bool
     adult: bool = Field(default=False)
     copyright: str
@@ -46,21 +46,23 @@ class ProductBase(BaseModel):
     id_by_official: str
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
-        description="This value should be an UTC timestamp."
+        description="This value should be an UTC timestamp.",
+        nullable=True,
     )
     order_period_end: Optional[datetime] = Field(
         title="The end of order period.",
-        description="This value should be an UTC timestamp."
+        description="This value should be an UTC timestamp.",
+        nullable=True,
     )
     series: str
     category: str
     manufacturer: str
-    releaser: Optional[str]
-    distributer: Optional[str]
-    sculptors: Optional[list[str]]
-    paintworks: Optional[list[str]]
+    releaser: Optional[str] = Field(nullable=True)
+    distributer: Optional[str] = Field(nullable=True)
+    sculptors: Optional[list[str]] = []
+    paintworks: Optional[list[str]] = []
 
-    @validator('jan')
+    @validator("jan")
     def validate_jan(cls, jan_v: str) -> str:
         assert len(jan_v) == 13
         assert jan_v.isnumeric()
@@ -69,7 +71,7 @@ class ProductBase(BaseModel):
 
 
 def _validate_jan(s):
-    return not sum(int(i)*d for i, d in zip(s, [1, 3]*7)) % 10
+    return not sum(int(i) * d for i, d in zip(s, [1, 3] * 7)) % 10
 
 
 class ProductCreate(ProductBase):
@@ -83,22 +85,24 @@ class ProductUpdate(ProductBase):
 class ProductInDB(BaseModel):
     id: int
     name: str
-    size: Optional[PositiveInt]
-    scale: Optional[PositiveInt]
+    size: Optional[PositiveInt] = Field(nullable=True)
+    scale: Optional[PositiveInt] = Field(nullable=True)
     rerelease: bool
     adult: bool = Field(default=False)
     copyright: str
     url: str
-    jan: Optional[str]
+    jan: Optional[str] = Field(nullable=True)
     checksum: str
     id_by_official: str
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
-        description="This value should be an UTC timestamp."
+        description="This value should be an UTC timestamp.",
+        nullable=True,
     )
     order_period_end: Optional[datetime] = Field(
         title="The end of order period.",
-        description="This value should be an UTC timestamp."
+        description="This value should be an UTC timestamp.",
+        nullable=True,
     )
 
     created_at: datetime
@@ -112,8 +116,8 @@ class ProductInDBRich(ProductInDB):
     series: SeriesInDB
     category: CategoryInDB
     manufacturer: CompanyInDB
-    releaser: Optional[CompanyInDB]
-    distributer: Optional[CompanyInDB]
-    sculptors: Optional[list[WorkerInDB]]
-    paintworks: Optional[list[WorkerInDB]]
+    releaser: Optional[CompanyInDB] = Field(nullable=True)
+    distributer: Optional[CompanyInDB] = Field(nullable=True)
+    sculptors: Optional[list[WorkerInDB]] = []
+    paintworks: Optional[list[WorkerInDB]] = []
     official_images: list[ProductOfficialImageInDB]

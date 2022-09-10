@@ -14,7 +14,7 @@ app = FastAPI(
     title="FigureHook",
     version="0.0.1",
     debug=settings.DEBUG,
-    on_startup=[configure_logging]
+    on_startup=[configure_logging],
 )
 
 app.add_middleware(GZipMiddleware)
@@ -25,6 +25,6 @@ app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
 app.include_router(api_router, prefix=settings.API_V1_ENDPOINT)
 
 
-if settings.ENVIRONMENT == 'development':
-    console_logger = logging.getLogger('uvicorn')
+if settings.ENVIRONMENT == "development":
+    console_logger = logging.getLogger("uvicorn")
     console_logger.info(f"Token: {str(settings.API_TOKEN)}")

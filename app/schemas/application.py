@@ -1,8 +1,8 @@
-from datetime import datetime
-from typing import Union
+from datetime import date, datetime
+from typing import Union, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ApplicationBase(BaseModel):
@@ -22,7 +22,7 @@ class ApplicationInDB(ApplicationBase):
     token: str
     created_at: datetime
     updated_at: datetime
-    last_seen_at: Union[datetime, None]
+    last_seen_at: Optional[datetime] = Field(nullable=True)
 
     class Config:
         orm_mode = True

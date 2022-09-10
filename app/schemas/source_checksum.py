@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SourceChecksumBase(BaseModel):
@@ -15,9 +15,9 @@ class SourceChecksumCreate(SourceChecksumBase):
 
 
 class SourceChecksumUpdate(BaseModel):
-    source: Optional[str]
-    checksum: Optional[str]
-    checked_at: Optional[datetime]
+    source: Optional[str] = Field(nullable=True)
+    checksum: Optional[str] = Field(nullable=True)
+    checked_at: Optional[datetime] = Field(nullable=True)
 
 
 class SourceChecksumInDB(SourceChecksumBase):

@@ -22,12 +22,12 @@ class WebhookDBCreate(WebhookCreate):
 
 
 class WebhookUpdate(BaseModel):
-    is_existed: Optional[bool]
+    is_existed: Optional[bool] = Field(nullable=True)
 
 
 class WebhookInDBBase(WebhookBase):
     channel_id: str
-    is_existed: Optional[bool]
+    is_existed: Optional[bool] = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
 

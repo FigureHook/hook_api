@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, NonNegativeInt
 
 
 class ReleaseTicketCreate(BaseModel):
-    from_: datetime = Field(..., alias='from')
+    from_: datetime = Field(..., alias="from")
 
 
 class ReleaseTicketInDB(BaseModel):
@@ -26,11 +26,11 @@ class ReleaseFeed(BaseModel):
     is_rerelease: bool
     series: str
     manufacturer: str
-    size: Optional[NonNegativeInt]
-    scale: Optional[NonNegativeInt]
-    price: Optional[NonNegativeInt]
-    release_date: Optional[date]
+    size: Optional[NonNegativeInt] = Field(nullable=True)
+    scale: Optional[NonNegativeInt] = Field(nullable=True)
+    price: Optional[NonNegativeInt] = Field(nullable=True)
+    release_date: Optional[date] = Field(nullable=True)
 
     # Media
     image_url: str
-    manufacturer_logo: Optional[str]
+    manufacturer_logo: Optional[str] = Field(nullable=True)
