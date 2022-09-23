@@ -1,16 +1,8 @@
 from datetime import date, datetime
 from typing import Optional, Union, cast
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Date,
-    DateTime,
-    ForeignKey,
-    Integer,
-    SmallInteger,
-    String,
-)
+from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
+                        SmallInteger, String)
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import Mapped, relationship
 
@@ -110,7 +102,6 @@ class Product(PkModelWithTimestamps):
     copyright: Mapped[str] = Column(String)  # type: ignore
     url: Mapped[str] = Column(String)  # type: ignore
     jan: Mapped[str] = Column(String(13), unique=True)  # type: ignore
-    id_by_official: Mapped[str] = Column(String)  # type: ignore
     checksum: Mapped[str] = Column(String(32))  # type: ignore
     order_period_start: Mapped[datetime] = Column(DateTime)  # type: ignore
     order_period_end: Mapped[datetime] = Column(DateTime)  # type: ignore

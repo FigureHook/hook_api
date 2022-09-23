@@ -39,11 +39,10 @@ class ProductBase(BaseModel):
     scale: Optional[PositiveInt] = Field(nullable=True)
     rerelease: bool
     adult: bool = Field(default=False)
-    copyright: str
+    copyright: Optional[str]
     url: str
     jan: Optional[str]
     checksum: str
-    id_by_official: str
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
         description="This value should be an UTC timestamp.",
@@ -89,11 +88,10 @@ class ProductInDB(BaseModel):
     scale: Optional[PositiveInt] = Field(nullable=True)
     rerelease: bool
     adult: bool = Field(default=False)
-    copyright: str
+    copyright: Optional[str]
     url: str
     jan: Optional[str] = Field(nullable=True)
     checksum: str
-    id_by_official: str
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
         description="This value should be an UTC timestamp.",

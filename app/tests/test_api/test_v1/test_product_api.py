@@ -46,7 +46,7 @@ def test_get_products(client: TestClient, db: Session):
 
 
 def test_get_products_by_url(db: Session, client: TestClient):
-    products_count = random.randint(0, 20)
+    products_count = random.randint(1, 20)
     db_products = [create_random_product(db) for _ in range(products_count)]
     choiced_product = random.choice(db_products)
     response = client.get(
@@ -70,7 +70,6 @@ def test_create_product(client: TestClient, db: Session):
         "copyright": "By someone",
         "url": "https://company.com/581",
         "jan": "4580692150055",
-        "id_by_official": "581",
         "checksum": "asdjk1290mfsddkljlhiijb3r",
         "order_period_start": datetime(2020, 2, 9, 9, 0, 0).isoformat(),
         "order_period_end": datetime(2020, 2, 15, 9, 0, 0).isoformat(),
@@ -103,7 +102,6 @@ def test_get_product(client: TestClient, db: Session):
         "url",
         "jan",
         "checksum",
-        "id_by_official",
         "order_period_start",
         "order_period_end",
         "created_at",
@@ -149,7 +147,6 @@ def test_update_product(db: Session, client: TestClient):
         "copyright": "By someone",
         "url": "https://company.com/581",
         "jan": "4580692150055",
-        "id_by_official": "581",
         "checksum": "asdjk1290mfsddkljlhiijb3r",
         "order_period_start": datetime(2020, 2, 9, 9, 0, 0).isoformat(),
         "order_period_end": datetime(2020, 2, 15, 9, 0, 0).isoformat(),
