@@ -370,14 +370,80 @@
                 ]
             }
         },
+        "/api/v1/products/{product_id}/release-infos/{release_id}": {
+            "patch": {
+                "tags": [
+                    "product"
+                ],
+                "summary": "Patch Product Release Info",
+                "operationId": "patch_product_release_info_api_v1_products__product_id__release_infos__release_id__patch",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Product Id",
+                            "type": "integer"
+                        },
+                        "name": "product_id",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Release Id",
+                            "type": "integer"
+                        },
+                        "name": "release_id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductReleaseInfoUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductReleaseInfoInDB"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ]
+            }
+        },
         "/api/v1/products/{product_id}/release-infos/{release_info_id}/feed": {
             "get": {
                 "tags": [
                     "product",
                     "release-feed"
                 ],
-                "summary": "Get Reelase Info Feed",
-                "operationId": "get_reelase_info_feed_api_v1_products__product_id__release_infos__release_info_id__feed_get",
+                "summary": "Get Release Info Feed",
+                "operationId": "get_release_info_feed_api_v1_products__product_id__release_infos__release_info_id__feed_get",
                 "parameters": [
                     {
                         "required": true,
@@ -3054,7 +3120,6 @@
                 "required": [
                     "name",
                     "rerelease",
-                    "copyright",
                     "url",
                     "checksum",
                     "series",
@@ -3424,12 +3489,52 @@
                     }
                 }
             },
+            "ProductReleaseInfoUpdate": {
+                "title": "ProductReleaseInfoUpdate",
+                "type": "object",
+                "properties": {
+                    "price": {
+                        "title": "Price",
+                        "minimum": 0.0,
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "tax_including": {
+                        "title": "Tax Including",
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "initial_release_date": {
+                        "title": "Initial Release Date",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "adjusted_release_date": {
+                        "title": "Adjusted Release Date",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "announced_at": {
+                        "title": "Announced At",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "shipped_at": {
+                        "title": "Shipped At",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    }
+                }
+            },
             "ProductUpdate": {
                 "title": "ProductUpdate",
                 "required": [
                     "name",
                     "rerelease",
-                    "copyright",
                     "url",
                     "checksum",
                     "series",

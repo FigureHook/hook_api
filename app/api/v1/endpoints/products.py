@@ -3,24 +3,17 @@ from typing import Any, Optional
 
 from app import crud
 from app.api import deps
-from app.models import (
-    Company,
-    Product,
-    ProductOfficialImage,
-    ProductReleaseInfo,
-    Series,
-)
+from app.models import (Company, Product, ProductOfficialImage,
+                        ProductReleaseInfo, Series)
 from app.schemas.category import CategoryInDB
 from app.schemas.company import CompanyInDB
 from app.schemas.page import Page, PageParamsBase
-from app.schemas.product import (
-    ProductCreate,
-    ProductInDBRich,
-    ProductOfficialImageInDB,
-    ProductUpdate,
-)
+from app.schemas.product import (ProductCreate, ProductInDBRich,
+                                 ProductOfficialImageInDB, ProductUpdate)
 from app.schemas.release_feed import ReleaseFeed
-from app.schemas.release_info import ProductReleaseInfoCreate, ProductReleaseInfoInDB
+from app.schemas.release_info import (ProductReleaseInfoCreate,
+                                      ProductReleaseInfoInDB,
+                                      ProductReleaseInfoUpdate)
 from app.schemas.series import SeriesInDB
 from app.schemas.worker import WorkerInDB
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -41,6 +34,18 @@ def check_product_exist(product_id: int, db: Session = Depends(deps.get_db)) -> 
             detail=f"Specified product doesn't exist. (id={product_id})",
         )
     return product
+
+
+def check_release_exist(
+    product_id: int, release_id: int, db: Session = Depends(deps.get_db)
+) -> ProductReleaseInfo:
+    releases = crud.release_info.get_by_product(db=db, product_id=product_id)
+    for r in releases:
+        if r.id == release_id:
+            return r
+    msg = f"Specified release-info doesn't exist. (id={release_id}, product_id={product_id})"
+    logger.info(msg)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=msg)
 
 
 @router.get("/", response_model=Page[ProductInDBRich])
@@ -136,6 +141,25 @@ async def create_product_release_info(
     )
     logger.info(f"Created the release-info. (id={obj_out.id}, product_id={product_id})")
     return ProductReleaseInfoInDB.from_orm(obj_out)
+
+
+@router.patch(
+    "/{product_id}/release-infos/{release_id}",
+    response_model=ProductReleaseInfoInDB,
+)
+async def patch_product_release_info(
+    *,
+    db: Session = Depends(deps.get_db),
+    release_info: ProductReleaseInfo = Depends(check_release_exist),
+    incoming_release: ProductReleaseInfoUpdate,
+):
+    updated_release_info = crud.release_info.update(
+        db=db, db_obj=release_info, obj_in=incoming_release
+    )
+    logger.info(
+        f"Updated the release-info. (release_info_id={updated_release_info.id}, product_id={release_info.product_id})"
+    )
+    return ProductReleaseInfoInDB.from_orm(updated_release_info)
 
 
 @router.get("/{product_id}/release-infos", response_model=list[ProductReleaseInfoInDB])

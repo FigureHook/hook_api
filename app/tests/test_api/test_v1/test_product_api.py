@@ -3,7 +3,8 @@ from datetime import date, datetime
 from math import ceil
 
 from app.tests.utils.product import create_random_product
-from app.tests.utils.release_info import create_random_release_info_own_by_product
+from app.tests.utils.release_info import \
+    create_random_release_info_own_by_product
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -215,6 +216,31 @@ def test_get_product_releases(db: Session, client: TestClient):
         v1_endpoint("/products/123123/release-infos"),
     )
     assert response.status_code == 404
+
+
+def test_update_product_release(db: Session, client: TestClient):
+    release_info_count = random.randint(1, 5)
+
+    product = create_random_product(db)
+    release_ids = []
+    for _ in range(release_info_count):
+        release = create_random_release_info_own_by_product(db, product_id=product.id)
+        release_ids.append(release.id)
+
+    release_patch_data = {"adjusted_release_date": date(2020, 2, 8).isoformat()}
+
+    response = client.patch(
+        v1_endpoint(
+            f"/products/{product.id}/release-infos/{random.choice(release_ids)}"
+        ),
+        json=release_patch_data,
+    )
+    assert response.status_code == 200
+
+    content = response.json()
+    assert (
+        content["adjusted_release_date"] == release_patch_data["adjusted_release_date"]
+    )
 
 
 def test_get_product_images(db: Session, client: TestClient):
