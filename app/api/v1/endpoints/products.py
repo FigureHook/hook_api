@@ -157,7 +157,7 @@ async def get_product_release_infos(
     response_model=ReleaseFeed,
     tags=["release-feed"],
 )
-async def get_reelase_info_feed(
+async def get_release_info_feed(
     *, db: Session = Depends(deps.get_db), product_id: int, release_info_id: int
 ):
     # FIXME: need to check the generated SQL query is efficient or not.
@@ -214,7 +214,7 @@ def get_official_images(
     product_id: int,
 ):
     logger.info(
-        f"Fetched the release-infos. (count={len(product.official_images)}, product_id={product_id})"
+        f"Fetched the official-images. (count={len(product.official_images)}, product_id={product_id})"
     )
     return [
         ProductOfficialImageInDB.from_orm(image) for image in product.official_images
