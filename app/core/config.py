@@ -42,7 +42,7 @@ class Settings(BaseSettings):
 class DevSettings(Settings):
     DEBUG: bool = True
     SECRET_KEY: Secret = Fernet.generate_key()
-    POSTGRES_SERVER: str = "db"
+    POSTGRES_SERVER: str = "127.0.0.1"
     POSTGRES_USER: str = "kappa"
     POSTGRES_PASSWORD: str = "test"
     POSTGRES_DB: str = "hook_api"

@@ -55,7 +55,7 @@ def configure_logging() -> None:
                 },
                 "uvicorn_error_file": {
                     "()": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": "/workspace/app/logs/uvicorn/access.log",
+                    "filename": "app/logs/uvicorn/access.log",
                     "when": "D",
                     "encoding": "utf-8",
                     "utc": True,
@@ -65,7 +65,7 @@ def configure_logging() -> None:
                 },
                 "uvicorn_access_file": {
                     "()": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": "/workspace/app/logs/uvicorn/access.log",
+                    "filename": "app/logs/uvicorn/access.log",
                     "when": "D",
                     "encoding": "utf-8",
                     "utc": True,
@@ -74,7 +74,7 @@ def configure_logging() -> None:
                 },
                 "app_default": {
                     "()": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": "/workspace/app/logs/api/access.log",
+                    "filename": "app/logs/api/access.log",
                     "when": "D",
                     "encoding": "utf-8",
                     "utc": True,
@@ -92,7 +92,7 @@ def configure_logging() -> None:
                 },
                 "orm": {
                     "()": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": "/workspace/app/logs/orm/echo.log",
+                    "filename": "app/logs/orm/echo.log",
                     "when": "D",
                     "encoding": "utf-8",
                     "utc": True,
