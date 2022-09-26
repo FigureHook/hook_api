@@ -62,10 +62,11 @@ class ProductBase(BaseModel):
     paintworks: Optional[list[str]] = []
 
     @validator("jan")
-    def validate_jan(cls, jan_v: str) -> str:
-        assert len(jan_v) == 13
-        assert jan_v.isnumeric()
-        assert _validate_jan(jan_v)
+    def validate_jan(cls, jan_v: Optional[str]) -> Optional[str]:
+        if jan_v:
+            assert len(jan_v) == 13
+            assert jan_v.isnumeric()
+            assert _validate_jan(jan_v)
         return jan_v
 
 
