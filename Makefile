@@ -9,11 +9,8 @@ help: # Show this help message.
 start-test: # Start test.
 	bash ./${SCRIPTS_DIR}/test_start.sh
 
-start-dev-server: # Start development server.
+dev-server: # Start development server.
 	bash ./${SCRIPTS_DIR}/start_dev_server.sh
-
-init-dev-db: # Init development database.
-	bash ./${SCRIPTS_DIR}/dev_database_init.sh
 
 load-env: # Load environment variable from .env file.
 	if [ -f ".env" ]; then \
@@ -25,8 +22,17 @@ load-env: # Load environment variable from .env file.
 freeze: # Export the requirements.txt file.
 	poetry export --without-hashes -f requirements.txt --output requirements.txt
 
-gen-openapi-json: # Generate openapi.json in assets.
+openapi-json: # Generate openapi.json in assets.
 	python -m app.generate_openapi_json
 
-gen-secret: # Generate random secret.
+secret: # Generate random secret.
 	openssl rand -base64 32
+
+scripts-executable: # Modify files' permissions in scripts.
+	chmod -R +x ${SCRIPTS_DIR}
+
+dev-env-file: # Generate dev.env file.
+	bash ./${SCRIPTS_DIR}/generate_env_file.sh
+
+dev-environment: dev-env-file # Initialize development environment.
+	bash ./${SCRIPTS_DIR}/init_dev_environment.sh

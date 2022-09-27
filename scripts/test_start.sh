@@ -3,7 +3,8 @@
 # set -e
 # set -x
 
-ENV='test'
+ENV="test"
+ENVFILE="test.env"
 POSTGRES_IMAGE=postgres:14.5
 CONTAINER_NAME=hook-api-test-db
 
@@ -26,14 +27,22 @@ if [ $? -eq 0 ]; then
     clean_container $CONTAINER_NAME
 fi
 
+if [ -f $ENVFILE ]; then
+    echo "Loading environment variables in $ENVFILE"
+    export $(cat $ENVFILE | xargs);
+else
+    echo "The '$ENVFILE' file doesn't exist.";
+    exit 1
+fi
+
 echo "Build test database with image..."
 docker run \
-    -p 5432:5432 \
-    -e POSTGRES_USER=kappa \
-    -e POSTGRES_PASSWORD=test \
-    -e POSTGRES_DB=hook_api_test \
-    --name $CONTAINER_NAME \
     -d \
+    -p $POSTGRES_PORT:5432 \
+    -e POSTGRES_USER=$POSTGRES_USER \
+    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+    -e POSTGRES_DB=$POSTGRES_DATABASE \
+    --name $CONTAINER_NAME \
     $POSTGRES_IMAGE
 
 echo "Run the test."

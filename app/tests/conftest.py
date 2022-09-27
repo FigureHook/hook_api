@@ -26,10 +26,11 @@ def check_test_database():
             dbname=settings.POSTGRES_DB,
             user=settings.POSTGRES_USER,
             password=settings.POSTGRES_PASSWORD,
+            port=settings.POSTGRES_PORT,
         )
 
     except:  # noqa: E722
-        print("Database not connected.")
+        pytest.exit("Can't establish database connection.")
 
     if connection is not None:
         connection.autocommit = True
