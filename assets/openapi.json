@@ -3119,12 +3119,11 @@
                 "title": "ProductCreate",
                 "required": [
                     "name",
-                    "rerelease",
+                    "manufacturer",
+                    "category",
                     "url",
                     "checksum",
-                    "series",
-                    "category",
-                    "manufacturer",
+                    "rerelease",
                     "official_images"
                 ],
                 "type": "object",
@@ -3132,6 +3131,31 @@
                     "name": {
                         "title": "Name",
                         "type": "string"
+                    },
+                    "manufacturer": {
+                        "title": "Manufacturer",
+                        "type": "string"
+                    },
+                    "category": {
+                        "title": "Category",
+                        "type": "string"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
+                    },
+                    "checksum": {
+                        "title": "Checksum",
+                        "type": "string"
+                    },
+                    "rerelease": {
+                        "title": "Rerelease",
+                        "type": "boolean"
+                    },
+                    "adult": {
+                        "title": "Adult",
+                        "type": "boolean",
+                        "default": false
                     },
                     "size": {
                         "title": "Size",
@@ -3144,31 +3168,6 @@
                         "exclusiveMinimum": 0.0,
                         "type": "integer",
                         "nullable": true
-                    },
-                    "rerelease": {
-                        "title": "Rerelease",
-                        "type": "boolean"
-                    },
-                    "adult": {
-                        "title": "Adult",
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "copyright": {
-                        "title": "Copyright",
-                        "type": "string"
-                    },
-                    "url": {
-                        "title": "Url",
-                        "type": "string"
-                    },
-                    "jan": {
-                        "title": "Jan",
-                        "type": "string"
-                    },
-                    "checksum": {
-                        "title": "Checksum",
-                        "type": "string"
                     },
                     "order_period_start": {
                         "title": "The begining of order period.",
@@ -3188,12 +3187,12 @@
                         "title": "Series",
                         "type": "string"
                     },
-                    "category": {
-                        "title": "Category",
+                    "copyright": {
+                        "title": "Copyright",
                         "type": "string"
                     },
-                    "manufacturer": {
-                        "title": "Manufacturer",
+                    "jan": {
+                        "title": "Jan",
                         "type": "string"
                     },
                     "releaser": {
@@ -3534,18 +3533,42 @@
                 "title": "ProductUpdate",
                 "required": [
                     "name",
-                    "rerelease",
+                    "manufacturer",
+                    "category",
                     "url",
                     "checksum",
-                    "series",
-                    "category",
-                    "manufacturer"
+                    "rerelease"
                 ],
                 "type": "object",
                 "properties": {
                     "name": {
                         "title": "Name",
                         "type": "string"
+                    },
+                    "manufacturer": {
+                        "title": "Manufacturer",
+                        "type": "string"
+                    },
+                    "category": {
+                        "title": "Category",
+                        "type": "string"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
+                    },
+                    "checksum": {
+                        "title": "Checksum",
+                        "type": "string"
+                    },
+                    "rerelease": {
+                        "title": "Rerelease",
+                        "type": "boolean"
+                    },
+                    "adult": {
+                        "title": "Adult",
+                        "type": "boolean",
+                        "default": false
                     },
                     "size": {
                         "title": "Size",
@@ -3558,31 +3581,6 @@
                         "exclusiveMinimum": 0.0,
                         "type": "integer",
                         "nullable": true
-                    },
-                    "rerelease": {
-                        "title": "Rerelease",
-                        "type": "boolean"
-                    },
-                    "adult": {
-                        "title": "Adult",
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "copyright": {
-                        "title": "Copyright",
-                        "type": "string"
-                    },
-                    "url": {
-                        "title": "Url",
-                        "type": "string"
-                    },
-                    "jan": {
-                        "title": "Jan",
-                        "type": "string"
-                    },
-                    "checksum": {
-                        "title": "Checksum",
-                        "type": "string"
                     },
                     "order_period_start": {
                         "title": "The begining of order period.",
@@ -3602,12 +3600,12 @@
                         "title": "Series",
                         "type": "string"
                     },
-                    "category": {
-                        "title": "Category",
+                    "copyright": {
+                        "title": "Copyright",
                         "type": "string"
                     },
-                    "manufacturer": {
-                        "title": "Manufacturer",
+                    "jan": {
+                        "title": "Jan",
                         "type": "string"
                     },
                     "releaser": {

@@ -33,16 +33,20 @@ class ProductOfficialImageInDB(ProductOfficialImageBase):
         orm_mode = True
 
 
-class ProductBase(BaseModel):
+class ProductRequiredMeta(BaseModel):
     name: str
-    size: Optional[PositiveInt] = Field(nullable=True)
-    scale: Optional[PositiveInt] = Field(nullable=True)
+    manufacturer: str
+    category: str
+    url: str
+    checksum: str
     rerelease: bool
     adult: bool = Field(default=False)
-    copyright: Optional[str]
-    url: str
-    jan: Optional[str]
-    checksum: str
+
+
+class ProductOptionalMeta(BaseModel):
+    size: Optional[PositiveInt] = Field(nullable=True)
+    scale: Optional[PositiveInt] = Field(nullable=True)
+
     order_period_start: Optional[datetime] = Field(
         title="The begining of order period.",
         description="This value should be an UTC timestamp.",
@@ -53,14 +57,17 @@ class ProductBase(BaseModel):
         description="This value should be an UTC timestamp.",
         nullable=True,
     )
-    series: str
-    category: str
-    manufacturer: str
+
+    series: Optional[str]
+    copyright: Optional[str]
+    jan: Optional[str]
     releaser: Optional[str] = Field(nullable=True)
     distributer: Optional[str] = Field(nullable=True)
     sculptors: Optional[list[str]] = []
     paintworks: Optional[list[str]] = []
 
+
+class ProductBase(ProductOptionalMeta, ProductRequiredMeta):
     @validator("jan")
     def validate_jan(cls, jan_v: Optional[str]) -> Optional[str]:
         if jan_v:
