@@ -3185,15 +3185,18 @@
                     },
                     "series": {
                         "title": "Series",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "copyright": {
                         "title": "Copyright",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "jan": {
                         "title": "Jan",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "releaser": {
                         "title": "Releaser",
@@ -3598,15 +3601,18 @@
                     },
                     "series": {
                         "title": "Series",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "copyright": {
                         "title": "Copyright",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "jan": {
                         "title": "Jan",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "releaser": {
                         "title": "Releaser",

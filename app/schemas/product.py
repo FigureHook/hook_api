@@ -58,9 +58,9 @@ class ProductOptionalMeta(BaseModel):
         nullable=True,
     )
 
-    series: Optional[str]
-    copyright: Optional[str]
-    jan: Optional[str]
+    series: Optional[str] = Field(nullable=True)
+    copyright: Optional[str] = Field(nullable=True)
+    jan: Optional[str] = Field(nullable=True)
     releaser: Optional[str] = Field(nullable=True)
     distributer: Optional[str] = Field(nullable=True)
     sculptors: Optional[list[str]] = []

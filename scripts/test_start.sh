@@ -31,11 +31,11 @@ if [ -f $ENVFILE ]; then
     echo "Loading environment variables in $ENVFILE"
     export $(cat $ENVFILE | xargs);
 else
-    echo "The '$ENVFILE' file doesn't exist.";
+    echo "The '$ENVFILE' file doesn't exists.";
     exit 1
 fi
 
-echo "Build test database with image..."
+echo -e "Build test database with image...\n"
 docker run \
     -d \
     -p $POSTGRES_PORT:5432 \
@@ -44,6 +44,9 @@ docker run \
     -e POSTGRES_DB=$POSTGRES_DATABASE \
     --name $CONTAINER_NAME \
     $POSTGRES_IMAGE
+
+docker ps -a | grep $CONTAINER_NAME
+echo
 
 echo "Run the test."
 coverage run -m pytest
