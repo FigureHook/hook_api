@@ -3434,6 +3434,7 @@
             "ProductReleaseInfoInDB": {
                 "title": "ProductReleaseInfoInDB",
                 "required": [
+                    "id",
                     "product_id",
                     "created_at",
                     "updated_at"
@@ -3474,6 +3475,10 @@
                         "type": "string",
                         "format": "date",
                         "nullable": true
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
                     },
                     "product_id": {
                         "title": "Product Id",

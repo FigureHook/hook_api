@@ -25,6 +25,7 @@ class ProductReleaseInfoUpdate(ProductReleaseInfoBase):
 class ProductReleaseInfoInDB(ProductReleaseInfoBase):
     tax_including: bool = Field(default=False)
 
+    id: int
     product_id: int
     created_at: datetime
     updated_at: datetime
