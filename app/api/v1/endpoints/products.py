@@ -249,8 +249,8 @@ def map_product_model_to_schema(db_obj: Product) -> ProductInDBRich:
     series = SeriesInDB.from_orm(db_obj.series)
     category = CategoryInDB.from_orm(db_obj.category)
     manufacturer = CompanyInDB.from_orm(db_obj.manufacturer)
-    releaser = CompanyInDB.from_orm(db_obj.releaser)
-    distributer = CompanyInDB.from_orm(db_obj.distributer)
+    releaser = CompanyInDB.from_orm(db_obj.releaser) if db_obj.releaser else None
+    distributer = CompanyInDB.from_orm(db_obj.distributer) if db_obj.distributer else None
     sculptors = [WorkerInDB.from_orm(s) for s in db_obj.sculptors]
     paintworks = [WorkerInDB.from_orm(p) for p in db_obj.paintworks]
     official_images = [
@@ -258,7 +258,20 @@ def map_product_model_to_schema(db_obj: Product) -> ProductInDBRich:
     ]
 
     return ProductInDBRich(
-        **db_obj.to_dict(),
+        id=db_obj.id,
+        name=db_obj.name,
+        size=db_obj.size,
+        scale=db_obj.scale,
+        rerelease=db_obj.rerelease,
+        adult=db_obj.adult,
+        copyright=db_obj.copyright,
+        url=db_obj.url,
+        jan=db_obj.jan,
+        checksum=db_obj.checksum,
+        order_period_start=db_obj.order_period_start,
+        order_period_end=db_obj.order_period_end,
+        created_at=db_obj.created_at,
+        updated_at=db_obj.updated_at,
         series=series,
         category=category,
         manufacturer=manufacturer,
