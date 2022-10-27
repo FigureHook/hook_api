@@ -6,7 +6,8 @@ from app.helpers.orm_helper import ReleaseFeedOrmHelper
 from app.models import ReleaseTicket
 from app.models.product import ProductReleaseInfo
 from app.schemas.page import Page, PageParamsBase
-from app.schemas.release_feed import ReleaseFeed, ReleaseTicketCreate, ReleaseTicketInDB
+from app.schemas.release_feed import (ReleaseFeed, ReleaseTicketCreate,
+                                      ReleaseTicketInDB, ReleaseTicketInfo)
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -50,7 +51,11 @@ async def get_multi_release_tickets(
     tickets_count = db.scalar(count_stmt)
 
     tickets_out = [
-        ReleaseTicketInDB(id=ticket.id.hex, created_at=ticket.created_at)
+        ReleaseTicketInDB(
+            id=ticket.id.hex,
+            created_at=ticket.created_at,
+            created_for=ticket.created_for
+        )
         for ticket in tickets
     ]
 
@@ -59,7 +64,7 @@ async def get_multi_release_tickets(
     )
 
 
-@router.post("/", response_model=ReleaseTicketInDB, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ReleaseTicketInfo, status_code=status.HTTP_201_CREATED)
 async def create_release_ticket(
     *, db: Session = Depends(deps.get_db), ticket_info: ReleaseTicketCreate
 ):
@@ -70,6 +75,7 @@ async def create_release_ticket(
     )
     future_releases = db.scalars(stmt).unique().all()
     ticket = ReleaseTicket()
+    ticket.created_for = ticket_info.created_for
     ticket.release_infos = future_releases
     db.add(ticket)
     db.commit()
@@ -77,7 +83,11 @@ async def create_release_ticket(
     logger.info(
         f"Created the release-ticket. (id={ticket.id}, from={ticket_info.from_.isoformat()})"
     )
-    return ReleaseTicketInDB(id=ticket.id.hex, created_at=ticket.created_at)
+    return ReleaseTicketInfo(
+        id=ticket.id.hex,
+        release_count=len(future_releases),
+        created_for=ticket.created_for
+    )
 
 
 @router.get("/{ticket_id}", response_model=list[ReleaseFeed])

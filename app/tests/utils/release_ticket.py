@@ -33,6 +33,7 @@ def create_random_release_ticket(
     future_releases = db.scalars(stmt).unique().all()
     ticket = ReleaseTicket()
     ticket.release_infos = future_releases
+    ticket.created_for = "testing"
     db.add(ticket)
     db.commit()
     db.refresh(ticket)

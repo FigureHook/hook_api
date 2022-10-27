@@ -55,6 +55,7 @@ def test_get_multi_release_tickets(db: Session, client: TestClient):
     )
     for result in content["results"]:
         assert "id" in result
+        assert "created_for" in result
         assert "created_at" in result
 
 
@@ -67,12 +68,14 @@ def test_create_release_ticket(db: Session, client: TestClient):
     base_datetime = datetime.now()
 
     response = client.post(
-        url=v1_endpoint("/release-tickets/"), json={"from": base_datetime.isoformat()}
+        url=v1_endpoint("/release-tickets/"), json={"from": base_datetime.isoformat(), "created_for": "testing"}
     )
     assert response.status_code == 201
 
     content = response.json()
     assert "id" in content
+    assert "release_count" in content
+    assert "created_for" in content
 
 
 def test_get_release_ticket(db: Session, client: TestClient):
