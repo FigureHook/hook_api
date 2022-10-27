@@ -2632,7 +2632,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ReleaseTicketInDB"
+                                    "$ref": "#/components/schemas/ReleaseTicketInfo"
                                 }
                             }
                         }
@@ -3732,7 +3732,8 @@
             "ReleaseTicketCreate": {
                 "title": "ReleaseTicketCreate",
                 "required": [
-                    "from"
+                    "from",
+                    "created_for"
                 ],
                 "type": "object",
                 "properties": {
@@ -3740,6 +3741,10 @@
                         "title": "From",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "created_for": {
+                        "title": "Created For",
+                        "type": "string"
                     }
                 }
             },
@@ -3747,6 +3752,7 @@
                 "title": "ReleaseTicketInDB",
                 "required": [
                     "id",
+                    "created_for",
                     "created_at"
                 ],
                 "type": "object",
@@ -3755,10 +3761,37 @@
                         "title": "Id",
                         "type": "string"
                     },
+                    "created_for": {
+                        "title": "Created For",
+                        "type": "string"
+                    },
                     "created_at": {
                         "title": "Created At",
                         "type": "string",
                         "format": "date-time"
+                    }
+                }
+            },
+            "ReleaseTicketInfo": {
+                "title": "ReleaseTicketInfo",
+                "required": [
+                    "id",
+                    "release_count",
+                    "created_for"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "release_count": {
+                        "title": "Release Count",
+                        "type": "integer"
+                    },
+                    "created_for": {
+                        "title": "Created For",
+                        "type": "string"
                     }
                 }
             },
