@@ -6,12 +6,12 @@ from pydantic import BaseModel, Field, NonNegativeInt
 
 class ReleaseTicketCreate(BaseModel):
     from_: datetime = Field(..., alias="from")
-    created_for: str
+    purpose: str
 
 
 class ReleaseTicketInDB(BaseModel):
     id: str
-    created_for: str
+    purpose: str
     created_at: datetime
 
     class Config:
@@ -21,7 +21,7 @@ class ReleaseTicketInDB(BaseModel):
 class ReleaseTicketInfo(BaseModel):
     id: str
     release_count: int
-    created_for: str
+    purpose: str
 
 
 class ReleaseFeed(BaseModel):

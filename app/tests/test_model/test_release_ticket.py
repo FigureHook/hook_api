@@ -14,9 +14,9 @@ class TestReleaseTicket:
         release_info = create_random_release_info_own_by_product(
             db, product_id=product.id
         )
-        ticket = ReleaseTicket(release_infos=[release_info], created_for="for_sth")
+        ticket = ReleaseTicket(release_infos=[release_info], purpose="for_sth")
         db.add(ticket)
         db.commit()
         db.refresh(ticket)
         assert type(ticket.id) is UUID
-        assert type(ticket.created_for) is str
+        assert type(ticket.purpose) is str

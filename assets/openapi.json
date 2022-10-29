@@ -2561,6 +2561,15 @@
                     {
                         "required": false,
                         "schema": {
+                            "title": "Purpose",
+                            "type": "string"
+                        },
+                        "name": "purpose",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
                             "title": "Page",
                             "minimum": 1.0,
                             "type": "integer",
@@ -3733,7 +3742,7 @@
                 "title": "ReleaseTicketCreate",
                 "required": [
                     "from",
-                    "created_for"
+                    "purpose"
                 ],
                 "type": "object",
                 "properties": {
@@ -3742,8 +3751,8 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "created_for": {
-                        "title": "Created For",
+                    "purpose": {
+                        "title": "Purpose",
                         "type": "string"
                     }
                 }
@@ -3752,7 +3761,7 @@
                 "title": "ReleaseTicketInDB",
                 "required": [
                     "id",
-                    "created_for",
+                    "purpose",
                     "created_at"
                 ],
                 "type": "object",
@@ -3761,8 +3770,8 @@
                         "title": "Id",
                         "type": "string"
                     },
-                    "created_for": {
-                        "title": "Created For",
+                    "purpose": {
+                        "title": "Purpose",
                         "type": "string"
                     },
                     "created_at": {
@@ -3777,7 +3786,7 @@
                 "required": [
                     "id",
                     "release_count",
-                    "created_for"
+                    "purpose"
                 ],
                 "type": "object",
                 "properties": {
@@ -3789,8 +3798,8 @@
                         "title": "Release Count",
                         "type": "integer"
                     },
-                    "created_for": {
-                        "title": "Created For",
+                    "purpose": {
+                        "title": "Purpose",
                         "type": "string"
                     }
                 }

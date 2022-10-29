@@ -15,7 +15,7 @@ __all__ = ("ReleaseTicket",)
 class ReleaseTicket(UUIDPkModel):
     __tablename__ = "release_ticket"
 
-    created_for: Mapped[str] = Column(String)  # type: ignore
+    purpose: Mapped[str] = Column(String)  # type: ignore
     release_infos: Mapped[list["ProductReleaseInfo"]] = relationship(
         "ProductReleaseInfo",
         secondary=feed_ticket_release_table,

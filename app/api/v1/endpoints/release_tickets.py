@@ -1,5 +1,6 @@
 import logging
 import uuid
+from typing import Optional
 
 from app.api import deps
 from app.helpers.orm_helper import ReleaseFeedOrmHelper
@@ -8,8 +9,8 @@ from app.models.product import ProductReleaseInfo
 from app.schemas.page import Page, PageParamsBase
 from app.schemas.release_feed import (ReleaseFeed, ReleaseTicketCreate,
                                       ReleaseTicketInDB, ReleaseTicketInfo)
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -42,9 +43,19 @@ def check_ticket_exist(
 
 @router.get("/", response_model=Page[ReleaseTicketInDB])
 async def get_multi_release_tickets(
-    *, db: Session = Depends(deps.get_db), page_params: PageParamsBase = Depends()
+    *, db: Session = Depends(deps.get_db), page_params: PageParamsBase = Depends(), purpose: Optional[str] = None
 ):
-    stmt = select(ReleaseTicket).offset(page_params.skip).limit(page_params.size)
+    stmt = (
+        select(ReleaseTicket)
+        .offset(page_params.skip)
+        .limit(page_params.size)
+        .order_by(
+            desc(ReleaseTicket.created_at)
+        )
+    )
+    if purpose:
+        stmt = stmt.filter_by(purpose=purpose)
+
     tickets = db.scalars(stmt).unique().all()
 
     count_stmt = select(func.count(ReleaseTicket.id))
@@ -54,7 +65,7 @@ async def get_multi_release_tickets(
         ReleaseTicketInDB(
             id=ticket.id.hex,
             created_at=ticket.created_at,
-            created_for=ticket.created_for
+            purpose=ticket.purpose
         )
         for ticket in tickets
     ]
@@ -75,7 +86,7 @@ async def create_release_ticket(
     )
     future_releases = db.scalars(stmt).unique().all()
     ticket = ReleaseTicket()
-    ticket.created_for = ticket_info.created_for
+    ticket.purpose = ticket_info.purpose
     ticket.release_infos = future_releases
     db.add(ticket)
     db.commit()
@@ -86,7 +97,7 @@ async def create_release_ticket(
     return ReleaseTicketInfo(
         id=ticket.id.hex,
         release_count=len(future_releases),
-        created_for=ticket.created_for
+        purpose=ticket.purpose
     )
 
 

@@ -55,9 +55,16 @@ def test_get_multi_release_tickets(db: Session, client: TestClient):
     )
     for result in content["results"]:
         assert "id" in result
-        assert "created_for" in result
+        assert "purpose" in result
         assert "created_at" in result
 
+    response = client.get(
+        url=v1_endpoint("/release-tickets"),
+        params={"page": expected_page, "size": results_size, "purpose": "nothing"},
+    )
+    content = response.json()
+    assert response.status_code == 200
+    assert len(content["results"]) == 0
 
 def test_create_release_ticket(db: Session, client: TestClient):
     for _ in range(random.randint(1, 50)):
@@ -68,14 +75,14 @@ def test_create_release_ticket(db: Session, client: TestClient):
     base_datetime = datetime.now()
 
     response = client.post(
-        url=v1_endpoint("/release-tickets/"), json={"from": base_datetime.isoformat(), "created_for": "testing"}
+        url=v1_endpoint("/release-tickets/"), json={"from": base_datetime.isoformat(), "purpose": "testing"}
     )
     assert response.status_code == 201
 
     content = response.json()
     assert "id" in content
     assert "release_count" in content
-    assert "created_for" in content
+    assert "purpose" in content
 
 
 def test_get_release_ticket(db: Session, client: TestClient):
