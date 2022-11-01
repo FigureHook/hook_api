@@ -13,8 +13,9 @@ __all__ = ["Webhook"]
 class Webhook(Model, TimestampsMixin):
     __tablename__ = "webhook"
 
-    channel_id: Mapped[str] = Column(String, primary_key=True)  # type: ignore
-    id: Mapped[str] = Column(String, unique=True, nullable=False)  # type: ignore
+    id: Mapped[str] = Column(String, primary_key=True)  # type: ignore
+    channel_id: Mapped[str] = Column(String, nullable=False)  # type: ignore
+    guild_id: Mapped[str] = Column(String)  # type: ignore
     token: Mapped[str] = Column(String, nullable=False)  # type: ignore
     is_existed: Mapped[str] = Column(Boolean)  # type: ignore
     is_nsfw: Mapped[str] = Column(Boolean, default=False)  # type: ignore

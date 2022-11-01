@@ -11,6 +11,7 @@ def create_random_webhook(db: Session):
     currency = faker.random_choices(elements=WebhookCurrency)[0]
     obj_data = WebhookDBCreate(
         channel_id=faker.numerify(text="%################"),
+        guild_id=faker.numerify(text="%################"),
         id=faker.numerify(text="%################"),
         token=faker.lexify(text="???????????????????"),
         is_nsfw=faker.boolean(chance_of_getting_true=25),

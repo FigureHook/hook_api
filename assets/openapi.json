@@ -576,7 +576,7 @@
                 ]
             }
         },
-        "/api/v1/webhooks/{channel_id}": {
+        "/api/v1/webhooks/{webhook_id}": {
             "get": {
                 "tags": [
                     "discord",
@@ -584,15 +584,15 @@
                     "internal-service"
                 ],
                 "summary": "Get Webhook",
-                "operationId": "get_webhook_api_v1_webhooks__channel_id__get",
+                "operationId": "get_webhook_api_v1_webhooks__webhook_id__get",
                 "parameters": [
                     {
                         "required": true,
                         "schema": {
-                            "title": "Channel Id",
+                            "title": "Webhook Id",
                             "type": "string"
                         },
-                        "name": "channel_id",
+                        "name": "webhook_id",
                         "in": "path"
                     }
                 ],
@@ -631,15 +631,15 @@
                     "internal-service"
                 ],
                 "summary": "Update Webhook",
-                "operationId": "update_webhook_api_v1_webhooks__channel_id__put",
+                "operationId": "update_webhook_api_v1_webhooks__webhook_id__put",
                 "parameters": [
                     {
                         "required": true,
                         "schema": {
-                            "title": "Channel Id",
+                            "title": "Webhook Id",
                             "type": "string"
                         },
-                        "name": "channel_id",
+                        "name": "webhook_id",
                         "in": "path"
                     }
                 ],
@@ -688,15 +688,15 @@
                     "internal-service"
                 ],
                 "summary": "Delete Webhook",
-                "operationId": "delete_webhook_api_v1_webhooks__channel_id__delete",
+                "operationId": "delete_webhook_api_v1_webhooks__webhook_id__delete",
                 "parameters": [
                     {
                         "required": true,
                         "schema": {
-                            "title": "Channel Id",
+                            "title": "Webhook Id",
                             "type": "string"
                         },
-                        "name": "channel_id",
+                        "name": "webhook_id",
                         "in": "path"
                     }
                 ],
@@ -733,15 +733,15 @@
                     "internal-service"
                 ],
                 "summary": "Patch Webhook",
-                "operationId": "patch_webhook_api_v1_webhooks__channel_id__patch",
+                "operationId": "patch_webhook_api_v1_webhooks__webhook_id__patch",
                 "parameters": [
                     {
                         "required": true,
                         "schema": {
-                            "title": "Channel Id",
+                            "title": "Webhook Id",
                             "type": "string"
                         },
-                        "name": "channel_id",
+                        "name": "webhook_id",
                         "in": "path"
                     }
                 ],
@@ -2905,6 +2905,7 @@
                     "id",
                     "token",
                     "channel_id",
+                    "guild_id",
                     "created_at",
                     "updated_at",
                     "decrypted_token"
@@ -2917,6 +2918,14 @@
                     },
                     "token": {
                         "title": "Token",
+                        "type": "string"
+                    },
+                    "channel_id": {
+                        "title": "Channel Id",
+                        "type": "string"
+                    },
+                    "guild_id": {
+                        "title": "Guild Id",
                         "type": "string"
                     },
                     "is_nsfw": {
@@ -2939,10 +2948,6 @@
                             }
                         ],
                         "default": "JPY"
-                    },
-                    "channel_id": {
-                        "title": "Channel Id",
-                        "type": "string"
                     },
                     "is_existed": {
                         "title": "Is Existed",
@@ -3960,7 +3965,9 @@
                 "title": "WebhookCreate",
                 "required": [
                     "id",
-                    "token"
+                    "token",
+                    "channel_id",
+                    "guild_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -3970,6 +3977,14 @@
                     },
                     "token": {
                         "title": "Token",
+                        "type": "string"
+                    },
+                    "channel_id": {
+                        "title": "Channel Id",
+                        "type": "string"
+                    },
+                    "guild_id": {
+                        "title": "Guild Id",
                         "type": "string"
                     },
                     "is_nsfw": {

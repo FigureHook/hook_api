@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 class WebhookBase(BaseModel):
     id: str
     token: str
+    channel_id: str
+    guild_id: str
     is_nsfw: Optional[bool] = Field(default=True)
     lang: Optional[WebhookLang] = Field(default=WebhookLang.EN)
     currency: Optional[WebhookCurrency] = Field(default=WebhookCurrency.JPY)
@@ -26,7 +28,6 @@ class WebhookUpdate(BaseModel):
 
 
 class WebhookInDBBase(WebhookBase):
-    channel_id: str
     is_existed: Optional[bool] = Field(nullable=True)
     created_at: datetime
     updated_at: datetime

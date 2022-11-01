@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 def test_create_webhook(db: Session):
     obj_in = WebhookDBCreate(
         channel_id=faker.numerify(text="%################"),
+        guild_id=faker.numerify(text="%################"),
         id=faker.numerify(text="%################"),
         token=faker.lexify(text="???????????????????"),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
@@ -27,7 +28,7 @@ def test_create_webhook(db: Session):
 
 def test_get_webhook(db: Session):
     db_obj = create_random_webhook(db=db)
-    fetched_db_obj = crud.webhook.get(db=db, id=db_obj.channel_id)
+    fetched_db_obj = crud.webhook.get(db=db, id=db_obj.id)
 
     assert fetched_db_obj == db_obj
 
@@ -37,6 +38,8 @@ def test_update_webhook(db: Session):
 
     obj_in = WebhookCreate(
         id=faker.numerify(text="%################"),
+        channel_id=faker.numerify(text="%################"),
+        guild_id=faker.numerify(text="%################"),
         token=faker.lexify(text="???????????????????"),
         is_nsfw=faker.boolean(chance_of_getting_true=25),
         lang=faker.random_choices(elements=WebhookLang)[0],
@@ -53,8 +56,8 @@ def test_update_webhook(db: Session):
 def test_remove_webhook(db: Session):
     db_obj = create_random_webhook(db=db)
 
-    deleted_db_obj = crud.webhook.remove(db=db, id=db_obj.channel_id)
-    fetched_db_obj = crud.webhook.get(db=db, id=db_obj.channel_id)
+    deleted_db_obj = crud.webhook.remove(db=db, id=db_obj.id)
+    fetched_db_obj = crud.webhook.get(db=db, id=db_obj.id)
 
     assert not fetched_db_obj
     if deleted_db_obj:
