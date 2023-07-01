@@ -7,10 +7,10 @@ POSTGRES_IMAGE="postgres:14.5"
 
 check_command() {
     if ! command -v $1 &>/dev/null; then
-        echo -e "<\033[36;1m$1\033[0m> is not installed."
+        echo -e "[\033[31;1mx\033[0m] \033[36;1m$1\033[0m is not installed."
         IS_LACK=1
     fi
-    echo -e "<\033[36;1m$1\033[0m> is installed."
+    echo -e "[\033[32;1mv\033[0m] \033[36;1m$1\033[0m is installed."
 }
 
 commands=('poetry' 'docker')
@@ -43,12 +43,13 @@ else
     exit 1
 fi
 
-echo "Start database containers."
+echo "Start database containers."; echo
 docker compose up -d
 
 ENV="development"
-echo "Migrating database..."
+echo; echo "Migrating database..."
 alembic upgrade head
 
 echo
 docker compose ps
+echo

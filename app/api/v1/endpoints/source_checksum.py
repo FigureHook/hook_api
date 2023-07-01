@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Sequence
 
 from app import crud
 from app.api import deps
@@ -33,7 +33,7 @@ def check_source_checksum_exist(
     return source_checksum
 
 
-@router.get("/", response_model=list[SourceChecksumInDB])
+@router.get("/", response_model=Sequence[SourceChecksumInDB])
 async def get_source_checksums(
     *,
     db: Session = Depends(deps.get_db),

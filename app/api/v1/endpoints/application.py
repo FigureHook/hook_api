@@ -1,12 +1,14 @@
 import logging
 import uuid
+from typing import Sequence
+
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy.orm import Session
 
 from app import crud
 from app.api import deps
 from app.models import Application
 from app.schemas.application import ApplicationCreate, ApplicationInDB
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -25,7 +27,7 @@ def check_application_exist(
     return app
 
 
-@router.get("/", response_model=list[ApplicationInDB])
+@router.get("/", response_model=Sequence[ApplicationInDB])
 async def get_applications(
     *, db: Session = Depends(deps.get_db), skip: int = 0, limit: int = 100
 ):

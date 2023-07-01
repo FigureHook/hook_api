@@ -67,20 +67,21 @@ class ReleaseFeedOrmHelper:
 
         release_feeds = []
         for feed in feeds:
+            result = feed._asdict()
             release_feed = ReleaseFeed(
-                product_id=feed["product_id"],
-                release_info_id=feed["release_info_id"],
-                name=feed["name"],
-                source_url=feed["source_url"],
-                is_nsfw=feed["is_nsfw"],
-                is_rerelease=feed["is_rerelease"],
-                series=feed["series"],
-                manufacturer=feed["manufacturer"],
-                size=feed["size"],
-                scale=feed["scale"],
-                price=feed["price"],
-                release_date=feed["release_date"],
-                image_url=feed["og_image"] or feed["image_url"],
+                product_id=result["product_id"],
+                release_info_id=result["release_info_id"],
+                name=result["name"],
+                source_url=result["source_url"],
+                is_nsfw=result["is_nsfw"],
+                is_rerelease=result["is_rerelease"],
+                series=result["series"],
+                manufacturer=result["manufacturer"],
+                size=result["size"],
+                scale=result["scale"],
+                price=result["price"],
+                release_date=result["release_date"],
+                image_url=result["og_image"] or result["image_url"],
                 manufacturer_logo=None,
             )
 
